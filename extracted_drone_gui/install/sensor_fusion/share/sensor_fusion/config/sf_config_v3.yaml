@@ -1,0 +1,489 @@
+# This is the configuration file for drone sensor fusion
+FormatVersion: "3.3.8"
+# Log for versions:
+# V3.0 -----------------------------------------------------------------
+# Started on 2023-12-15
+# Main change:
+# - Group settings for different sensor
+# - Add FilterSetting.AutoReset.
+#
+# Change log:
+# V3.1.0:
+#   - 2024-02-12: add UwbCfgFile
+#   - 2024-02-20: Add GroundLine sensor section
+#   - 2024-02-21: Start working on ModelParam
+# V3.1.1:
+#   - 2024-03-04: Add predict time setting
+#   - 2024-03-11: Add GimbalTopic
+# V3.1.2:
+#   - 2024-03-19: Add LineDetector
+# V3.1.3:
+#   - 2024-04-01: Add RackCfg in LineDetector
+#                 Add SaveDebugInterval setting
+#
+# V3.2.0:
+#   - 2024-04-05: Add HeightAboveGround sensor
+#
+# V3.2.1:
+#   - 2024-04-07: Add TakeOffHeight into ApAlt (optional)
+#
+# V3.3.1:
+#   - 2024-05-17: Change LineData part LineDetector
+#
+# V3.3.2:
+#   - 2024-05-21: add KThetaErr in LineDetector
+#   - 2024-05-23: add MsgType for LineDetector (for backwards compatibility)
+#
+# V3.3.3:
+#   - 2024-08-13: add IgnoreRegionX/Y setting. If not gaven, will use 0.3
+#
+# V3.3.4:
+#   - 2024-08-19: Set *Enable* to False for all sensors by default
+#
+# v3.3.5:
+#   - 2024-12-03: Add Gps MsgType setting
+#
+# v3.3.6:
+#   - 2025-01-13: Add WallLidar sensor
+#
+# v3.3.7:
+#   - 2025-05-06: Add Gps Alt sigma
+#
+# v3.3.8:
+#   - 2025-11-04: Add MsgType for HeightAboveGround sensor (the PSDK_ROS gives Float32)
+#
+
+FilterSetting:
+  # Folder name to save the EKF (oase.save). If the folder exists, the
+  # program will load the EKF from the folder (to save time) unless the
+  # *EkfRecreate* == True
+  EkfSaveFolder: ekf
+  # Rerun the KalmanCreator to create a new EKF.
+  EkfRecreate: True
+  # Data publish rate for on-line application (Hz)
+  EstRate: 40
+  # Number of events saved in the buffer
+  BufferSize: 10000
+  # Print states regularly while running the filter on-line
+  PrintState: True
+  # Bag file name
+  BagFile: ""
+  # The baseline system model
+  # IMU: full kinematic model using IMU as input
+  # SPD: 3D constant speed model with yaw angle
+  # SPDCMD: using speed control command as input for SPD model
+  # AGV: a testing AGV model, still under development
+  BaseModelType: "SPDCMD"
+  # Detailed model parameters (design not fixed yet)
+  ModelParam:
+    Version: "1.0"
+    AddImuBias: False
+    Tc:
+      Vx: 0.5
+      Vy: 0.5
+      Vz: 0.5
+      R: 0.5
+  # Add reset when start the ROS node
+  AutoReset: True
+  # Predict system states in the future (s)
+  PredictTime: 0.1
+  # Save debug data into pk file in every X seconds. Not saving data if set
+  # to 0.0. Not working properly yet. Set to 0.0 for now.
+  SaveDebugInterval: 0.0
+
+  # Initial state of the drone
+  InitState:
+    # Initial states and sigma, the key should match the model variable
+    # TODO: add more states
+    x:
+      Value: 0.0
+      Sigma: 10.0
+    y:
+      Value: 0.0
+      Sigma: 10.0
+    z:
+      Value: -0.3
+      Sigma: 10.0
+    u:
+      Value: 0.0
+      Sigma: 0.01
+    v:
+      Value: 0.0
+      Sigma: 0.01
+    w:
+      Value: 0.0
+      Sigma: 0.01
+    r:
+      Value: 0.0
+      Sigma: 0.01
+    Psi:
+      Value: 0.0
+      Sigma: 2.0
+    ap_yaw_bias:
+      Value: 0.0
+      Sigma: 3.5
+
+  # The sigma for system process noise
+  SigmaW:
+    vx_dot: 1.5
+    vy_dot: 1.5
+    vz_dot: 1.5
+    Psi_dot: 0.5
+    ap_yaw_bias_dot: 0.1
+    slam_yaw_bias_dot: 0.1
+    slam_yaw_align_dot: 0.1
+    slam_pitch_align_dot: 0.1
+    slam_roll_align_dot: 0.1
+    # x-coordinate of SLAM ref in local ref
+    x_slam_0_dot: 1.0
+    # y-coordinate of SLAM ref in local ref
+    y_slam_0_dot: 1.0
+    # z-coordinate of SLAM ref in local ref
+    z_slam_0_dot: 1.0
+    kx_slam_dot: 0.1
+    ky_slam_dot: 0.1
+    kz_slam_dot: 0.1
+    # UWB bias states
+    uwb_bias: 1.0
+    # x shift of GPS pos
+    dx_gps: 0.1
+    # y shift of GPS pos
+    dy_gps: 0.1
+    # z shift of GPS pos
+    dz_gps: 0.1
+    # for SPDCMD model
+    vx_noise: 0.1
+    vy_noise: 0.1
+    vz_noise: 0.1
+    r_noise: 0.1
+    # for SPDCMD model V 2.0
+    vx_dot_noise: 0.1
+    vy_dot_noise: 0.1
+    vz_dot_noise: 0.1
+    r_dot_noise: 0.1
+
+DiagnosticSetting:
+  # The topic to publish the diagnostic data
+  Topic: "diagnostic"
+  # The rate to publish the diagnostic data (Hz)
+  Rate: 1.0
+  # List of main localization sensor observation keys. If none of the keys is received,
+  # the SF is running in dead-reckoning mode.
+  PosObsKeys:
+    - "pos"
+    - "line"
+    - "marker_MAIN"
+  # Timeout for the main localization sensor observation (s)
+  PosObsTimeout: 1.4
+  # Config for critical sensor observation timeout
+  CriticalObsTimeout:
+    - GroupName: "Main"
+      Logic: "AND"
+      ObsCfg:
+        - Key: "marker_MAIN"
+          Timeout: 1.4
+        - Key: "line"
+          Timeout: 1.4
+      Weight: 5.0
+    - GroupName: "Tele"
+      Logic: "AND"
+      ObsCfg:
+        - Key: "spd"
+          Timeout: 1.0
+        - Key: "alt_0"
+          Timeout: 1.0
+      Weight: 5.0
+  TimeoutThreshold:
+    Normal: 20.0
+    Warning: 40.0
+    Error: 60.0
+  PoseRegion:
+    # The region of the drone pose. If the drone is outside the region, the
+    # SF will give a warning.
+    X: [-100.0, 100.0]
+    Y: [-100.0, 100.0]
+    Z: [-100.0, 100.0]
+    Yaw: [-3.142, 3.142]
+
+SensorSetting:
+  # In dev, testing ctrl input
+  SpeedCmd:
+    Enable: False
+    Topic: "cmd/drone/setpoint"
+    DelayMs: 50
+
+  # In dev, very simple implementation ATM
+  GroundLine:
+    Enable: False
+    Topic: "line_detection"
+    DelayMs: 800
+    SigmaY: 0.2
+    SigmaYaw: 0.1
+
+  # Generic line detection
+  LineDetector:
+    Enable: False
+    LineMode: "SLSD"
+    Topic: "perception/line_detection_2p"
+    # Type of the ROS msg: Float = Float32MualtiArray, Line = LineArray
+    MsgType: "Float"
+    SigmaPos: 10.0
+    SigmaAngle: 0.1
+    CameraInfo: "config/camera_mini3.yaml"
+    CameraId: "LINE"
+    DelayMs: 800
+    GimbalTopic: "gimbal_attitude"
+    KThetaErr: 2.0
+    LineData:
+      # optional, see config/line_example.yaml
+      LineCfg: ""
+      # optional, see config/rack_example.yaml
+      RackCfg: ""
+    # Detections close to the edge of img will be ignored. Default value is 0.3
+    IgnoreRegionX: 0.3
+    IgnoreRegionY: 0.3
+
+  MarkerDetector:
+    MarkerData: "marker_data_pl.yaml"
+    CameraId: "MAIN"
+    # Use camera data (ArUco corner detection).
+    Enable: False
+    # Use camera distortion model
+    CameraDist: True
+    # Camera info file
+    CameraInfo: "camera_mini3_pl.yaml"
+    # How the sensor fusion uses the marker detection data
+    # Raw = Row marker corner coordinates
+    # PosCv = Calculate the pos of drone first using OpenCV
+    # Center = Use the center of the marker (added 2025-02-15, not tested)
+    # PosCvPl = Landing case using opencv + a simple correction (obsolete)
+    # PosOpt = Calculate the pos of drone first using optimization (obsolete)
+    # Mib = Use marker-in-body algorithm (obsolete)
+    Algorithm: "Raw"
+    # ROS topic of marker detection
+    Topic: "aruco_detection"
+    DelayMs: 800
+    SigmaRaw: 10.0
+    SigmaPos: 0.3
+    ShowErr: False
+    GimbalTopic: "gimbal_attitude"
+
+  Uwb:
+    Enable: False
+    # Keep using UWB data while the camera data is available. Old config.
+    # Mainly needed for testing, not implemented in new version of SF
+    # code.
+    UseUwbWithCamera: True
+    # Type of the UWB (For testing, only use FM now)
+    UwbType: "FM"
+    # Add UWB range bias states for each anchors
+    # Note: the code has been tested, but didn't improve the
+    # localization. Don't use A.T.M.
+    AddUwbBias: False
+    # Tag configurations
+    TagConfig:
+      # Used to convert the coordinate data into meter
+      UnitFactor: 0.001
+      # Type of frame used for the following position data. Should be FRD
+      # (Forward-Right-Down) or FLU (Forward-Left-Up)
+      Frame: FRD
+      # Tag position in the vehicle body. Multiple tags can be defined
+      TagPosition:
+        Tag1:
+          Enable: True
+          ID: T4 # tag id
+          Coordinate:
+            x: -60
+            y: 0
+            z: -220
+          RosTopic: "/range_array_topic"
+    # Delay of UWB data (ms)
+    DelayMs: 10.0
+    # Force the filter to mask a part of the UWB data. Can be used to test
+    # the effects of only using a subset of anchors. NOTE: the length of
+    # the list must the same as the number of anchors
+    UwbMask: [1, 1, 1, 1, 1, 1]
+    # UWB ranger bias (m). NOTE: the length of the list must the same as
+    # the number of anchors
+    UwbBias: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    Sigma: 0.3
+    UwbCfgFile: "decawave_example.yaml"
+
+  SLAM:
+    Enable: False
+    UseXY: True
+    UseZ: True
+    UseYaw: True
+    UseSpd: False
+    AddYawBias: True
+    AddYawAlign: True
+    AddPitchAlign: True
+    AddRollAlign: True
+    AddInitPoseState: True
+    NumScaleState: 3
+    ConstantYawBias: 0.0
+    ConstantYawAlign: 0.0
+    ConstantPitchAlign: 0.0
+    ConstantRollAlign: 0.0
+    ConstantXinit: 0.0
+    ConstantYinit: 0.0
+    ConstantZinit: 0.0
+    ConstantKx: 1.0
+    ConstantKy: 1.0
+    ConstantKz: 1.0
+    # ROS topic for SLAM
+    Topic: "/orbslam3/pose"
+    # Slam Ref
+    Ref: "FLU"
+    # Slam subsample. Only use SLAM once very SlamSubsample data
+    Subsample: 5
+    # The SLAM position and orientation in drone body frame (FRD)
+    SlamPoseInDrone:
+      x: 0.05
+      y: -0.0
+      z: 0.0
+      yaw: 0.0
+      pitch: 0.0
+      roll: 0.0
+    SigmaXy: 0.2
+    SigmaYaw: 0.1
+    SigmaZ: 0.2
+    SigmaSpd: 0.4
+    DelayMs: 800
+
+  # Use 1D Lidar
+  LidarAlt:
+    Enable: False
+    # ros topic for 1D Lidar
+    Topic: "/range"
+    # Offset of altitude range sensor (1D lidar)
+    RangeBias: -0.1
+    Sigma: 0.3
+
+  Imu:
+    Enable: False
+    Topic: "/mavros/imu/data_raw"
+    # IMU installation angles on the drone
+    ImuAngleDeg:
+      Yaw: 0.0
+      Pitch: 0.0
+      Roll: 0.0
+    # Add IMU data bias states
+    AddImuBias: False
+    SigmaAcc: 0.2
+    SigmaOmega: 0.3
+
+  ApYaw:
+    Enable: False
+    Topic: "drone/attitude"
+    # Type of the AP yaw data
+    # MAVROS = sensor_msgs/Imu from MAVROS
+    # VITRO = geometry_msgs/QuaternionStamped from VITRO DJI interface
+    Type: "VITRO"
+    # Yaw angle between the local frame and the local magnetic filed. Used
+    # to convert the AP yaw data to local frame
+    ApYawShift: 3.0
+    # Add autopilot yaw angle bias state
+    AddApYawBias: True
+    Sigma: 0.1
+
+  ApAlt:
+    Enable: False
+    Topic: "drone/pos"
+    Type: "DJI"
+    Sigma: 0.5
+    # Height of the take off position. This setting should only be used
+    # if the ApAlt is reporting height above takeoff
+    TakeOffHeight: 0.5
+
+  BodySpd:
+    Enable: False
+    Topic: "drone/spd"
+    Sigma: 0.3
+    Type: "DJI"
+
+  Gps:
+    Enable: False
+    SigmaPos: 10.0
+    SigmaAlt: 10.0
+    SigmaSpd: 2.0
+    # GPS Topic
+    Topic: "/mavros/global_position/global"
+    # Msg type of the GPS data
+    # NavSatFix = sensor_msgs/NavSatFix from MAVROS
+    # GeoPoint = geobackward compatibility_msgs/GeoPointStamped from VITRO DJI interface
+    # Set to GeoPoint for backward compatibility
+    MsgType: "GeoPoint"
+
+    # Initial GPS pos, i.e., the GPS location of the origin of the local
+    # reference frame
+    InitialGpsLoc:
+      Lat: 50.86521295323624
+      Lon: 4.6710163263520155
+      Alt: 0.0
+    # If set, add x,y,z-shift states of GPS related to local ref
+    AddGpsShift: False
+
+    # setting to check if the GPS will be used in a region (2D)
+    UseGpsRegion:
+      # enable the checking
+      Enable: False
+      # the result of checking if the current pos is inside the polygon
+      # when the GPS data should be used
+      Logic: False
+      # type of pos data will be used for the checking:
+      # GPS = raw GPS coordinates
+      # LOCAL = local pos calculated from the GPS
+      # SF = local pos calculated from sensor fusion
+      PosType: "LOCAL"
+      # polygon pos point
+      # NOTE: for local pos, it should be in NED frame
+      Polygon:
+        - [0.0, 0.0]
+        - [8.5, -8.5]
+        - [16.0, -0.5]
+        - [7.5, 5.0]
+
+  # 2D lidar corridor detection
+  LidarCorridor:
+    Enable: False
+    Topic: "/pose_in_corridor"
+    SigmaY: 0.3
+    SigmaYaw: 0.1
+
+  # Use barometer data (in-development)
+  Baro:
+    Enable: False
+    Sigma: 1.0
+
+  # Use magnetometer data (in-development)
+  Magnetometer:
+    Enable: False
+    # Add drone body magnetal field states (in-development)
+    AddBodyMag: False
+    Sigma: 100
+
+  HeightAboveGround:
+    Enable: False
+    Topic: "height_from_ground"
+    # MsgType: Range, Float32
+    MsgType: "Range"
+    Sigma: 0.2
+    DelayMs: 500
+
+  # Testing lidar array for wall detection
+  # the wall is in YZ plane (X=0)
+  WallLidar:
+    Enable: False
+    Topic: "gnc/lidar/plane_fit"
+    SigmaX: 0.1
+    SigmaYaw: 0.1
+    DelayMs: 50
+
+  # Testing pos from ground object detection
+  PosFromGroundObj:
+    Enable: False
+    Topic: "gnc/sf/pos_from_ground_obj"
+    Sigma: 0.2
+    DelayMs: 100
+    SigmaKz: 0.1

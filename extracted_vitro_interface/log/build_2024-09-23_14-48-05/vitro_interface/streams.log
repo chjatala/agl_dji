@@ -1,0 +1,343 @@
+[0.009s] Invoking command in '/root/ros2_ws/build/vitro_interface': AMENT_PREFIX_PATH=/root/ros2_ws/install/vitro_ros_definitions:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/ros2_ws/install/vitro_ros_definitions:/opt/ros/humble LD_LIBRARY_PATH=/root/ros2_ws/install/vitro_ros_definitions/lib:${LD_LIBRARY_PATH} PYTHONPATH=/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake /root/ros2_ws/src/vitro_interface -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/root/ros2_ws/install/vitro_interface
+[0.059s] -- The C compiler identification is GNU 11.4.0
+[0.110s] -- The CXX compiler identification is GNU 11.4.0
+[0.117s] -- Detecting C compiler ABI info
+[0.182s] -- Detecting C compiler ABI info - done
+[0.189s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.189s] -- Detecting C compile features
+[0.190s] -- Detecting C compile features - done
+[0.193s] -- Detecting CXX compiler ABI info
+[0.269s] -- Detecting CXX compiler ABI info - done
+[0.276s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.277s] -- Detecting CXX compile features
+[0.277s] -- Detecting CXX compile features - done
+[0.280s] -- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.401s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.458s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.488s] -- Found rclcpp: 16.0.10 (/opt/ros/humble/share/rclcpp/cmake)
+[0.530s] -- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.536s] -- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.545s] -- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[0.557s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.574s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.621s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[0.624s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[0.712s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[0.736s] -- Found FastRTPS: /opt/ros/humble/include  
+[0.775s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.785s] -- Looking for pthread.h
+[0.854s] -- Looking for pthread.h - found
+[0.854s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[0.922s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[0.923s] -- Found Threads: TRUE  
+[0.976s] -- Found std_srvs: 4.2.4 (/opt/ros/humble/share/std_srvs/cmake)
+[0.987s] -- Found sensor_msgs: 4.2.4 (/opt/ros/humble/share/sensor_msgs/cmake)
+[1.019s] -- Found nav_msgs: 4.2.4 (/opt/ros/humble/share/nav_msgs/cmake)
+[1.037s] -- Found geographic_msgs: 1.0.6 (/opt/ros/humble/share/geographic_msgs/cmake)
+[1.069s] -- Found mavros_msgs: 2.8.0 (/opt/ros/humble/share/mavros_msgs/cmake)
+[1.097s] -- Found tf2_ros: 0.25.8 (/opt/ros/humble/share/tf2_ros/cmake)
+[1.190s] -- Found cv_bridge: 3.2.1 (/opt/ros/humble/share/cv_bridge/cmake)
+[1.204s] -- Found OpenCV: /usr (found version "4.5.4") 
+[1.214s] -- Found PahoMqttC: /usr/local/lib/libpaho-mqtt3as.so  
+[1.220s] -- Found nlohmann_json: /usr/lib/cmake/nlohmann_json/nlohmann_jsonConfig.cmake (found suitable version "3.10.5", minimum required is "3.2.0") 
+[1.221s] -- Found vitro_ros_definitions: 0.0.0 (/root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake)
+[1.299s] -- Configuring done
+[1.338s] -- Generating done
+[1.340s] -- Build files have been written to: /root/ros2_ws/build/vitro_interface
+[1.349s] Invoked command in '/root/ros2_ws/build/vitro_interface' returned '0': AMENT_PREFIX_PATH=/root/ros2_ws/install/vitro_ros_definitions:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/ros2_ws/install/vitro_ros_definitions:/opt/ros/humble LD_LIBRARY_PATH=/root/ros2_ws/install/vitro_ros_definitions/lib:${LD_LIBRARY_PATH} PYTHONPATH=/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake /root/ros2_ws/src/vitro_interface -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/root/ros2_ws/install/vitro_interface
+[1.350s] Invoking command in '/root/ros2_ws/build/vitro_interface': AMENT_PREFIX_PATH=/root/ros2_ws/install/vitro_ros_definitions:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/ros2_ws/install/vitro_ros_definitions:/opt/ros/humble LD_LIBRARY_PATH=/root/ros2_ws/install/vitro_ros_definitions/lib:${LD_LIBRARY_PATH} PYTHONPATH=/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /root/ros2_ws/build/vitro_interface -- -j2 -l2
+[1.402s] [  9%] Building CXX object CMakeFiles/vitro_mqtt.dir/src/generic_mqtt_client.cpp.o
+[1.849s] In file included from /root/ros2_ws/src/vitro_interface/src/generic_mqtt_client.cpp:1:
+[1.850s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::on_failure(const mqtt::token&)’:
+[1.850s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:67:40: warning: unused parameter ‘tok’ [-Wunused-parameter]
+[1.850s]    67 |     void on_failure(const mqtt::token& tok) override {
+[1.850s]       |                     ~~~~~~~~~~~~~~~~~~~^~~
+[1.850s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::on_success(const mqtt::token&)’:
+[1.850s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:75:40: warning: unused parameter ‘tok’ [-Wunused-parameter]
+[1.850s]    75 |     void on_success(const mqtt::token& tok) override {}
+[1.851s]       |                     ~~~~~~~~~~~~~~~~~~~^~~
+[1.851s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::connected(const string&)’:
+[1.852s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:79:39: warning: unused parameter ‘cause’ [-Wunused-parameter]
+[1.852s]    79 |     void connected(const std::string& cause) override {
+[1.852s]       |                    ~~~~~~~~~~~~~~~~~~~^~~~~
+[1.852s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::delivery_complete(mqtt::delivery_token_ptr)’:
+[1.852s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:98:53: warning: unused parameter ‘token’ [-Wunused-parameter]
+[1.852s]    98 |     void delivery_complete(mqtt::delivery_token_ptr token) override {}
+[1.852s]       |                            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+[1.858s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In constructor ‘vitro::GenericMqttClient::GenericMqttClient(std::string, std::string, std::string, std::function<void(std::shared_ptr<const mqtt::message>)>, int)’:
+[1.858s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:135:17: warning: ‘vitro::GenericMqttClient::server’ will be initialized after [-Wreorder]
+[1.858s]   135 |     std::string server;
+[1.858s]       |                 ^~~~~~
+[1.858s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:134:17: warning:   ‘std::string vitro::GenericMqttClient::client_name’ [-Wreorder]
+[1.858s]   134 |     std::string client_name;
+[1.858s]       |                 ^~~~~~~~~~~
+[1.859s] /root/ros2_ws/src/vitro_interface/src/generic_mqtt_client.cpp:5:1: warning:   when initialized here [-Wreorder]
+[1.859s]     5 | GenericMqttClient::GenericMqttClient(std::string server_uri, std::string name, std::string topic,
+[1.859s]       | ^~~~~~~~~~~~~~~~~
+[1.859s] In file included from /root/ros2_ws/src/vitro_interface/src/generic_mqtt_client.cpp:1:
+[1.859s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:139:50: warning: ‘vitro::GenericMqttClient::_callback_func’ will be initialized after [-Wreorder]
+[1.859s]   139 |     std::function<void(mqtt::const_message_ptr)> _callback_func;
+[1.859s]       |                                                  ^~~~~~~~~~~~~~
+[1.859s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:131:9: warning:   ‘int vitro::GenericMqttClient::QOS’ [-Wreorder]
+[1.859s]   131 |     int QOS;
+[1.859s]       |         ^~~
+[1.860s] /root/ros2_ws/src/vitro_interface/src/generic_mqtt_client.cpp:5:1: warning:   when initialized here [-Wreorder]
+[1.860s]     5 | GenericMqttClient::GenericMqttClient(std::string server_uri, std::string name, std::string topic,
+[1.860s]       | ^~~~~~~~~~~~~~~~~
+[1.860s] In file included from /root/ros2_ws/src/vitro_interface/src/generic_mqtt_client.cpp:1:
+[1.860s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In constructor ‘vitro::GenericMqttClient::GenericMqttClient(std::string, std::string, int)’:
+[1.860s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:135:17: warning: ‘vitro::GenericMqttClient::server’ will be initialized after [-Wreorder]
+[1.860s]   135 |     std::string server;
+[1.861s]       |                 ^~~~~~
+[1.861s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:134:17: warning:   ‘std::string vitro::GenericMqttClient::client_name’ [-Wreorder]
+[1.861s]   134 |     std::string client_name;
+[1.861s]       |                 ^~~~~~~~~~~
+[1.861s] /root/ros2_ws/src/vitro_interface/src/generic_mqtt_client.cpp:17:1: warning:   when initialized here [-Wreorder]
+[1.861s]    17 | GenericMqttClient::GenericMqttClient(std::string server_uri, std::string name, int level) : server(server_uri), client_name(name), QOS(level) {
+[1.861s]       | ^~~~~~~~~~~~~~~~~
+[1.861s] In file included from /root/ros2_ws/src/vitro_interface/src/generic_mqtt_client.cpp:1:
+[1.861s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:134:17: warning: ‘vitro::GenericMqttClient::client_name’ will be initialized after [-Wreorder]
+[1.861s]   134 |     std::string client_name;
+[1.862s]       |                 ^~~~~~~~~~~
+[1.862s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:131:9: warning:   ‘int vitro::GenericMqttClient::QOS’ [-Wreorder]
+[1.862s]   131 |     int QOS;
+[1.862s]       |         ^~~
+[1.862s] /root/ros2_ws/src/vitro_interface/src/generic_mqtt_client.cpp:17:1: warning:   when initialized here [-Wreorder]
+[1.862s]    17 | GenericMqttClient::GenericMqttClient(std::string server_uri, std::string name, int level) : server(server_uri), client_name(name), QOS(level) {
+[1.862s]       | ^~~~~~~~~~~~~~~~~
+[2.517s] [ 18%] Linking CXX shared library libvitro_mqtt.so
+[2.590s] [ 18%] Built target vitro_mqtt
+[2.620s] [ 36%] Building CXX object CMakeFiles/vitro_interface_docking.dir/src/docking_interface.cpp.o
+[2.620s] [ 36%] Building CXX object CMakeFiles/vitro_interface_executor.dir/src/vitro_interface.cpp.o
+[4.414s] In file included from /root/ros2_ws/src/vitro_interface/include/command_handler_node.hpp:9,
+[4.414s]                  from /root/ros2_ws/src/vitro_interface/src/vitro_interface.cpp:11:
+[4.414s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::on_failure(const mqtt::token&)’:
+[4.414s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:67:40: warning: unused parameter ‘tok’ [-Wunused-parameter]
+[4.414s]    67 |     void on_failure(const mqtt::token& tok) override {
+[4.414s]       |                     ~~~~~~~~~~~~~~~~~~~^~~
+[4.415s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::on_success(const mqtt::token&)’:
+[4.415s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:75:40: warning: unused parameter ‘tok’ [-Wunused-parameter]
+[4.415s]    75 |     void on_success(const mqtt::token& tok) override {}
+[4.415s]       |                     ~~~~~~~~~~~~~~~~~~~^~~
+[4.416s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::connected(const string&)’:
+[4.416s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:79:39: warning: unused parameter ‘cause’ [-Wunused-parameter]
+[4.416s]    79 |     void connected(const std::string& cause) override {
+[4.416s]       |                    ~~~~~~~~~~~~~~~~~~~^~~~~
+[4.418s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::delivery_complete(mqtt::delivery_token_ptr)’:
+[4.418s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:98:53: warning: unused parameter ‘token’ [-Wunused-parameter]
+[4.418s]    98 |     void delivery_complete(mqtt::delivery_token_ptr token) override {}
+[4.418s]       |                            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+[5.939s] In file included from /root/ros2_ws/src/vitro_interface/include/docking_station_handler_node.hpp:9,
+[5.939s]                  from /root/ros2_ws/src/vitro_interface/src/docking_interface.cpp:12:
+[5.939s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::on_failure(const mqtt::token&)’:
+[5.939s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:67:40: warning: unused parameter ‘tok’ [-Wunused-parameter]
+[5.939s]    67 |     void on_failure(const mqtt::token& tok) override {
+[5.939s]       |                     ~~~~~~~~~~~~~~~~~~~^~~
+[5.939s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::on_success(const mqtt::token&)’:
+[5.939s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:75:40: warning: unused parameter ‘tok’ [-Wunused-parameter]
+[5.939s]    75 |     void on_success(const mqtt::token& tok) override {}
+[5.940s]       |                     ~~~~~~~~~~~~~~~~~~~^~~
+[5.940s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::connected(const string&)’:
+[5.940s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:79:39: warning: unused parameter ‘cause’ [-Wunused-parameter]
+[5.940s]    79 |     void connected(const std::string& cause) override {
+[5.940s]       |                    ~~~~~~~~~~~~~~~~~~~^~~~~
+[5.944s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::delivery_complete(mqtt::delivery_token_ptr)’:
+[5.944s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:98:53: warning: unused parameter ‘token’ [-Wunused-parameter]
+[5.944s]    98 |     void delivery_complete(mqtt::delivery_token_ptr token) override {}
+[5.944s]       |                            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+[6.262s] In file included from /root/ros2_ws/src/vitro_interface/include/command_handler_node.hpp:13,
+[6.262s]                  from /root/ros2_ws/src/vitro_interface/src/vitro_interface.cpp:11:
+[6.262s] /root/ros2_ws/src/vitro_interface/include/shared_memory_handler.hpp: At global scope:
+[6.262s] /root/ros2_ws/src/vitro_interface/include/shared_memory_handler.hpp:28:1: warning: extra ‘;’ [-Wpedantic]
+[6.262s]    28 | ;
+[6.262s]       | ^
+[6.262s]       | -
+[9.585s] [ 45%] Building CXX object CMakeFiles/vitro_interface_docking.dir/src/docking_station_handler_node.cpp.o
+[10.488s] [ 54%] Building CXX object CMakeFiles/vitro_interface_executor.dir/src/video_stream_node.cpp.o
+[11.123s] In file included from /root/ros2_ws/src/vitro_interface/include/docking_station_handler_node.hpp:9,
+[11.123s]                  from /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:1:
+[11.123s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::on_failure(const mqtt::token&)’:
+[11.123s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:67:40: warning: unused parameter ‘tok’ [-Wunused-parameter]
+[11.124s]    67 |     void on_failure(const mqtt::token& tok) override {
+[11.124s]       |                     ~~~~~~~~~~~~~~~~~~~^~~
+[11.124s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::on_success(const mqtt::token&)’:
+[11.124s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:75:40: warning: unused parameter ‘tok’ [-Wunused-parameter]
+[11.124s]    75 |     void on_success(const mqtt::token& tok) override {}
+[11.124s]       |                     ~~~~~~~~~~~~~~~~~~~^~~
+[11.124s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::connected(const string&)’:
+[11.124s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:79:39: warning: unused parameter ‘cause’ [-Wunused-parameter]
+[11.124s]    79 |     void connected(const std::string& cause) override {
+[11.126s]       |                    ~~~~~~~~~~~~~~~~~~~^~~~~
+[11.126s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::delivery_complete(mqtt::delivery_token_ptr)’:
+[11.126s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:98:53: warning: unused parameter ‘token’ [-Wunused-parameter]
+[11.126s]    98 |     void delivery_complete(mqtt::delivery_token_ptr token) override {}
+[11.127s]       |                            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+[14.118s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function ‘void DockingStationHandlerNode::trigger_remote_on(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)’:
+[14.118s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:83:106: warning: unused parameter ‘request’ [-Wunused-parameter]
+[14.118s]    83 | void DockingStationHandlerNode::trigger_remote_on(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+[14.118s]       |                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+[14.120s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function ‘void DockingStationHandlerNode::trigger_remote_off(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)’:
+[14.120s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:99:107: warning: unused parameter ‘request’ [-Wunused-parameter]
+[14.120s]    99 | void DockingStationHandlerNode::trigger_remote_off(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+[14.120s]       |                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+[14.122s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function ‘void DockingStationHandlerNode::trigger_canopy_open(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)’:
+[14.122s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:115:108: warning: unused parameter ‘request’ [-Wunused-parameter]
+[14.122s]   115 | void DockingStationHandlerNode::trigger_canopy_open(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+[14.122s]       |                                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+[14.124s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function ‘void DockingStationHandlerNode::trigger_canopy_close(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)’:
+[14.124s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:131:109: warning: unused parameter ‘request’ [-Wunused-parameter]
+[14.124s]   131 | void DockingStationHandlerNode::trigger_canopy_close(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+[14.124s]       |                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+[14.126s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function ‘void DockingStationHandlerNode::trigger_bars_open(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)’:
+[14.126s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:147:106: warning: unused parameter ‘request’ [-Wunused-parameter]
+[14.126s]   147 | void DockingStationHandlerNode::trigger_bars_open(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+[14.126s]       |                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+[14.127s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function ‘void DockingStationHandlerNode::trigger_bars_close(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)’:
+[14.127s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:163:107: warning: unused parameter ‘request’ [-Wunused-parameter]
+[14.128s]   163 | void DockingStationHandlerNode::trigger_bars_close(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+[14.128s]       |                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+[14.130s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function ‘void DockingStationHandlerNode::trigger_charging_start(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)’:
+[14.130s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:179:111: warning: unused parameter ‘request’ [-Wunused-parameter]
+[14.130s]   179 | void DockingStationHandlerNode::trigger_charging_start(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+[14.130s]       |                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+[14.131s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function ‘void DockingStationHandlerNode::trigger_charging_stop(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)’:
+[14.131s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:195:110: warning: unused parameter ‘request’ [-Wunused-parameter]
+[14.131s]   195 | void DockingStationHandlerNode::trigger_charging_stop(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+[14.131s]       |                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+[14.133s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function ‘void DockingStationHandlerNode::trigger_battery_on(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)’:
+[14.133s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:211:107: warning: unused parameter ‘request’ [-Wunused-parameter]
+[14.133s]   211 | void DockingStationHandlerNode::trigger_battery_on(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+[14.133s]       |                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+[14.136s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function ‘void DockingStationHandlerNode::trigger_battery_off(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)’:
+[14.136s] /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:227:108: warning: unused parameter ‘request’ [-Wunused-parameter]
+[14.137s]   227 | void DockingStationHandlerNode::trigger_battery_off(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+[14.137s]       |                                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+[19.180s] [ 63%] Linking CXX executable vitro_interface_docking
+[19.410s] [ 63%] Built target vitro_interface_docking
+[19.422s] [ 72%] Building CXX object CMakeFiles/vitro_interface_executor.dir/src/data_publish_node.cpp.o
+[21.093s] In file included from /root/ros2_ws/src/vitro_interface/include/data_publish_node.hpp:11,
+[21.093s]                  from /root/ros2_ws/src/vitro_interface/src/data_publish_node.cpp:1:
+[21.093s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::on_failure(const mqtt::token&)’:
+[21.094s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:67:40: warning: unused parameter ‘tok’ [-Wunused-parameter]
+[21.094s]    67 |     void on_failure(const mqtt::token& tok) override {
+[21.094s]       |                     ~~~~~~~~~~~~~~~~~~~^~~
+[21.095s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::on_success(const mqtt::token&)’:
+[21.095s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:75:40: warning: unused parameter ‘tok’ [-Wunused-parameter]
+[21.095s]    75 |     void on_success(const mqtt::token& tok) override {}
+[21.096s]       |                     ~~~~~~~~~~~~~~~~~~~^~~
+[21.096s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::connected(const string&)’:
+[21.096s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:79:39: warning: unused parameter ‘cause’ [-Wunused-parameter]
+[21.096s]    79 |     void connected(const std::string& cause) override {
+[21.096s]       |                    ~~~~~~~~~~~~~~~~~~~^~~~~
+[21.097s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::delivery_complete(mqtt::delivery_token_ptr)’:
+[21.097s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:98:53: warning: unused parameter ‘token’ [-Wunused-parameter]
+[21.097s]    98 |     void delivery_complete(mqtt::delivery_token_ptr token) override {}
+[21.097s]       |                            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+[22.974s] In file included from /root/ros2_ws/src/vitro_interface/include/data_publish_node.hpp:18,
+[22.974s]                  from /root/ros2_ws/src/vitro_interface/src/data_publish_node.cpp:1:
+[22.974s] /root/ros2_ws/src/vitro_interface/include/shared_memory_handler.hpp: At global scope:
+[22.974s] /root/ros2_ws/src/vitro_interface/include/shared_memory_handler.hpp:28:1: warning: extra ‘;’ [-Wpedantic]
+[22.974s]    28 | ;
+[22.974s]       | ^
+[22.974s]       | -
+[25.639s] [ 81%] Building CXX object CMakeFiles/vitro_interface_executor.dir/src/command_handler_node.cpp.o
+[27.312s] In file included from /root/ros2_ws/src/vitro_interface/include/command_handler_node.hpp:9,
+[27.312s]                  from /root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp:1:
+[27.312s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::on_failure(const mqtt::token&)’:
+[27.312s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:67:40: warning: unused parameter ‘tok’ [-Wunused-parameter]
+[27.312s]    67 |     void on_failure(const mqtt::token& tok) override {
+[27.312s]       |                     ~~~~~~~~~~~~~~~~~~~^~~
+[27.314s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::on_success(const mqtt::token&)’:
+[27.314s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:75:40: warning: unused parameter ‘tok’ [-Wunused-parameter]
+[27.315s]    75 |     void on_success(const mqtt::token& tok) override {}
+[27.315s]       |                     ~~~~~~~~~~~~~~~~~~~^~~
+[27.315s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::connected(const string&)’:
+[27.315s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:79:39: warning: unused parameter ‘cause’ [-Wunused-parameter]
+[27.315s]    79 |     void connected(const std::string& cause) override {
+[27.315s]       |                    ~~~~~~~~~~~~~~~~~~~^~~~~
+[27.315s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function ‘virtual void vitro::Callback::delivery_complete(mqtt::delivery_token_ptr)’:
+[27.315s] /root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:98:53: warning: unused parameter ‘token’ [-Wunused-parameter]
+[27.315s]    98 |     void delivery_complete(mqtt::delivery_token_ptr token) override {}
+[27.315s]       |                            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+[27.386s] In file included from /root/ros2_ws/src/vitro_interface/include/data_publish_node.hpp:10,
+[27.387s]                  from /root/ros2_ws/src/vitro_interface/src/data_publish_node.cpp:1:
+[27.387s] /root/ros2_ws/src/vitro_interface/include/drone_list.hpp: In member function ‘vitro::Drone::SDK vitro::Drone::getSDK()’:
+[27.387s] /root/ros2_ws/src/vitro_interface/include/drone_list.hpp:36:5: warning: control reaches end of non-void function [-Wreturn-type]
+[27.387s]    36 |     };
+[27.387s]       |     ^
+[29.270s] In file included from /root/ros2_ws/src/vitro_interface/include/command_handler_node.hpp:13,
+[29.270s]                  from /root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp:1:
+[29.270s] /root/ros2_ws/src/vitro_interface/include/shared_memory_handler.hpp: At global scope:
+[29.270s] /root/ros2_ws/src/vitro_interface/include/shared_memory_handler.hpp:28:1: warning: extra ‘;’ [-Wpedantic]
+[29.270s]    28 | ;
+[29.270s]       | ^
+[29.270s]       | -
+[30.859s] /root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp: In member function ‘void CommandHandlerNode::set_gimball_angle(std::shared_ptr<vitro_ros_definitions::srv::SetGimballAngle_Request_<std::allocator<void> > >, std::shared_ptr<vitro_ros_definitions::srv::SetGimballAngle_Response_<std::allocator<void> > >)’:
+[30.859s] /root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp:333:39: warning: catching polymorphic type ‘class GoalNotReachedException’ by value [-Wcatch-value=]
+[30.859s]   333 |     }  catch (GoalNotReachedException e) {
+[30.859s]       |                                       ^
+[30.863s] /root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp: In member function ‘void CommandHandlerNode::get_gimbal_pitch(geometry_msgs::msg::QuaternionStamped&, double&)’:
+[30.863s] /root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp:380:58: warning: catching polymorphic type ‘class SharedMemoryHandlerUnintializedException’ by value [-Wcatch-value=]
+[30.863s]   380 |         }catch (SharedMemoryHandlerUnintializedException e){
+[30.863s]       |                                                          ^
+[30.879s] /root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp: In member function ‘void CommandHandlerNode::save_photo(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)’:
+[30.879s] /root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp:474:92: warning: unused parameter ‘request’ [-Wunused-parameter]
+[30.879s]   474 | void CommandHandlerNode::save_photo(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+[30.879s]       |                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+[30.887s] /root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp: In member function ‘void CommandHandlerNode::control_automatic_navigation(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >, std::string)’:
+[30.887s] /root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp:514:110: warning: unused parameter ‘request’ [-Wunused-parameter]
+[30.887s]   514 | void CommandHandlerNode::control_automatic_navigation(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+[30.888s]       |                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+[36.451s] [ 90%] Building CXX object CMakeFiles/vitro_interface_executor.dir/src/shared_memory_handler.cpp.o
+[37.218s] In file included from /root/ros2_ws/src/vitro_interface/src/shared_memory_handler.cpp:1:
+[37.219s] /root/ros2_ws/src/vitro_interface/include/shared_memory_handler.hpp:28:1: warning: extra ‘;’ [-Wpedantic]
+[37.219s]    28 | ;
+[37.219s]       | ^
+[37.219s]       | -
+[47.374s] [100%] Linking CXX executable vitro_interface_executor
+[47.959s] [100%] Built target vitro_interface_executor
+[47.970s] Invoked command in '/root/ros2_ws/build/vitro_interface' returned '0': AMENT_PREFIX_PATH=/root/ros2_ws/install/vitro_ros_definitions:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/ros2_ws/install/vitro_ros_definitions:/opt/ros/humble LD_LIBRARY_PATH=/root/ros2_ws/install/vitro_ros_definitions/lib:${LD_LIBRARY_PATH} PYTHONPATH=/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /root/ros2_ws/build/vitro_interface -- -j2 -l2
+[48.012s] Invoking command in '/root/ros2_ws/build/vitro_interface': AMENT_PREFIX_PATH=/root/ros2_ws/install/vitro_ros_definitions:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/ros2_ws/install/vitro_ros_definitions:/opt/ros/humble LD_LIBRARY_PATH=/root/ros2_ws/install/vitro_ros_definitions/lib:${LD_LIBRARY_PATH} PYTHONPATH=/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /root/ros2_ws/build/vitro_interface
+[48.018s] -- Install configuration: "Release"
+[48.019s] -- Execute custom install script
+[48.020s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/environment/library_path.sh
+[48.027s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/environment/library_path.dsv
+[48.036s] -- Symlinking: /root/ros2_ws/install/vitro_interface/lib/vitro_interface/vitro_interface_docking
+[48.044s] -- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/command_handler_node.hpp
+[48.052s] -- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/data_publish_node.hpp
+[48.060s] -- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/docking_station_handler_node.hpp
+[48.069s] -- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/drone_list.hpp
+[48.077s] -- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/generic_mqtt_client.hpp
+[48.085s] -- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/shared_memory_handler.hpp
+[48.093s] -- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/utils.h
+[48.101s] -- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/video_stream_node.hpp
+[48.109s] -- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/vitro_exceptions.hpp
+[48.117s] -- Symlinking: /root/ros2_ws/install/vitro_interface/lib/vitro_interface/vitro_interface_executor
+[48.126s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cfg/camera_config.json
+[48.133s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cfg/config.yaml
+[48.141s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cfg/docking/d80.yaml
+[48.149s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cfg/rviz/viz_orientation.rviz
+[48.157s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cfg/test.yaml
+[48.165s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/launch/docking.launch.py
+[48.173s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share//entrypoint.sh
+[48.182s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/ament_index/resource_index/package_run_dependencies/vitro_interface
+[48.190s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/ament_index/resource_index/parent_prefix_path/vitro_interface
+[48.198s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/environment/ament_prefix_path.sh
+[48.207s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/environment/ament_prefix_path.dsv
+[48.214s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/environment/path.sh
+[48.222s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/environment/path.dsv
+[48.230s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/local_setup.bash
+[48.239s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/local_setup.sh
+[48.247s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/local_setup.zsh
+[48.255s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/local_setup.dsv
+[48.263s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/package.dsv
+[48.271s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/ament_index/resource_index/packages/vitro_interface
+[48.279s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cmake/ament_cmake_export_targets-extras.cmake
+[48.287s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cmake/vitro_interfaceConfig.cmake
+[48.296s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cmake/vitro_interfaceConfig-version.cmake
+[48.303s] -- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/package.xml
+[48.312s] -- Installing: /root/ros2_ws/install/vitro_interface/lib/libvitro_mqtt.so
+[48.313s] -- Set runtime path of "/root/ros2_ws/install/vitro_interface/lib/libvitro_mqtt.so" to ""
+[48.313s] -- Installing: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cmake/vitro_mqttExport.cmake
+[48.313s] -- Installing: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cmake/vitro_mqttExport-release.cmake
+[48.315s] Invoked command in '/root/ros2_ws/build/vitro_interface' returned '0': AMENT_PREFIX_PATH=/root/ros2_ws/install/vitro_ros_definitions:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/ros2_ws/install/vitro_ros_definitions:/opt/ros/humble LD_LIBRARY_PATH=/root/ros2_ws/install/vitro_ros_definitions/lib:${LD_LIBRARY_PATH} PYTHONPATH=/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /root/ros2_ws/build/vitro_interface

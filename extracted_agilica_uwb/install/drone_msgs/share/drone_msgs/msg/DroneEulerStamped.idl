@@ -1,0 +1,19 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from drone_msgs/msg/DroneEulerStamped.msg
+// generated code does not contain a copyright notice
+
+#include "std_msgs/msg/Header.idl"
+
+module drone_msgs {
+  module msg {
+    struct DroneEulerStamped {
+      std_msgs::msg::Header header;
+
+      float yaw;
+
+      float pitch;
+
+      float roll;
+    };
+  };
+};

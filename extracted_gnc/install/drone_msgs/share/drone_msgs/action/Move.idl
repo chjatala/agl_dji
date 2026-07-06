@@ -1,0 +1,51 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from drone_msgs/action/Move.action
+// generated code does not contain a copyright notice
+
+#include "drone_msgs/msg/Waypoints.idl"
+
+module drone_msgs {
+  module action {
+    module Move_Goal_Constants {
+      const uint8 RELATIVE = 0;
+      const uint8 ABSOLUTE = 1;
+      @verbatim (language="comment", text=
+        "Ref frame constants")
+      const uint8 LOCAL = 0;
+    };
+    @verbatim (language="comment", text=
+      "Reference type constants")
+    struct Move_Goal {
+      drone_msgs::msg::Waypoints waypoints;
+
+      @verbatim (language="comment", text=
+        "Reference type fo each DOF (RELATIVE or ABSOLUTE)")
+      @default (value=1)
+      uint8 x_reference_type;
+
+      @default (value=1)
+      uint8 y_reference_type;
+
+      @default (value=1)
+      uint8 z_reference_type;
+
+      @default (value=1)
+      uint8 yaw_reference_type;
+
+      @verbatim (language="comment", text=
+        "Reference frame (in case of relative DOFS)")
+      @default (value=0)
+      uint8 ref_frame;
+    };
+    struct Move_Result {
+      string status;
+    };
+    struct Move_Feedback {
+      float dist_to_go;
+
+      float eta;
+
+      float err_bar;
+    };
+  };
+};

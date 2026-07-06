@@ -1,0 +1,12 @@
+msg/DiagnosticsRSSI.idl
+msg/DiagnosticsRSSI.msg
+msg/DiagnosticsRTT.idl
+msg/DiagnosticsRTT.msg
+msg/RangeArrayRSSI.idl
+msg/RangeArrayRSSI.msg
+msg/RangeArrayRTT.idl
+msg/RangeArrayRTT.msg
+msg/RangeRSSI.idl
+msg/RangeRSSI.msg
+msg/RangeRTT.idl
+msg/RangeRTT.msg

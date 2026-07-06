@@ -1,0 +1,1 @@
+/root/ros2_ws/build/vitro_ros_definitions/ament_cmake_export_libraries/ament_cmake_export_libraries-extras.cmake

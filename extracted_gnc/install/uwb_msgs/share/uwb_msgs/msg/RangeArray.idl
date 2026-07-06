@@ -1,0 +1,36 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from uwb_msgs/msg/RangeArray.msg
+// generated code does not contain a copyright notice
+
+#include "geometry_msgs/msg/Point.idl"
+#include "std_msgs/msg/Header.idl"
+#include "uwb_msgs/msg/Range.idl"
+
+module uwb_msgs {
+  module msg {
+    @verbatim (language="comment", text=
+      "RangeArray Message" "\n"
+      "This message type represents an array of range measurements between a specific tag" "\n"
+      "and multiple anchors, including the tag's position and unique identifier.")
+    struct RangeArray {
+      @verbatim (language="comment", text=
+        "Header Information" "\n"
+        "Standard metadata for higher-level stamped data types")
+      std_msgs::msg::Header header;
+
+      @verbatim (language="comment", text=
+        "Tag Details" "\n"
+        "A unique identifier for the tag (e.g., \"1\", \"2\", \"3\", etc.)")
+      string tagid;
+
+      @verbatim (language="comment", text=
+        "The (x,y,z) position of the tag in the body frame (in meters)")
+      geometry_msgs::msg::Point tag_position;
+
+      @verbatim (language="comment", text=
+        "Range Measurements" "\n"
+        "An array of Range messages, one for each anchor a range is measured to")
+      sequence<uwb_msgs::msg::Range> ranges;
+    };
+  };
+};

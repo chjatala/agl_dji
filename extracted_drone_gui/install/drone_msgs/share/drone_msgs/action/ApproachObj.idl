@@ -1,0 +1,46 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from drone_msgs/action/ApproachObj.action
+// generated code does not contain a copyright notice
+
+#include "geometry_msgs/msg/Point.idl"
+
+module drone_msgs {
+  module action {
+    struct ApproachObj_Goal {
+      double max_vel;
+
+      double max_yaw_rate;
+
+      double distance;
+
+      double distance_tolerance;
+
+      double object_pos_x;
+
+      double object_pos_y;
+
+      double object_pos_z;
+
+      @default (value="TOWARDS")
+      string approach_type;
+
+      string id;
+    };
+    struct ApproachObj_Result {
+      string id;
+
+      string status;
+
+      geometry_msgs::msg::Point init_pos;
+
+      double init_yaw;
+    };
+    struct ApproachObj_Feedback {
+      string id;
+
+      float dist_to_go;
+
+      geometry_msgs::msg::Point target_pos;
+    };
+  };
+};

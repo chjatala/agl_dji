@@ -1,0 +1,4 @@
+source;share/vitro_ros_definitions/local_setup.bash
+source;share/vitro_ros_definitions/local_setup.dsv
+source;share/vitro_ros_definitions/local_setup.sh
+source;share/vitro_ros_definitions/local_setup.zsh

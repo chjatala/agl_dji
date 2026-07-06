@@ -1,0 +1,5 @@
+string camera_video_stream_source_type
+string multi_spectral_fusion_type
+string multi_spectral_display_mode
+---
+string status

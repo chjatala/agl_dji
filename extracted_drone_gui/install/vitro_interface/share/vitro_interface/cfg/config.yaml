@@ -1,0 +1,29 @@
+/**/CommandHandlerNode:
+  ros__parameters:
+    topic_joystick: "cmd/drone/setpoint"
+    topic_cmd: "cmd/drone/action"
+    server_uri: "tcp://127.0.0.1:1883"
+    vertical_control_mode: "POSITION"
+    roll_pitch_control_mode: "VELOCITY"
+    yaw_control_mode: "ANGULAR_VELOCITY" 
+
+/**/DataPublishNode:
+  ros__parameters:
+    server_uri : "tcp://127.0.0.1:1883"
+    drone_make : "DJI_MINI3"
+    topic_position : "data/drone/location"
+    topic_speed : "data/drone/velocity_global"
+    topic_attitude : "data/drone/attitude"
+    topic_gimbal_attitude : "data/camera/gimbal_angle"
+    topic_ultrasonic_height : "data/drone/height_above_ground"
+    topic_battery : "data/drone/battery_state"
+    topic_log: "data/drone/log"
+
+/**/VideoStreamNode:
+  ros__parameters:
+    topic_image: "data/camera/image"
+    compression_type: "jpeg"
+    compression_quality: 95 # PNG 0-9, JPEG 0-100: https://docs.opencv.org/3.4/d8/d6a/group__imgcodecs__flags.html#gga292d81be8d76901bff7988d18d2b42aca947af22db2cf6f1f482289b0985b09ec
+    video_url: "rtsp://123:123@192.168.1.33:8554/streaming/live/1"
+    skip_frames_raw: 0
+    skip_frames_compressed: 0

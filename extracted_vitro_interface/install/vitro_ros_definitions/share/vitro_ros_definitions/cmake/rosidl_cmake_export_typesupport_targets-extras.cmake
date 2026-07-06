@@ -1,0 +1,1 @@
+/root/ros2_ws/build/vitro_ros_definitions/rosidl_cmake/rosidl_cmake_export_typesupport_targets-extras.cmake

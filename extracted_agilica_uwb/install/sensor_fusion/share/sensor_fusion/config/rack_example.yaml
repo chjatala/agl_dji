@@ -1,0 +1,38 @@
+GeneralConfig:
+  cross_beam_width: 0.1
+  cross_beam_depth: 0.1
+  vertical_support_width: 0.1
+  vertical_support_depth: 0.1
+
+Rack1:
+  # (x,y,z) position of the center of the bottom left vertical support of the
+  # rack, when looking at it from the drone's perspective
+  bottom_left_position: [0, 0, 0]
+  # (x,y,z) position of the center of the bottom right position of the rack.
+  # Together witht he bottom left position, this defines the size of the rack.
+  # We use this to determine the rack orientation, and can (later) also use
+  # this to limit the search area for beams of this rack.
+  bottom_right_position: [10, 0, 0]
+  cross_beams:
+    # The heights of the horizontal (orange) beams, measured from the ground to
+    # the bottom of the orange beam
+    heights: [1.0, 2.0, 3.0]
+    #width: 0.1 # Optional -> if not specified, use the global one
+    #depth: 0.1 # Optional -> if not specified, use the global one
+  vertical_supports:
+    # When specifying a regular type, the vertical supports are supposed to be
+    # spaced at regular intervals.
+    type: "regular"
+    inner_distance: 3.0
+    number_of_beams: 10
+    #width: 0.1 # Optional -> if not specified, use the global one
+    #depth: 0.1 # Optional -> if not specified, use the global one
+Rack2:
+  bottom_left_position: [0, 0, 0]
+  bottom_right_position: [10, 0, 0]
+  cross_beams:
+    heights: [1.0, 2.0, 3.0]
+  vertical_supports:
+    # When specifying specific, each inner distance is specified
+    type: "specific"
+    inner_distances: [3,4,5,4,3]

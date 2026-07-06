@@ -1,0 +1,8 @@
+srv/SetGimballAngle.idl
+srv/SetGimballAngle.srv
+srv/SetGimballAngle_Request.msg
+srv/SetGimballAngle_Response.msg
+srv/SetVideoSettings.idl
+srv/SetVideoSettings.srv
+srv/SetVideoSettings_Request.msg
+srv/SetVideoSettings_Response.msg

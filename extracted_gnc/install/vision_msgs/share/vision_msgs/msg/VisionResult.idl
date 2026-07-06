@@ -1,0 +1,26 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from vision_msgs/msg/VisionResult.msg
+// generated code does not contain a copyright notice
+
+#include "geometry_msgs/msg/Point.idl"
+
+module vision_msgs {
+  module msg {
+    @verbatim (language="comment", text=
+      "VisionResult.msg" "\n"
+      "A message to hold a single vision recognition result")
+    struct VisionResult {
+      @verbatim (language="comment", text=
+        "Array of positions to decode point, (oriented) bounding box or segmentation")
+      sequence<geometry_msgs::msg::Point> points;
+
+      @verbatim (language="comment", text=
+        "Optional: Confidence value")
+      float confidence;
+
+      @verbatim (language="comment", text=
+        "Optional: Additional Information i.e. Text")
+      string additional_info;
+    };
+  };
+};

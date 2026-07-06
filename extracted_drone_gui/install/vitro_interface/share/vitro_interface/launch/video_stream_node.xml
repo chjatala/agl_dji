@@ -1,0 +1,9 @@
+<launch>
+    <node
+        pkg="vitro_interface"
+        exec="vitro_interface_video_node"
+        name="VideoStreamNode"
+        output="screen">
+        <param from="$(find-pkg-share vitro_interface)/cfg/config.yaml" />
+    </node>
+</launch>

@@ -1,0 +1,118 @@
+services:
+  vitro_startup_config:
+    container_name: vitro_startup_config
+    profiles: ["msdk"]
+    image: ghcr.io/flanders-make-vzw/vitro/drone_gnc_prod:v1.4.0
+    network_mode: "host"
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - ./cfg/dji_interface.yaml:/root/ros2_ws/src/drone_gui/config/dji_interface.yaml
+    command: >-
+      python3 /root/ros2_ws/install/drone_gui/lib/python3.10/site-packages/drone_gui/ip_configurator.pyc
+    depends_on:
+      - mqtt_broker
+
+  mqtt_broker:
+    container_name: mqtt_broker
+    image: eclipse-mosquitto:2.0.18
+    network_mode: "host"
+    volumes:
+      - ./cfg/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+  vitro_dji_interface:
+    container_name: vitro_dji_interface
+    profiles: ["msdk"]
+    image: ghcr.io/flanders-make-vzw/vitro/vitro_interface:v3.3.0
+    network_mode: "host"
+    volumes:
+      - /dev/shm:/dev/shm
+      - ./cfg/dji_interface.yaml:/root/ros2_ws/src/vitro_interface/cfg/config.yaml
+    command: >-
+      ros2 run vitro_interface vitro_interface_executor --ros-args -r __ns:=/dji 
+                                                        --params-file /root/ros2_ws/src/vitro_interface/cfg/config.yaml
+    depends_on:
+      vitro_startup_config:
+        condition: service_completed_successfully
+
+  drone_gui:
+    container_name: drone_gui
+    image: ghcr.io/flanders-make-vzw/vitro/drone_gnc_prod:v1.4.0
+    network_mode: "host"
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /dev/shm:/dev/shm
+      - ./log/sundae:/root/log
+      # - ./cfg/gui_cfg.yaml:/root/drone_cfg_home/gui_cfg.yaml
+    command: ros2 run drone_gui dev_gui --ros-args -r __ns:=/dji -p cfg_file:=gui_cfg.yaml
+
+  drone_gnc:
+    container_name: drone_gnc
+    image: ghcr.io/flanders-make-vzw/vitro/drone_gnc_prod:v1.4.0
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /dev/shm:/dev/shm
+      - ./log/sundae:/root/log
+      - ./cfg/gnc/demo_agilica:/root/drone_cfg_home/demo_agilica
+      - ./cfg/gnc/demo_agilica_launch.py:/demo_agilica_launch.py
+    network_mode: "host"
+    command: ros2 launch /demo_agilica_launch.py
+
+  agilica_uwb:
+    container_name: agilica_uwb
+    image: ghcr.io/flanders-make-vzw/vitro/drone_gnc_prod:v1.4.0
+    volumes:
+      - /dev/shm:/dev/shm
+      - /dev/ttyACM0:/dev/ttyAgilica
+      - ./log/sundae:/root/log
+      - ./cfg/parser_params.yaml:/parser_params.yaml
+    privileged: true
+    network_mode: "host"
+    command: ros2 launch nmea_parser parser.launch.py params_file:=/parser_params.yaml
+
+  ros_log_record:
+    container_name: ros_log_record
+    image: ghcr.io/flanders-make-vzw/vitro/drone_gnc_prod:v1.4.0
+    volumes:
+      - ./log/ros:/root/bag_record
+      - /dev/shm:/dev/shm
+    network_mode: "host"
+    working_dir: /root/bag_record
+    command: ros2 bag record -a -s mcap -x '(.*)image(.*)'
+
+  psdk_bridge:
+    container_name: psdk_bridge
+    profiles: ["psdk"]
+    image: ghcr.io/flanders-make-vzw/vitro/drone_gnc_prod:v1.4.0
+    network_mode: "host"
+    environment:
+      - DISPLAY=${DISPLAY}
+      # DJI developer app credentials (create/obtain at https://developer.dji.com/user/apps).
+      # Export these in the host shell (or a .env file next to this compose.yaml) before
+      # `use_psdk_msdk=0 ./start_demo.sh` - psdk_wrapper refuses to connect without them.
+      - PSDK_APP_NAME=${PSDK_APP_NAME:-}
+      - PSDK_APP_ID=${PSDK_APP_ID:-}
+      - PSDK_APP_KEY=${PSDK_APP_KEY:-}
+      - PSDK_APP_LICENSE=${PSDK_APP_LICENSE:-}
+      - PSDK_DEV_ACCOUNT=${PSDK_DEV_ACCOUNT:-}
+      - PSDK_BAUD_RATE=${PSDK_BAUD_RATE:-460800}
+      - PSDK_UART_DEV1=/dev/ttyUSB0
+      - PSDK_LIB_PATH=/root/ros2_ws/install/psdk_wrapper/lib/libpsdk_wrapper.so
+    devices:
+      # UART link to the aircraft's payload port (E-Port/X-Port/SkyPort). Override the
+      # host side via PSDK_UART_DEV if your adapter doesn't enumerate as ttyUSB0.
+      - "${PSDK_UART_DEV:-/dev/ttyUSB0}:/dev/ttyUSB0"
+    volumes:
+      - /dev/shm:/dev/shm
+      # Mount local packages so they can be built/run inside the container
+      - ../extracted_gnc/src/dji_psdk_bridge:/root/ros2_ws/src/dji_psdk_bridge:ro
+      - ../extracted_gnc/src/psdk_wrapper:/root/ros2_ws/src/psdk_wrapper:ro
+      - ./log/sundae:/root/log
+    command: >-
+      bash -lc "source /opt/ros/humble/setup.bash && \
+      cd /root/ros2_ws && \
+      colcon build --symlink-install --packages-select psdk_wrapper dji_psdk_bridge && \
+      source install/setup.bash && \
+      ros2 run dji_psdk_bridge psdk_bridge_node --ros-args -r __ns:=/dji"

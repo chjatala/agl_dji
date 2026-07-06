@@ -1,0 +1,39 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from wifi_msgs/msg/RangeRSSI.msg
+// generated code does not contain a copyright notice
+
+#include "builtin_interfaces/msg/Time.idl"
+#include "geometry_msgs/msg/Point.idl"
+#include "wifi_msgs/msg/DiagnosticsRSSI.idl"
+
+module wifi_msgs {
+  module msg {
+    struct RangeRSSI {
+      builtin_interfaces::msg::Time stamp;
+
+      @verbatim (language="comment", text=
+        "A unique number (1,2,3...) per anchor")
+      string ap_mac;
+
+      @verbatim (language="comment", text=
+        "flag that determines if the ap position is known")
+      boolean valid_ap_position;
+
+      @verbatim (language="comment", text=
+        "The (x,y,z) position (in meter) of the tag in the reference frame")
+      geometry_msgs::msg::Point ap_position;
+
+      @verbatim (language="comment", text=
+        "Flag that determines if the measured range is valid")
+      boolean valid_range;
+
+      @verbatim (language="comment", text=
+        "Distance (in meter) between the tag and the anchor")
+      float distance;
+
+      @verbatim (language="comment", text=
+        "Signal specific data")
+      wifi_msgs::msg::DiagnosticsRSSI diagnostics;
+    };
+  };
+};

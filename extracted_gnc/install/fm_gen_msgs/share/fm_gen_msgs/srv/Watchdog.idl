@@ -1,0 +1,16 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from fm_gen_msgs/srv/Watchdog.srv
+// generated code does not contain a copyright notice
+
+#include "fm_gen_msgs/msg/DiagnosticArray.idl"
+
+module fm_gen_msgs {
+  module srv {
+    struct Watchdog_Request {
+      uint8 structure_needs_at_least_one_member;
+    };
+    struct Watchdog_Response {
+      fm_gen_msgs::msg::DiagnosticArray diagnostic_status;
+    };
+  };
+};

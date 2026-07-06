@@ -1,0 +1,3 @@
+/root/ros2_ws/install/vitro_interface/lib/libvitro_mqtt.so
+/root/ros2_ws/install/vitro_interface/share/vitro_interface/cmake/vitro_mqttExport.cmake
+/root/ros2_ws/install/vitro_interface/share/vitro_interface/cmake/vitro_mqttExport-release.cmake

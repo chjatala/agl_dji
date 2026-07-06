@@ -1,0 +1,1 @@
+/root/ros2_ws/build/vitro_ros_definitions/ament_cmake_core/vitro_ros_definitionsConfig-version.cmake

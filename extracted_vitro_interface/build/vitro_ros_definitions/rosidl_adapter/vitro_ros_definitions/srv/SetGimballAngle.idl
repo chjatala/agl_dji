@@ -1,0 +1,18 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from vitro_ros_definitions/srv/SetGimballAngle.srv
+// generated code does not contain a copyright notice
+
+
+module vitro_ros_definitions {
+  module srv {
+    struct SetGimballAngle_Request {
+      float pitch;
+
+      @default (value=-1.0)
+      float speed;
+    };
+    struct SetGimballAngle_Response {
+      string status;
+    };
+  };
+};

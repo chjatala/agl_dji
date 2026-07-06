@@ -1,0 +1,18 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from drone_msgs/action/TakeOff.action
+// generated code does not contain a copyright notice
+
+
+module drone_msgs {
+  module action {
+    struct TakeOff_Goal {
+      uint8 structure_needs_at_least_one_member;
+    };
+    struct TakeOff_Result {
+      float height_from_ground;
+    };
+    struct TakeOff_Feedback {
+      float height_from_ground;
+    };
+  };
+};

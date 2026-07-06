@@ -1,0 +1,24 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from vitro_ros_definitions/msg/InspectionObj.msg
+// generated code does not contain a copyright notice
+
+#include "geometry_msgs/msg/Pose.idl"
+
+module vitro_ros_definitions {
+  module msg {
+    module InspectionObj_Constants {
+      @verbatim (language="comment", text=
+        "constants")
+      const int8 INSPECTION_REQUESTED = 1;
+      const int8 NO_INSPECTION_REQUESTED = 0;
+    };
+    struct InspectionObj {
+      string id;
+
+      @default (value=0)
+      int8 status;
+
+      geometry_msgs::msg::Pose pose;
+    };
+  };
+};

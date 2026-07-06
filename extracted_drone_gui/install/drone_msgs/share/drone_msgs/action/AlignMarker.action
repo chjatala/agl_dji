@@ -1,0 +1,11 @@
+uint16 id
+float64 max_vel
+float64 max_yaw_rate
+float64 distance
+---
+string status
+geometry_msgs/Point init_pos
+float64 init_yaw
+---
+float32 dist_to_go
+geometry_msgs/Point target_pos

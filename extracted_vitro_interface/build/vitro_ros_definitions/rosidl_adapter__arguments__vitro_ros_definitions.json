@@ -1,0 +1,7 @@
+{
+  "package_name": "vitro_ros_definitions",
+  "non_idl_tuples": [
+    "/root/ros2_ws/src/vitro_ros_definitions:srv/SetGimballAngle.srv",
+    "/root/ros2_ws/src/vitro_ros_definitions:srv/SetVideoSettings.srv"
+  ]
+}

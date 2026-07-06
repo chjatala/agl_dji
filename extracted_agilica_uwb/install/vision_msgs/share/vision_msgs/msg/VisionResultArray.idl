@@ -1,0 +1,28 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from vision_msgs/msg/VisionResultArray.msg
+// generated code does not contain a copyright notice
+
+#include "sensor_msgs/msg/Image.idl"
+#include "std_msgs/msg/Header.idl"
+#include "vision_msgs/msg/VisionResult.idl"
+
+module vision_msgs {
+  module msg {
+    @verbatim (language="comment", text=
+      "VisionResultArray.msg" "\n"
+      "A message to hold an array of vision detection results and link to the original image via header")
+    struct VisionResultArray {
+      @verbatim (language="comment", text=
+        "Header for metadata (timestamps, frame_id, etc.)")
+      std_msgs::msg::Header header;
+
+      @verbatim (language="comment", text=
+        "An array of vision detection results")
+      sequence<vision_msgs::msg::VisionResult> results;
+
+      @verbatim (language="comment", text=
+        "Debug purposes: Visualization image (default not active), can be linked to image by header")
+      sensor_msgs::msg::Image visualization_image;
+    };
+  };
+};

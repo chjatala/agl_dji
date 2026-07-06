@@ -1,0 +1,11 @@
+float64 x
+float64 y
+float64 z
+float64 yaw
+---
+string status
+---
+string status
+float32 dist_to_go
+float32 eta
+float32 err_bar

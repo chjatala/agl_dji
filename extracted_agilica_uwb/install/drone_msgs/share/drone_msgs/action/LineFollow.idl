@@ -1,0 +1,19 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from drone_msgs/action/LineFollow.action
+// generated code does not contain a copyright notice
+
+#include "std_msgs/msg/Float32MultiArray.idl"
+
+module drone_msgs {
+  module action {
+    struct LineFollow_Goal {
+      std_msgs::msg::Float32MultiArray param;
+    };
+    struct LineFollow_Result {
+      string status;
+    };
+    struct LineFollow_Feedback {
+      float dist_travelled;
+    };
+  };
+};

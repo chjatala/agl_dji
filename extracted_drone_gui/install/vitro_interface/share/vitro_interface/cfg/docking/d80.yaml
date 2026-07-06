@@ -1,0 +1,13 @@
+
+DockingStationNode:
+  ros__parameters:
+    # MQTT broker information
+    broker_address: "test.mosquitto.org:1883" # tcp://127.0.0.1:1883
+    topic: "heisha/dnest/dpLGgCWM9dYtDt14EPoQ/server/service"
+
+    # code in on,off format
+    remote_codes: [1.0,2.0]
+    canopy_codes: [41.0,42.0]
+    charging_bar_codes: [82.0,81.0]
+    charging_codes: [121.0,123.0]
+    battery_codes: [124.0,125.0]

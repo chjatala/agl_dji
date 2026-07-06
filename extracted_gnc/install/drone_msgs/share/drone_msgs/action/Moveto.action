@@ -1,0 +1,7 @@
+drone_msgs/Waypoints waypoints
+---
+string status
+---
+float32 dist_to_go
+float32 eta
+float32 err_bar

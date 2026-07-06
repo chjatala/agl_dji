@@ -1,0 +1,23 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from drone_msgs/action/Moveto.action
+// generated code does not contain a copyright notice
+
+#include "drone_msgs/msg/Waypoints.idl"
+
+module drone_msgs {
+  module action {
+    struct Moveto_Goal {
+      drone_msgs::msg::Waypoints waypoints;
+    };
+    struct Moveto_Result {
+      string status;
+    };
+    struct Moveto_Feedback {
+      float dist_to_go;
+
+      float eta;
+
+      float err_bar;
+    };
+  };
+};

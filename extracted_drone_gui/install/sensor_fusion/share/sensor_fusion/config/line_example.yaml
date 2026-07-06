@@ -1,0 +1,27 @@
+# Line infomation for line detector
+# The line is defined in the FLU reference frame
+# The following input types can bu used:
+#   - Raw: The user provide transformation matrix and the pose of the line in the plane
+#     (R and Theta)
+#   - 3P: 3 points should be provided including the start-, end-point of the line, and
+#     one point on the line plane. The line will be on the x-axis of the plane (i.e., R
+#     and Theta = 0.0)
+#
+LineData:
+  "1":
+    LineType: "NA"
+    Group: "NA"
+    InputType: "Raw"
+    TransformationMatrix: [1.0, 0.0, 0.0, 0.0,
+                           0.0, 1.0, 0.0, 0.0,
+                           0.0, 0.0, 1.0, 0.0,
+                           0.0, 0.0, 0.0, 1.0 ]
+    R: 0.0
+    Theta: 0.0
+  "2":
+    LineType: "NA"
+    Group: "NA"
+    InputType: "3P"
+    PointStart: [0.0, 0.5, 1.0]
+    PointEnd: [10.0, 0.5, 1.0]
+    PointInPlane: [0.0, 1.5, 1.0]

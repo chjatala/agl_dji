@@ -1,0 +1,22 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from fm_gen_msgs/msg/ArucoMarkerArray.msg
+// generated code does not contain a copyright notice
+
+#include "fm_gen_msgs/msg/ArucoMarker.idl"
+#include "std_msgs/msg/Header.idl"
+
+module fm_gen_msgs {
+  module msg {
+    struct ArucoMarkerArray {
+      std_msgs::msg::Header header;
+
+      uint8 num_marker;
+
+      string camera_id;
+
+      double time_captured;
+
+      sequence<fm_gen_msgs::msg::ArucoMarker> marker;
+    };
+  };
+};

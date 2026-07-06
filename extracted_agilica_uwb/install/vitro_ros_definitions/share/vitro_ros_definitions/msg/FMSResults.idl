@@ -1,0 +1,13 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from vitro_ros_definitions/msg/FMSResults.msg
+// generated code does not contain a copyright notice
+
+#include "vitro_ros_definitions/msg/FMSResult.idl"
+
+module vitro_ros_definitions {
+  module msg {
+    struct FMSResults {
+      sequence<vitro_ros_definitions::msg::FMSResult> results;
+    };
+  };
+};

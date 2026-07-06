@@ -1,0 +1,1 @@
+/root/ros2_ws/build/vitro_ros_definitions/rosidl_typesupport_fastrtps_c/vitro_ros_definitions/msg/rosidl_typesupport_fastrtps_c__visibility_control.h

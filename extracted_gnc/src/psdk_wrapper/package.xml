@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://download.ros.org/schema/package_format3.xsd"?>
+<package format="3">
+  <name>psdk_wrapper</name>
+  <version>0.1.0</version>
+  <description>
+    Native shared library (libpsdk_wrapper.so) wrapping DJI's Payload SDK (PSDK) so
+    dji_psdk_bridge can drive a PSDK-capable aircraft over UART instead of running
+    in stub mode. Requires a real DJI developer app license and a PSDK-capable
+    airframe (M30/M30T, M300/M350 RTK, Matrice 4 series, Mavic 3 Enterprise, ...).
+  </description>
+  <maintainer email="mh.chaudhary@yahoo.com">agl_dji</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

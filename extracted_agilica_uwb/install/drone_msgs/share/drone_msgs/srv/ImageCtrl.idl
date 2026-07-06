@@ -1,0 +1,36 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from drone_msgs/srv/ImageCtrl.srv
+// generated code does not contain a copyright notice
+
+
+module drone_msgs {
+  module srv {
+    struct ImageCtrl_Request {
+      @default (value=FALSE)
+      boolean enable;
+
+      @verbatim (language="comment", text=
+        "\"distance\" or \"overlap\"")
+      string mode;
+
+      @verbatim (language="comment", text=
+        "Input required for \"distance\" mode")
+      @default (value=0.0)
+      float next_picture_distance;
+
+      @verbatim (language="comment", text=
+        "Input required for \"overlap\" mode")
+      @default (value=0.0)
+      float overlap;
+
+      @default (value=0.0)
+      float fov;
+
+      @default (value=0.0)
+      float picture_plane_distance;
+    };
+    struct ImageCtrl_Response {
+      boolean success;
+    };
+  };
+};

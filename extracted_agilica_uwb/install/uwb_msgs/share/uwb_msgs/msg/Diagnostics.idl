@@ -1,0 +1,56 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from uwb_msgs/msg/Diagnostics.msg
+// generated code does not contain a copyright notice
+
+
+module uwb_msgs {
+  module msg {
+    @verbatim (language="comment", text=
+      "Diagnostics Message" "\n"
+      "This message type encapsulates various diagnostic information related to" "\n"
+      "# channel impulse response, signal strength, and frequency points.")
+    struct Diagnostics {
+      @verbatim (language="comment", text=
+        "# Channel Impulse Response (CIR) Attributes" "\n"
+        "CIR power (e.g., in dBm)")
+      uint32 cir_power;
+
+      @verbatim (language="comment", text=
+        "CIR magnitude signal")
+      sequence<float> cir_magnitude;
+
+      @verbatim (language="comment", text=
+        "CIR phase signal")
+      sequence<float> cir_phase;
+
+      @verbatim (language="comment", text=
+        "CIR imaginary signal")
+      sequence<int16> cir_imag;
+
+      @verbatim (language="comment", text=
+        "CIR real signal")
+      sequence<int16> cir_real;
+
+      @verbatim (language="comment", text=
+        "# Wireless Channel Signal Attributes" "\n"
+        "Size of the preamble message")
+      uint32 preamble_count;
+
+      @verbatim (language="comment", text=
+        "First peak power level (e.g., in dB)")
+      float fppl;
+
+      @verbatim (language="comment", text=
+        "Received Signal Strength Intensity (RSSI, e.g., in dBm)")
+      float rssi;
+
+      @verbatim (language="comment", text=
+        "Index of the first peak in the CIR (e.g., in samples)")
+      float index_fp;
+
+      @verbatim (language="comment", text=
+        "delay of message in ms")
+      uint32 msgdelay_ms;
+    };
+  };
+};

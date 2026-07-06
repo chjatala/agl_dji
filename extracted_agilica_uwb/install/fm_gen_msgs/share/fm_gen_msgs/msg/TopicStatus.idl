@@ -1,0 +1,22 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from fm_gen_msgs/msg/TopicStatus.msg
+// generated code does not contain a copyright notice
+
+
+module fm_gen_msgs {
+  module msg {
+    @verbatim (language="comment", text=
+      "values can be negative ?")
+    struct TopicStatus {
+      string topic_name;
+
+      boolean topic_is_ok;
+
+      sequence<string> error_message;
+
+      sequence<uint32> error_code;
+
+      sequence<double> error_value;
+    };
+  };
+};

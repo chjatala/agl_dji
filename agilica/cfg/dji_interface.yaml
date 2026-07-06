@@ -1,0 +1,23 @@
+/**/CommandHandlerNode:
+  ros__parameters:
+    joy_mqtt_pub_topic_: drone/command
+    roll_pitch_control_mode: VELOCITY
+    server_uri: tcp://127.0.0.1:1883
+    topic_cmd: cmd/drone/action
+    topic_joystick: cmd/drone/setpoint
+    vertical_control_mode: VELOCITY
+    yaw_control_mode: ANGULAR_VELOCITY
+/**/DataPublishNode:
+  ros__parameters:
+    drone_make: DJI_MINI3
+    server_uri: tcp://127.0.0.1:1883
+    topic_attitude: drone/attitude
+    topic_battery: battery
+    topic_gimbal_attitude: gimbal_attitude
+    topic_position: drone/pos
+    topic_speed: drone/spd
+    topic_ultrasonic_height: height_from_ground
+/**/VideoStreamNode:
+  ros__parameters:
+    topic_image: camera/image
+    video_url: rtsp://123:123@10.90.90.100:8554/streaming/live/1

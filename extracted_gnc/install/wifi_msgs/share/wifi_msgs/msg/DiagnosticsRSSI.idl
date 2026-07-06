@@ -1,0 +1,22 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from wifi_msgs/msg/DiagnosticsRSSI.msg
+// generated code does not contain a copyright notice
+
+
+module wifi_msgs {
+  module msg {
+    struct DiagnosticsRSSI {
+      @verbatim (language="comment", text=
+        "Received signal strength intensity")
+      float rssi;
+
+      @verbatim (language="comment", text=
+        "A value from equation for estimating distance from RSSI (RSSI at one meter from the ap)")
+      float a;
+
+      @verbatim (language="comment", text=
+        "n value from equation for estimating distance from RSSI (represents the signal loss over distance)")
+      float n;
+    };
+  };
+};

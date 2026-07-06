@@ -1,0 +1,19 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from vitro_ros_definitions/srv/SetVideoSettings.srv
+// generated code does not contain a copyright notice
+
+
+module vitro_ros_definitions {
+  module srv {
+    struct SetVideoSettings_Request {
+      string camera_video_stream_source_type;
+
+      string multi_spectral_fusion_type;
+
+      string multi_spectral_display_mode;
+    };
+    struct SetVideoSettings_Response {
+      string status;
+    };
+  };
+};

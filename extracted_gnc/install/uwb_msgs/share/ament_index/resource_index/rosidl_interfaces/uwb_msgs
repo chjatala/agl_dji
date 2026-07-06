@@ -1,0 +1,6 @@
+msg/Diagnostics.idl
+msg/Diagnostics.msg
+msg/Range.idl
+msg/Range.msg
+msg/RangeArray.idl
+msg/RangeArray.msg

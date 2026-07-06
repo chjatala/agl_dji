@@ -1,0 +1,50 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from fm_gen_msgs/msg/DiagnosticStatus.msg
+// generated code does not contain a copyright notice
+
+#include "fm_gen_msgs/msg/KeyValue.idl"
+#include "std_msgs/msg/Header.idl"
+
+module fm_gen_msgs {
+  module msg {
+    module DiagnosticStatus_Constants {
+      @verbatim (language="comment", text=
+        "Possible levels of operations.")
+      const int8 OK = 0;
+      const int8 WARN = 3;
+      const int8 ERROR = 5;
+      const int8 STALE = 7;
+    };
+    @verbatim (language="comment", text=
+      "This message holds the status of diagnostic for SW/HW component")
+    struct DiagnosticStatus {
+      @verbatim (language="comment", text=
+        "time of the status")
+      std_msgs::msg::Header header;
+
+      @verbatim (language="comment", text=
+        "Level of operation enumerated above.")
+      int8 level;
+
+      @verbatim (language="comment", text=
+        "A description of who is reporting this status.")
+      string diagnoiser_name;
+
+      @verbatim (language="comment", text=
+        "A description of the status.")
+      string message;
+
+      @verbatim (language="comment", text=
+        "A component unique string.")
+      string component_id;
+
+      @verbatim (language="comment", text=
+        "number of status (to make it easier to process the msg)")
+      uint8 num_status;
+
+      @verbatim (language="comment", text=
+        "An array of values associated with the status.")
+      sequence<fm_gen_msgs::msg::KeyValue> values;
+    };
+  };
+};

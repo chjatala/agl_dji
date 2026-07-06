@@ -1,0 +1,17 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/vitro_ros_definitions__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/vitro_ros_definitions/srv/detail/set_gimball_angle__type_support.c.o"
+  "CMakeFiles/vitro_ros_definitions__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/vitro_ros_definitions/srv/detail/set_gimball_angle__type_support.c.o.d"
+  "CMakeFiles/vitro_ros_definitions__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/vitro_ros_definitions/srv/detail/set_video_settings__type_support.c.o"
+  "CMakeFiles/vitro_ros_definitions__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/vitro_ros_definitions/srv/detail/set_video_settings__type_support.c.o.d"
+  "libvitro_ros_definitions__rosidl_typesupport_introspection_c.pdb"
+  "libvitro_ros_definitions__rosidl_typesupport_introspection_c.so"
+  "rosidl_typesupport_introspection_c/vitro_ros_definitions/srv/detail/set_gimball_angle__rosidl_typesupport_introspection_c.h"
+  "rosidl_typesupport_introspection_c/vitro_ros_definitions/srv/detail/set_gimball_angle__type_support.c"
+  "rosidl_typesupport_introspection_c/vitro_ros_definitions/srv/detail/set_video_settings__rosidl_typesupport_introspection_c.h"
+  "rosidl_typesupport_introspection_c/vitro_ros_definitions/srv/detail/set_video_settings__type_support.c"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang C)
+  include(CMakeFiles/vitro_ros_definitions__rosidl_typesupport_introspection_c.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

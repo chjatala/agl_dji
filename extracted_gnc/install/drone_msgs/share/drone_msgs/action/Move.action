@@ -1,0 +1,23 @@
+# Reference type constants
+uint8 RELATIVE = 0
+uint8 ABSOLUTE = 1
+
+# Ref frame constants
+uint8 LOCAL = 0
+
+drone_msgs/Waypoints waypoints
+
+# Reference type fo each DOF (RELATIVE or ABSOLUTE)
+uint8 x_reference_type 1
+uint8 y_reference_type 1
+uint8 z_reference_type 1
+uint8 yaw_reference_type 1
+
+# Reference frame (in case of relative DOFS)
+uint8 ref_frame 0
+---
+string status
+---
+float32 dist_to_go
+float32 eta
+float32 err_bar

@@ -1,0 +1,58 @@
+# Configration for all anchors
+AnchorConfig:
+  # Used to convert the coordinate data into meter
+  UnitFactor: 0.001
+  # Type of frame used for the following position data.
+  # Should be ENU (East-North-Up) or NED (North-East-Down)
+  Frame: FLU
+  # All anchor position
+  AnchorPosition:
+    # Note: the name of the anchor (e.g., anchor1) is not important
+    anchor1:
+      ID: A0
+      Coordinate:
+        x :  8025
+        y :   300
+        z :  7250
+    anchor2:
+      ID: A1
+      Coordinate:
+        x :  8114
+        y : 10635
+        z :  7250
+    anchor3:
+      ID: A2
+      Coordinate:
+        x :  1224
+        y :  5634
+        z :  7250
+    anchor4:
+      ID: A3
+      Coordinate:
+        x : 14722
+        y :  5523
+        z :  7250
+    anchor5:
+      ID: A4
+      Coordinate:
+        x :  1120
+        y :   297
+        z :  7250
+    anchor6:
+      ID: A5
+      Coordinate:
+        x : 14810
+        y : 10617
+        z :  7250
+    anchor7:
+      ID: A6
+      Coordinate:
+        x :  1228
+        y : 10639
+        z :  7250
+    anchor8:
+      ID: A7
+      Coordinate:
+        x : 14706
+        y :   300
+        z :  7250

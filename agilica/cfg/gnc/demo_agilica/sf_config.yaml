@@ -1,0 +1,159 @@
+# This is the configuration file for drone sensor fusion
+FormatVersion: "3.3.2"
+
+FilterSetting:
+  # Folder name to save the EKF (oase.save). If the folder exsits, the
+  # program will load the EKF from the folder (to save time) unless the
+  # *EkfRecreate* == True
+  EkfSaveFolder: ekf_main
+  # Rerun the KalmanCreator to create a new EKF.
+  EkfRecreate: True
+  # Data publish rate for on-line application (Hz)
+  EstRate: 40
+  # Number of events saved in the buffer
+  BufferSize: 10000
+  # Print states regularly while running the filter on-line
+  PrintState: True
+  # Bag file name
+  BagFile: ""
+  # The baseline system model
+  # IMU: full kinematic model using IMU as input
+  # SPD: 3D constant speed model with yaw angle
+  # SPDCMD: using speed control command as input for SPD model
+  BaseModelType: "SPDCMD"
+  # Detailed model parameters (design not fixed yet)
+  ModelParam:
+    AddImuBias: False
+    Tc:
+      Vx: 0.3
+      Vy: 0.3
+      Vz: 0.3
+      R: 0.3
+  # Add reset when start the ROS node
+  AutoReset: True
+  # Predict system states in the future (s)
+  PredictTime: 0.1
+  # Save debug data into pk file in every X seconds. Not saving data if set
+  # to 0.0
+  SaveDebugInterval: 0.0
+
+  # Initial state of the drone
+  InitState:
+    # Initial states and sigma, the key should match the model variable 
+    # TODO: add more states
+    x:
+      Value: 0.0
+      Sigma: 999.0
+    y:
+      Value:  0.0
+      Sigma: 999.0
+    z:
+      Value: -0.8
+      Sigma:  2.0
+    u:
+      Value:  0.0
+      Sigma:  0.01
+    v:
+      Value:  0.0
+      Sigma:  0.01
+    w:
+      Value:  0.0
+      Sigma:  0.01
+    r:
+      Value: 0.0
+      Sigma:  0.01
+    Psi:
+      Value: 0.0
+      Sigma: 0.2
+    ap_yaw_bias:
+      Value: 0.0
+      Sigma: 80.0
+
+  # The sigma for system process noise
+  SigmaW:
+    vx_dot: 1.5
+    vy_dot: 1.5
+    vz_dot: 1.5
+    Psi_dot: 0.5
+    ap_yaw_bias_dot: 0.001
+    slam_yaw_bias_dot: 0.1
+    slam_yaw_align_dot: 0.1
+    slam_pitch_align_dot: 0.1
+    slam_roll_align_dot: 0.1
+    # x-coordinate of SLAM ref in local ref
+    x_slam_0_dot: 1.0
+    # y-coordinate of SLAM ref in local ref
+    y_slam_0_dot: 1.0
+    # z-coordinate of SLAM ref in local ref
+    z_slam_0_dot: 1.0
+    kx_slam_dot: 0.1
+    ky_slam_dot: 0.1
+    kz_slam_dot: 0.1
+    # UWB bias states
+    uwb_bias: 1.0
+    # x shift of GPS pos
+    dx_gps: 0.1
+    # y shift of GPS pos
+    dy_gps: 0.1
+    # z shift of GPS pos
+    dz_gps: 0.1
+    # for SPDCMD model
+    vx_noise: 0.2
+    vy_noise: 0.2
+    vz_noise: 0.2
+    r_noise: 0.2
+
+SensorSetting:
+  # In dev, testing ctrl input
+  SpeedCmd:
+    Enable: True
+    Topic: "cmd/drone/setpoint"
+    DelayMs: 50
+
+  ApYaw:
+    Enable: True
+    Topic: "drone/attitude"
+    Type: "VITRO"
+    # Yaw angle between the local frame and the local magnetic filed. Used
+    # to convert the AP yaw data to local frame
+    ApYawShift: 0.0
+    # Add autopilot yaw angle bias state
+    AddApYawBias: True
+    Sigma: 0.05
+
+  ApAlt:
+    Enable: False
+    Topic: "drone/pos"
+    Type: "DJI"
+    Sigma: 0.2
+    # Height of the take off position. This setting should only be used
+    # if the ApAlt is reporting height above takeoff
+    TakeOffHeight: 0.8
+
+  BodySpd:
+    Enable: True
+    Topic: "drone/spd"
+    Sigma: 0.3
+    Type: "DJI"
+
+  HeightAboveGround:
+    Enable: True
+    Topic: "height_from_ground"
+    Sigma: 0.2
+
+  # Generic POSE sensor
+  GenericPose:
+    Enable: True
+    Topic: "/agilica_pose"
+    Transformation:
+      Pose: [0.0, 0.0, 0.0, 0.0, 0.0, 3.14159265359]
+    Sigma:
+      X: 0.1
+      Y: 0.1
+      Z: 0.1
+      Yaw: 0.1
+      Pitch: 0.1
+      Roll: 0.1
+    DelayMs: 500
+    PosOnly: True
+    Pos2D: True

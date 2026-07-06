@@ -1,0 +1,14 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from fm_gen_msgs/msg/ArucoMarker.msg
+// generated code does not contain a copyright notice
+
+
+module fm_gen_msgs {
+  module msg {
+    struct ArucoMarker {
+      uint16 id;
+
+      sequence<float> corner;
+    };
+  };
+};

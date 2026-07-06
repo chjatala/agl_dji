@@ -1,0 +1,38 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from drone_msgs/msg/DroneStateStamped.msg
+// generated code does not contain a copyright notice
+
+#include "std_msgs/msg/Header.idl"
+
+module drone_msgs {
+  module msg {
+    module DroneStateStamped_Constants {
+      const string FLIGHT_STATE_INIT = "init";
+      const string CTRL_MODE_MANUAL = "manual";
+      const string CTRL_MODE_AUTO = "auto";
+    };
+    struct DroneStateStamped {
+      std_msgs::msg::Header header;
+
+      string drone_id;
+
+      string flight_state;
+
+      string ctrl_mode;
+
+      string cam_state;
+
+      string nav_state;
+
+      string mission_state;
+
+      string pil_state;
+
+      boolean armed;
+
+      float battery_remain;
+
+      float battery_voltage;
+    };
+  };
+};

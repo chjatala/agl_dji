@@ -1,0 +1,31 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from drone_msgs/action/AlignMarker.action
+// generated code does not contain a copyright notice
+
+#include "geometry_msgs/msg/Point.idl"
+
+module drone_msgs {
+  module action {
+    struct AlignMarker_Goal {
+      uint16 id;
+
+      double max_vel;
+
+      double max_yaw_rate;
+
+      double distance;
+    };
+    struct AlignMarker_Result {
+      string status;
+
+      geometry_msgs::msg::Point init_pos;
+
+      double init_yaw;
+    };
+    struct AlignMarker_Feedback {
+      float dist_to_go;
+
+      geometry_msgs::msg::Point target_pos;
+    };
+  };
+};

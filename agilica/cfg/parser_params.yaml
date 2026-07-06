@@ -1,0 +1,18 @@
+nmea_parser:
+  ros__parameters:
+    # Serial port configuration
+    port: "/dev/ttyAgilica"
+    baudrate: 9600
+    timeout: 1.0
+
+    # Parser configuration
+    validate_checksums: true
+    publish_raw_data: false
+
+    # Position filtering
+    position_tolerance: 0.001  # meters
+
+    # Publishing configuration
+    pose_frame_id: "agilica_frame"
+    pose_topic: "agilica_pose"
+    publish_rate: 10.0  # Hz

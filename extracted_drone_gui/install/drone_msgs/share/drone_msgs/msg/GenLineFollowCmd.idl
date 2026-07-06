@@ -1,0 +1,55 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from drone_msgs/msg/GenLineFollowCmd.msg
+// generated code does not contain a copyright notice
+
+#include "std_msgs/msg/Header.idl"
+
+module drone_msgs {
+  module msg {
+    module GenLineFollowCmd_Constants {
+      @verbatim (language="comment", text=
+        "some constant for ctrl type" "\n"        "close loop pos control, will keep the drone at the *_tgt position")
+      const string POS_CLOSELOOP = "POS_CLOSELOOP";
+      @verbatim (language="comment", text=
+        "open loop speed control, will send a constant speed (*_tgt) command")
+      const string SPEED_OPENLOOP = "SPEED_OPENLOOP";
+    };
+    @verbatim (language="comment", text=
+      "A generic cmd msg for gen_line_follow control" "\n"
+      "the x/y/z/yaw control targets are defined in the global frame, not" "\n"
+      "in the drone body frame.")
+    struct GenLineFollowCmd {
+      @verbatim (language="comment", text=
+        "to save the time stamp")
+      std_msgs::msg::Header header;
+
+      @default (value=0.0)
+      float x_tgt;
+
+      @default (value="POS_CLOSELOOP")
+      string x_type;
+
+      @default (value=0.0)
+      float y_tgt;
+
+      @default (value="POS_CLOSELOOP")
+      string y_type;
+
+      @default (value=1.0)
+      float z_tgt;
+
+      @default (value="POS_CLOSELOOP")
+      string z_type;
+
+      @default (value=0.0)
+      float yaw_tgt;
+
+      @default (value="POS_CLOSELOOP")
+      string yaw_type;
+
+      @verbatim (language="comment", text=
+        "reserved for advanced setting (e.g., ctrl gain)")
+      sequence<double> param;
+    };
+  };
+};

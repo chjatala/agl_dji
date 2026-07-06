@@ -1,0 +1,30 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from fm_gen_msgs/msg/LineArray.msg
+// generated code does not contain a copyright notice
+
+#include "fm_gen_msgs/msg/Line.idl"
+#include "std_msgs/msg/Header.idl"
+
+module fm_gen_msgs {
+  module msg {
+    struct LineArray {
+      std_msgs::msg::Header header;
+
+      @verbatim (language="comment", text=
+        "number of detections in the img")
+      uint8 num_detection;
+
+      @verbatim (language="comment", text=
+        "camera id (reserved for future application)")
+      string camera_id;
+
+      @verbatim (language="comment", text=
+        "time stamp of the image")
+      double time_captured;
+
+      @verbatim (language="comment", text=
+        "an array of all lines detected")
+      sequence<fm_gen_msgs::msg::Line> lines;
+    };
+  };
+};

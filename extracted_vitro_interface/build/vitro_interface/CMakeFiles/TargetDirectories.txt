@@ -1,0 +1,12 @@
+/root/ros2_ws/build/vitro_interface/CMakeFiles/uninstall.dir
+/root/ros2_ws/build/vitro_interface/CMakeFiles/vitro_interface_uninstall.dir
+/root/ros2_ws/build/vitro_interface/CMakeFiles/vitro_mqtt.dir
+/root/ros2_ws/build/vitro_interface/CMakeFiles/vitro_interface_executor.dir
+/root/ros2_ws/build/vitro_interface/CMakeFiles/vitro_interface_docking.dir
+/root/ros2_ws/build/vitro_interface/CMakeFiles/test.dir
+/root/ros2_ws/build/vitro_interface/CMakeFiles/edit_cache.dir
+/root/ros2_ws/build/vitro_interface/CMakeFiles/rebuild_cache.dir
+/root/ros2_ws/build/vitro_interface/CMakeFiles/list_install_components.dir
+/root/ros2_ws/build/vitro_interface/CMakeFiles/install.dir
+/root/ros2_ws/build/vitro_interface/CMakeFiles/install/local.dir
+/root/ros2_ws/build/vitro_interface/CMakeFiles/install/strip.dir

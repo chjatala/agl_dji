@@ -1,0 +1,19 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from drone_msgs/action/GenLineFollow.action
+// generated code does not contain a copyright notice
+
+#include "drone_msgs/msg/GenLineFollowCmd.idl"
+
+module drone_msgs {
+  module action {
+    struct GenLineFollow_Goal {
+      drone_msgs::msg::GenLineFollowCmd cmd;
+    };
+    struct GenLineFollow_Result {
+      string status;
+    };
+    struct GenLineFollow_Feedback {
+      float dist_travelled;
+    };
+  };
+};

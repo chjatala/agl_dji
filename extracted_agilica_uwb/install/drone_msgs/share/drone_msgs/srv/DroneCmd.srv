@@ -1,0 +1,15 @@
+string CMD_TAKEOFF="takeoff"
+string CMD_LAND="land"
+
+std_msgs/Header header
+string cmd
+float32[] param
+string note
+string cmder
+string tgt
+---
+string STATUS_UNKNOWN_CMD="unknown cmd"
+bool success
+string status
+
+

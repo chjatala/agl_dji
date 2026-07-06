@@ -1,0 +1,30 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from drone_msgs/action/PrecisionLanding.action
+// generated code does not contain a copyright notice
+
+
+module drone_msgs {
+  module action {
+    struct PrecisionLanding_Goal {
+      double x;
+
+      double y;
+
+      double z;
+
+      double yaw;
+    };
+    struct PrecisionLanding_Result {
+      string status;
+    };
+    struct PrecisionLanding_Feedback {
+      string status;
+
+      float dist_to_go;
+
+      float eta;
+
+      float err_bar;
+    };
+  };
+};

@@ -1,0 +1,33 @@
+// generated from rosidl_generator_c/resource/idl__type_support.h.em
+// with input from vitro_ros_definitions:msg/FMSResults.idl
+// generated code does not contain a copyright notice
+
+#ifndef VITRO_ROS_DEFINITIONS__MSG__DETAIL__FMS_RESULTS__TYPE_SUPPORT_H_
+#define VITRO_ROS_DEFINITIONS__MSG__DETAIL__FMS_RESULTS__TYPE_SUPPORT_H_
+
+#include "rosidl_typesupport_interface/macros.h"
+
+#include "vitro_ros_definitions/msg/rosidl_generator_c__visibility_control.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#include "rosidl_runtime_c/message_type_support_struct.h"
+
+// Forward declare the get type support functions for this type.
+ROSIDL_GENERATOR_C_PUBLIC_vitro_ros_definitions
+const rosidl_message_type_support_t *
+ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
+  rosidl_typesupport_c,
+  vitro_ros_definitions,
+  msg,
+  FMSResults
+)();
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif  // VITRO_ROS_DEFINITIONS__MSG__DETAIL__FMS_RESULTS__TYPE_SUPPORT_H_

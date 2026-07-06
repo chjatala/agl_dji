@@ -1,0 +1,16 @@
+GuiCfg:
+  GuiMode: "dev"
+  RosImg1Cfg:
+    InitSelect: True
+    InitTopic: "/dji/camera/image"
+    InitTopicCompressed: False
+    EnableDoubleClick: False
+  RosImg2Cfg:
+    InitSelect: False
+    InitTopic: ""
+    InitTopicCompressed: False
+    EnableDoubleClick: False
+  GimbalInitAngle: 0.0
+  DefaultDs4Mode: 1.0
+  ModeList: ["GUI", "Waypoint"]
+  SfTabList: ["main",]

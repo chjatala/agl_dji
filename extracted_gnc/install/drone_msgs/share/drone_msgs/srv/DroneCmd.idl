@@ -1,0 +1,35 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from drone_msgs/srv/DroneCmd.srv
+// generated code does not contain a copyright notice
+
+#include "std_msgs/msg/Header.idl"
+
+module drone_msgs {
+  module srv {
+    module DroneCmd_Request_Constants {
+      const string CMD_TAKEOFF = "takeoff";
+      const string CMD_LAND = "land";
+    };
+    struct DroneCmd_Request {
+      std_msgs::msg::Header header;
+
+      string cmd;
+
+      sequence<float> param;
+
+      string note;
+
+      string cmder;
+
+      string tgt;
+    };
+    module DroneCmd_Response_Constants {
+      const string STATUS_UNKNOWN_CMD = "unknown cmd";
+    };
+    struct DroneCmd_Response {
+      boolean success;
+
+      string status;
+    };
+  };
+};

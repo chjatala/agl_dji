@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=Drone
+Comment=Drone localization and control application
+Exec=/home/ipointso/Documents/agl_dji/agilica/start_demo.sh
+Path=/home/ipointso/Documents/agl_dji/agilica
+Icon=/home/ipointso/Documents/agl_dji/agilica/icon.png
+Terminal=true
+Type=Application
+Categories=Utility
+X-Desktop-File-Install-Version=0.26

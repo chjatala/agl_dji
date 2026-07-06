@@ -1,0 +1,18 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from drone_msgs/action/Land.action
+// generated code does not contain a copyright notice
+
+
+module drone_msgs {
+  module action {
+    struct Land_Goal {
+      uint8 structure_needs_at_least_one_member;
+    };
+    struct Land_Result {
+      float height_from_ground;
+    };
+    struct Land_Feedback {
+      float height_from_ground;
+    };
+  };
+};

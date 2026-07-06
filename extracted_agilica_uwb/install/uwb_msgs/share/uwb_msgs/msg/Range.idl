@@ -1,0 +1,48 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from uwb_msgs/msg/Range.msg
+// generated code does not contain a copyright notice
+
+#include "builtin_interfaces/msg/Time.idl"
+#include "geometry_msgs/msg/Point.idl"
+#include "uwb_msgs/msg/Diagnostics.idl"
+
+module uwb_msgs {
+  module msg {
+    @verbatim (language="comment", text=
+      "Anchor Range Message" "\n"
+      "This message type represents the information related to the distance measurement" "\n"
+      "between a tag and an anchor, including position, validity, and diagnostic details.")
+    struct Range {
+      @verbatim (language="comment", text=
+        "Timestamp of the measurement")
+      builtin_interfaces::msg::Time stamp;
+
+      @verbatim (language="comment", text=
+        "Anchor Details" "\n"
+        "A identifier for the anchor (e.g., \"0x042D\", \"0x0417\", \"0x00CC\", etc.)")
+      string anchorid;
+
+      @verbatim (language="comment", text=
+        "ID of the listener")
+      string listenerid;
+
+      @verbatim (language="comment", text=
+        "The (x,y,z) position of the anchor in the reference frame (in meters)")
+      geometry_msgs::msg::Point anchor_position;
+
+      @verbatim (language="comment", text=
+        "Range Information" "\n"
+        "Flag indicating whether the measured range is valid (true if valid)")
+      boolean valid_range;
+
+      @verbatim (language="comment", text=
+        "Distance between the tag and the anchor (in meters). by default it is single-side twr")
+      float distance;
+
+      @verbatim (language="comment", text=
+        "Signal Diagnostics" "\n"
+        "Signal-specific diagnostic data, as defined in the Diagnostics message")
+      uwb_msgs::msg::Diagnostics diagnostics;
+    };
+  };
+};

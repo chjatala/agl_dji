@@ -1,0 +1,100 @@
+# The controller gain 
+
+JoystickCtrl:
+  CtrlRate: 25.0
+  Pitch:
+    Sign: 1.0
+    P: 0.0
+    I: 0.0
+    D: 0.0
+    FF: 0.7
+    CtrlLimit:
+      max_cmd_out: 3.0
+      max_i_err: 0.0
+      max_i: 0.0
+      max_integrator: 0.0
+      max_rate: 3.0
+    Trim: 0.0
+  Roll:
+    Sign: -1.0
+    P: 0.0
+    I: 0.0
+    D: 0.0
+    FF: 0.8
+    CtrlLimit:
+      max_cmd_out: 3.0
+      max_i_err: 0.0
+      max_i: 0.0
+      max_integrator: 0.0
+      max_rate: 3.0
+    Trim: 0.0
+  Yaw:
+    Sign: -1.0
+    P: 3.5
+    I: 0.0
+    D: 0.0
+    FF: 0.0
+    CtrlLimit:
+      max_cmd_out: 1.5
+      max_i_err: 0.0
+      max_i: 0.0
+      max_integrator: 0.0
+      max_rate: 3.0
+    Trim: 0.0
+  YawRate:
+    Sign: -1.0
+    P: 0.0
+    I: 0.0
+    D: 0.0
+    FF: 0.9
+    CtrlLimit:
+      max_cmd_out: 1.5
+      max_i_err: 0.0
+      max_i: 0.0
+      max_integrator: 0.0
+      max_rate: 3.0
+    Trim: 0.0
+  Zvel:
+    Sign: 1.0
+    P: 0.0
+    I: 0.0
+    D: 0.0
+    FF: 0.5
+    CtrlLimit:
+      max_cmd_out: 3.0
+      max_i_err: 0.0
+      max_i: 0.0
+      max_integrator: 0.0
+      max_rate: 3.0
+    Trim: 0.0
+
+WpCtrl:
+  CtrlRate: 25.0
+  KpPos: 0.3
+  KpYaw: 1.0
+
+LineFollowCtrl:
+  CtrlRate: 20.0
+
+GenLineFollowCtrl:
+  CtrlRate: 20.0
+  CtrlX:
+    p_gain: 0.5
+    max_cmd: 1.0
+    max_rate: 1.0
+    sign: 1.0
+  CtrlY:
+    p_gain: 0.5
+    max_cmd: 1.0
+    max_rate: 1.0
+    sign: 1.0
+  CtrlZ:
+    p_gain: 0.5
+    max_cmd: 1.0
+    max_rate: 1.0
+    sign: 1.0
+  CtrlYaw:
+    p_gain: 0.5
+    max_cmd: 1.0
+    max_rate: 1.0
+    sign: 1.0

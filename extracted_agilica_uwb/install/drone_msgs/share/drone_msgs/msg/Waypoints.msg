@@ -1,0 +1,3 @@
+Waypoint current_wp
+Waypoint previous_wp
+bool last_wp_reached

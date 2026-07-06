@@ -1,0 +1,22 @@
+/**/CommandHandlerNode:
+  ros__parameters:
+    topic_joystick: "dji/setpoint"
+    topic_cmd: "dji/cmd"
+    server_uri: "tcp://127.0.0.1:1883"
+    vertical_control_mode: "POSITION"
+    roll_pitch_control_mode: "VELOCITY"
+    yaw_control_mode: "ANGULAR_VELOCITY" 
+    
+/**/DataPublishNode:
+  ros__parameters:
+    server_uri : "tcp://127.0.0.1:1883"
+    drone_make : "DJI_MINI3"
+    topic_position : "dji/pos"
+    topic_speed : "dji/spd"
+    topic_attitude : "dji/attitude"
+    topic_ultrasonic_height : "dji/height_from_ground"
+
+/**/VideoStreamNode:
+  ros__parameters:
+    topic_image: "dji/image"
+    video_url: "rtsp://123:123@127.0.0.1:8554/streaming/live/1"

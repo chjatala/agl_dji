@@ -1,0 +1,54 @@
+image_width: 1088
+image_height: 720
+camera_name: main
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [792.17883,   0.     , 555.67114,
+           0.     , 933.24526, 352.1768 ,
+           0.     ,   0.     ,   1.     ]
+distortion_model: plumb_bob
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [0.121697, -0.182365, -0.004673, 0.005723, 0.000000]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1., 0., 0.,
+         0., 1., 0.,
+         0., 0., 1.]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [804.93109,   0.     , 562.20117,   0.     ,
+           0.     , 955.38904, 348.76194,   0.     ,
+           0.     ,   0.     ,   1.     ,   0.     ]
+
+# added by Jia
+# the transformation matrix from drone body ref to camera ref
+extrinsic_matrix:
+  rows: 4
+  cols: 4
+  data: [ 1.0,   0.     ,  0.0,   0.     ,
+           0.,   1.0    ,  0.0,   0.     ,
+           0.  ,   0.   ,   1. ,  0.     ,
+           0.  ,   0.   ,   0. ,  1.     ]
+
+with_gimbal: true
+
+gimbal_position:
+  rows: 1
+  cols: 3
+  data: [0.05, 0.0, 0.0]
+
+camera_to_gimbal_pos:
+  rows: 1
+  cols: 3
+  data: [-0.05, 0.0, 0.0]
+
+# Initial angle of gimbal in deg
+gimbal_init_angle_deg:
+  yaw: 0.0
+  pitch: 0.0
+  roll: 0.0

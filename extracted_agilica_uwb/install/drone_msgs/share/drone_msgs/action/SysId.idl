@@ -1,0 +1,23 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from drone_msgs/action/SysId.action
+// generated code does not contain a copyright notice
+
+
+module drone_msgs {
+  module action {
+    struct SysId_Goal {
+      string cfg_file;
+
+      @default (value="{}")
+      string cfg_str;
+    };
+    struct SysId_Result {
+      string status;
+
+      sequence<double> ret;
+    };
+    struct SysId_Feedback {
+      string status;
+    };
+  };
+};

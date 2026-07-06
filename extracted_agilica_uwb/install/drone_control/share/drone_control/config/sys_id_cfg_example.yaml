@@ -1,0 +1,42 @@
+# This is an example configuration file for a system identification action.
+SysIdCfg:
+  # The name of the test case. Will be used in the bag file name.
+  Name: "z_marker"
+  # path to the folder where the bag files will be saved.
+  BagFolder: "~/bag_record/system_id"
+  # The axis of the drone to be controlled.
+  Axis: "z"
+  # Control input for the system identification.
+  Input:
+    # Type of ctrl, Step or Doublet
+    Type: "Doublet"
+    Amplitude: 0.5
+    CtrlTime: 1.0
+    StartTime: 1.0
+    Amplitude2: 0.5  # only for doublet
+    CtrlTime2: 1.0  # only for doublet
+    PauseTime: 1.0  # only for doublet
+    EndTime: 5.0
+    Trim: 0.0
+    CtrlRate: 20.0
+  # List of output data to be used for system identification.
+  # The system identification will be performed on each data in this list.
+  Output:
+    - Name: "MarkerPos"  # Name of the case
+      # Type of the data, POS or SPEED
+      Type: "POS"
+      # Topic name of the data
+      Topic: "topic_name"
+      # Type of the message, Pose or Odom
+      MsgType: "Pose"
+      # Scale of the data
+      Scale: -1.0
+    - Name: "Sim"
+      Type: "POS"
+      Topic: "gnc/sf_main/pose"
+      MsgType: "Odom"
+      Scale: -1.0
+  # Configuration of the drone for the system identification.
+  DroneCfg:
+    GimbalPitch: -90.0
+
