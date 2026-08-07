@@ -1,0 +1,27 @@
+# The build context is the repo root, but the image needs only ~10 MB of the
+# 190 MB tree. Docker cannot re-include a path whose parent is excluded, so each
+# level below extracted_gnc/ has to be opened up explicitly.
+
+*
+
+!msgs_src
+
+!extracted_gnc
+extracted_gnc/*
+
+!extracted_gnc/src
+extracted_gnc/src/*
+!extracted_gnc/src/psdk_wrapper
+!extracted_gnc/src/dji_psdk_bridge
+
+!extracted_gnc/install
+extracted_gnc/install/*
+!extracted_gnc/install/drone_control
+!extracted_gnc/install/sensor_fusion
+!extracted_gnc/install/drone_gnc_launch
+!extracted_gnc/install/nmea_parser
+
+# Never bake credentials or build noise into an image layer.
+**/.env
+**/__pycache__
+**/*.img

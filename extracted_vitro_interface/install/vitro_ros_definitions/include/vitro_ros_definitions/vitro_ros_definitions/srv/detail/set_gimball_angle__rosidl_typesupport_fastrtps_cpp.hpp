@@ -1,1 +1,0 @@
-/root/ros2_ws/build/vitro_ros_definitions/rosidl_typesupport_fastrtps_cpp/vitro_ros_definitions/srv/detail/set_gimball_angle__rosidl_typesupport_fastrtps_cpp.hpp

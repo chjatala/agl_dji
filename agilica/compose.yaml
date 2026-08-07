@@ -1,3 +1,10 @@
+# Two mutually exclusive drone-link profiles:
+#   COMPOSE_PROFILES=psdk  -> psdk_bridge, Agilica's PSDK module (the Pi/arm64 path)
+#   COMPOSE_PROFILES=msdk  -> vitro_interface, Flanders Make's MSDK bridge
+#
+# The msdk services below stay pinned to the original x86_64 prod images. That
+# path cannot run on the Pi: vitro_interface is native C++ built for x86_64 and
+# we have no source for it. It is precisely what psdk_bridge replaces.
 services:
   vitro_startup_config:
     container_name: vitro_startup_config
@@ -35,8 +42,14 @@ services:
       vitro_startup_config:
         condition: service_completed_successfully
 
+  # NOT part of the default (headless) Pi stack - the arm64 image deliberately
+  # omits the desktop/PyQt stack, and drone_gui is not grafted into it. Kept
+  # behind a profile so it never starts by accident. To use the GUI, run this
+  # service on an x86_64 laptop against the original prod image, pointed at the
+  # Pi over the network.
   drone_gui:
     container_name: drone_gui
+    profiles: ["gui"]
     image: ghcr.io/flanders-make-vzw/vitro/drone_gnc_prod:v1.4.0
     network_mode: "host"
     environment:
@@ -49,7 +62,7 @@ services:
 
   drone_gnc:
     container_name: drone_gnc
-    image: ghcr.io/flanders-make-vzw/vitro/drone_gnc_prod:v1.4.0
+    image: vitro_arm64:humble
     environment:
       - DISPLAY=${DISPLAY}
     volumes:
@@ -62,7 +75,7 @@ services:
 
   agilica_uwb:
     container_name: agilica_uwb
-    image: ghcr.io/flanders-make-vzw/vitro/drone_gnc_prod:v1.4.0
+    image: vitro_arm64:humble
     volumes:
       - /dev/shm:/dev/shm
       - /dev/ttyACM0:/dev/ttyAgilica
@@ -74,7 +87,7 @@ services:
 
   ros_log_record:
     container_name: ros_log_record
-    image: ghcr.io/flanders-make-vzw/vitro/drone_gnc_prod:v1.4.0
+    image: vitro_arm64:humble
     volumes:
       - ./log/ros:/root/bag_record
       - /dev/shm:/dev/shm
@@ -85,7 +98,7 @@ services:
   psdk_bridge:
     container_name: psdk_bridge
     profiles: ["psdk"]
-    image: ghcr.io/flanders-make-vzw/vitro/drone_gnc_prod:v1.4.0
+    image: vitro_arm64:humble
     network_mode: "host"
     environment:
       - DISPLAY=${DISPLAY}
@@ -106,13 +119,9 @@ services:
       - "${PSDK_UART_DEV:-/dev/ttyUSB0}:/dev/ttyUSB0"
     volumes:
       - /dev/shm:/dev/shm
-      # Mount local packages so they can be built/run inside the container
-      - ../extracted_gnc/src/dji_psdk_bridge:/root/ros2_ws/src/dji_psdk_bridge:ro
-      - ../extracted_gnc/src/psdk_wrapper:/root/ros2_ws/src/psdk_wrapper:ro
       - ./log/sundae:/root/log
-    command: >-
-      bash -lc "source /opt/ros/humble/setup.bash && \
-      cd /root/ros2_ws && \
-      colcon build --symlink-install --packages-select psdk_wrapper dji_psdk_bridge && \
-      source install/setup.bash && \
-      ros2 run dji_psdk_bridge psdk_bridge_node --ros-args -r __ns:=/dji"
+    # psdk_wrapper and dji_psdk_bridge are compiled into vitro_arm64:humble at
+    # image-build time, so there is no colcon build here - the static whole-archive
+    # link against libpayloadsdk.a is slow on a Pi 4 and pointless to repeat on
+    # every start. The entrypoint already sources ROS and the workspace.
+    command: ros2 run dji_psdk_bridge psdk_bridge_node --ros-args -r __ns:=/dji

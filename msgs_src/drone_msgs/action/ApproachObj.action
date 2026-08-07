@@ -1,0 +1,18 @@
+float64 max_vel
+float64 max_yaw_rate
+float64 distance
+float64 distance_tolerance
+float64 object_pos_x
+float64 object_pos_y
+float64 object_pos_z
+string approach_type TOWARDS
+string id
+---
+string id
+string status
+geometry_msgs/Point init_pos
+float64 init_yaw
+---
+string id
+float32 dist_to_go
+geometry_msgs/Point target_pos

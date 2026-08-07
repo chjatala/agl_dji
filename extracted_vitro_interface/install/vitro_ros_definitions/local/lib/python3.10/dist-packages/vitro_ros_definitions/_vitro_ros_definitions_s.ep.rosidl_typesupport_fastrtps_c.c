@@ -1,1 +1,0 @@
-/root/ros2_ws/build/vitro_ros_definitions/rosidl_generator_py/vitro_ros_definitions/_vitro_ros_definitions_s.ep.rosidl_typesupport_fastrtps_c.c

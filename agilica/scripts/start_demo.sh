@@ -19,7 +19,7 @@ echo "UWB is found, starting drone application ..."
 
 # use_psdk_msdk=1 (default) -> use DJI MSDK (vitro_interface)
 # use_psdk_msdk=0           -> use DJI PSDK (psdk_bridge)
-use_psdk_msdk="${use_psdk_msdk:-1}"
+use_psdk_msdk="0"
 if [[ "$use_psdk_msdk" == "1" ]]; then
     echo "Using DJI MSDK (vitro_interface)"
     export COMPOSE_PROFILES=msdk

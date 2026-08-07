@@ -1,1 +1,0 @@
-/root/ros2_ws/src/vitro_interface/include/docking_station_handler_node.hpp

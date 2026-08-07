@@ -1,0 +1,13 @@
+bool enable false
+string mode # "distance" or "overlap"
+
+# Input required for "distance" mode
+float32 next_picture_distance 0
+
+# Input required for "overlap" mode
+float32 overlap 0
+float32 fov 0
+float32 picture_plane_distance 0
+
+---
+bool success

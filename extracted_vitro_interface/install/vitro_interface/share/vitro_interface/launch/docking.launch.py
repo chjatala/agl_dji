@@ -1,1 +1,0 @@
-/root/ros2_ws/src/vitro_interface/launch/docking.launch.py

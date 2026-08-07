@@ -1,1 +1,0 @@
-/root/ros2_ws/build/vitro_ros_definitions/rosidl_generator_c/vitro_ros_definitions/srv/detail/set_gimball_angle__struct.h

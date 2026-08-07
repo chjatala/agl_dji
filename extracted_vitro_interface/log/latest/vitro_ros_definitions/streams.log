@@ -1,0 +1,228 @@
+[0.011s] Invoking command in '/root/ros2_ws/build/vitro_ros_definitions': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /root/ros2_ws/src/vitro_ros_definitions -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/root/ros2_ws/install/vitro_ros_definitions
+[0.063s] -- The C compiler identification is GNU 11.4.0
+[0.115s] -- The CXX compiler identification is GNU 11.4.0
+[0.122s] -- Detecting C compiler ABI info
+[0.185s] -- Detecting C compiler ABI info - done
+[0.192s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.192s] -- Detecting C compile features
+[0.193s] -- Detecting C compile features - done
+[0.196s] -- Detecting CXX compiler ABI info
+[0.268s] -- Detecting CXX compiler ABI info - done
+[0.276s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.276s] -- Detecting CXX compile features
+[0.277s] -- Detecting CXX compile features - done
+[0.280s] -- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.395s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.452s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.480s] -- Found rosidl_default_generators: 1.2.0 (/opt/ros/humble/share/rosidl_default_generators/cmake)
+[0.483s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.490s] -- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.529s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.565s] -- Found ament_lint_auto: 0.12.11 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[0.794s] -- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)
+[0.939s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.123s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.139s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.10.12", minimum required is "3.6") 
+[1.140s] -- Found python_cmake_module: 0.10.0 (/opt/ros/humble/share/python_cmake_module/cmake)
+[1.159s] -- Found PythonLibs: /usr/lib/x86_64-linux-gnu/libpython3.10.so (found suitable version "3.10.12", minimum required is "3.5") 
+[1.159s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[1.159s] -- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.10
+[1.159s] -- Using PYTHON_LIBRARIES: /usr/lib/x86_64-linux-gnu/libpython3.10.so
+[1.174s] -- Found PythonExtra: .so  
+[1.216s] -- Added test 'lint_cmake' to check CMake code style
+[1.226s] -- Added test 'xmllint' to check XML markup files
+[1.234s] -- Configuring done
+[1.273s] -- Generating done
+[1.276s] -- Build files have been written to: /root/ros2_ws/build/vitro_ros_definitions
+[1.281s] Invoked command in '/root/ros2_ws/build/vitro_ros_definitions' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /root/ros2_ws/src/vitro_ros_definitions -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/root/ros2_ws/install/vitro_ros_definitions
+[1.282s] Invoking command in '/root/ros2_ws/build/vitro_ros_definitions': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /root/ros2_ws/build/vitro_ros_definitions -- -j2 -l2
+[1.325s] [  2%] Generating C code for ROS interfaces
+[1.337s] [  5%] Generating C++ code for ROS interfaces
+[1.878s] [  5%] Built target vitro_ros_definitions__cpp
+[1.910s] [  7%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_generator_c.dir/rosidl_generator_c/vitro_ros_definitions/srv/detail/set_gimball_angle__functions.c.o
+[1.920s] [  7%] Built target ament_cmake_python_symlink_vitro_ros_definitions
+[1.931s] [ 10%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_generator_c.dir/rosidl_generator_c/vitro_ros_definitions/srv/detail/set_video_settings__functions.c.o
+[1.989s] [ 12%] Generating C++ introspection for ROS interfaces
+[2.007s] [ 15%] Linking C shared library libvitro_ros_definitions__rosidl_generator_c.so
+[2.056s] [ 15%] Built target vitro_ros_definitions__rosidl_generator_c
+[2.073s] [ 17%] Generating C++ type support dispatch for ROS interfaces
+[2.440s] [ 20%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/vitro_ros_definitions/srv/detail/set_gimball_angle__type_support.cpp.o
+[2.458s] [ 23%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/vitro_ros_definitions/srv/set_gimball_angle__type_support.cpp.o
+[2.780s] [ 25%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/vitro_ros_definitions/srv/set_video_settings__type_support.cpp.o
+[2.892s] [ 28%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/vitro_ros_definitions/srv/detail/set_video_settings__type_support.cpp.o
+[3.109s] [ 30%] Linking CXX shared library libvitro_ros_definitions__rosidl_typesupport_cpp.so
+[3.172s] [ 30%] Built target vitro_ros_definitions__rosidl_typesupport_cpp
+[3.186s] [ 33%] Generating C type support for eProsima Fast-RTPS
+[3.358s] [ 35%] Linking CXX shared library libvitro_ros_definitions__rosidl_typesupport_introspection_cpp.so
+[3.438s] [ 35%] Built target vitro_ros_definitions__rosidl_typesupport_introspection_cpp
+[3.450s] [ 38%] Generating C introspection for ROS interfaces
+[3.895s] [ 41%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/vitro_ros_definitions/srv/detail/set_gimball_angle__type_support_c.cpp.o
+[3.954s] [ 43%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/vitro_ros_definitions/srv/detail/set_gimball_angle__type_support.c.o
+[4.002s] [ 46%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/vitro_ros_definitions/srv/detail/set_video_settings__type_support.c.o
+[4.051s] [ 48%] Linking C shared library libvitro_ros_definitions__rosidl_typesupport_introspection_c.so
+[4.095s] [ 48%] Built target vitro_ros_definitions__rosidl_typesupport_introspection_c
+[4.108s] [ 51%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/vitro_ros_definitions/srv/detail/set_video_settings__type_support_c.cpp.o
+[4.340s] [ 53%] Generating C type support dispatch for ROS interfaces
+[4.559s] [ 56%] Linking CXX shared library libvitro_ros_definitions__rosidl_typesupport_fastrtps_c.so
+[4.648s] [ 56%] Built target vitro_ros_definitions__rosidl_typesupport_fastrtps_c
+[4.661s] [ 58%] Generating C++ type support for eProsima Fast-RTPS
+[4.751s] [ 61%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_c.dir/rosidl_typesupport_c/vitro_ros_definitions/srv/set_gimball_angle__type_support.cpp.o
+[4.796s] [ 64%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_c.dir/rosidl_typesupport_c/vitro_ros_definitions/srv/set_video_settings__type_support.cpp.o
+[4.836s] [ 66%] Linking CXX shared library libvitro_ros_definitions__rosidl_typesupport_c.so
+[4.895s] [ 66%] Built target vitro_ros_definitions__rosidl_typesupport_c
+[5.156s] [ 69%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/vitro_ros_definitions/srv/detail/dds_fastrtps/set_gimball_angle__type_support.cpp.o
+[5.162s] running egg_info
+[5.163s] creating vitro_ros_definitions.egg-info
+[5.163s] writing vitro_ros_definitions.egg-info/PKG-INFO
+[5.165s] writing dependency_links to vitro_ros_definitions.egg-info/dependency_links.txt
+[5.165s] writing top-level names to vitro_ros_definitions.egg-info/top_level.txt
+[5.165s] writing manifest file 'vitro_ros_definitions.egg-info/SOURCES.txt'
+[5.166s] reading manifest file 'vitro_ros_definitions.egg-info/SOURCES.txt'
+[5.168s] writing manifest file 'vitro_ros_definitions.egg-info/SOURCES.txt'
+[5.198s] [ 69%] Built target ament_cmake_python_build_vitro_ros_definitions_egg
+[5.208s] [ 71%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/vitro_ros_definitions/srv/detail/dds_fastrtps/set_video_settings__type_support.cpp.o
+[5.678s] [ 74%] Linking CXX shared library libvitro_ros_definitions__rosidl_typesupport_fastrtps_cpp.so
+[5.734s] [ 74%] Built target vitro_ros_definitions__rosidl_typesupport_fastrtps_cpp
+[5.752s] [ 74%] Built target vitro_ros_definitions
+[5.771s] [ 76%] Generating Python code for ROS interfaces
+[6.235s] [ 76%] Built target vitro_ros_definitions__py
+[6.257s] [ 79%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_generator_py.dir/rosidl_generator_py/vitro_ros_definitions/srv/_set_gimball_angle_s.c.o
+[6.257s] [ 82%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_generator_py.dir/rosidl_generator_py/vitro_ros_definitions/srv/_set_video_settings_s.c.o
+[6.390s] [ 84%] Linking C shared library rosidl_generator_py/vitro_ros_definitions/libvitro_ros_definitions__rosidl_generator_py.so
+[6.426s] [ 84%] Built target vitro_ros_definitions__rosidl_generator_py
+[6.451s] [ 89%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_introspection_c__pyext.dir/rosidl_generator_py/vitro_ros_definitions/_vitro_ros_definitions_s.ep.rosidl_typesupport_introspection_c.c.o
+[6.452s] [ 89%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_generator_py/vitro_ros_definitions/_vitro_ros_definitions_s.ep.rosidl_typesupport_fastrtps_c.c.o
+[6.585s] [ 92%] Linking C shared library rosidl_generator_py/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so
+[6.593s] [ 94%] Linking C shared library rosidl_generator_py/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so
+[6.629s] [ 94%] Built target vitro_ros_definitions__rosidl_typesupport_introspection_c__pyext
+[6.635s] [ 94%] Built target vitro_ros_definitions__rosidl_typesupport_fastrtps_c__pyext
+[6.650s] [ 97%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_c__pyext.dir/rosidl_generator_py/vitro_ros_definitions/_vitro_ros_definitions_s.ep.rosidl_typesupport_c.c.o
+[6.736s] [100%] Linking C shared library rosidl_generator_py/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so
+[6.767s] [100%] Built target vitro_ros_definitions__rosidl_typesupport_c__pyext
+[6.778s] Invoked command in '/root/ros2_ws/build/vitro_ros_definitions' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /root/ros2_ws/build/vitro_ros_definitions -- -j2 -l2
+[6.861s] Invoking command in '/root/ros2_ws/build/vitro_ros_definitions': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /root/ros2_ws/build/vitro_ros_definitions
+[6.868s] -- Install configuration: ""
+[6.869s] -- Execute custom install script
+[6.870s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/ament_index/resource_index/rosidl_interfaces/vitro_ros_definitions
+[6.878s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/msg/rosidl_generator_c__visibility_control.h
+[6.886s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__functions.h
+[6.894s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__struct.h
+[6.902s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__type_support.h
+[6.910s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__functions.h
+[6.918s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__struct.h
+[6.925s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__type_support.h
+[6.934s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/set_gimball_angle.h
+[6.941s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/set_video_settings.h
+[6.950s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/environment/library_path.sh
+[6.958s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/environment/library_path.dsv
+[6.966s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+[6.974s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__rosidl_typesupport_fastrtps_c.h
+[6.982s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__rosidl_typesupport_fastrtps_c.h
+[6.990s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/msg/rosidl_typesupport_introspection_c__visibility_control.h
+[6.998s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__rosidl_typesupport_introspection_c.h
+[7.006s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__rosidl_typesupport_introspection_c.h
+[7.014s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__builder.hpp
+[7.022s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__struct.hpp
+[7.030s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__traits.hpp
+[7.038s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__builder.hpp
+[7.046s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__struct.hpp
+[7.054s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__traits.hpp
+[7.062s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/set_gimball_angle.hpp
+[7.070s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/set_video_settings.hpp
+[7.078s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+[7.086s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__rosidl_typesupport_fastrtps_cpp.hpp
+[7.094s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__rosidl_typesupport_fastrtps_cpp.hpp
+[7.102s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__rosidl_typesupport_introspection_cpp.hpp
+[7.110s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__rosidl_typesupport_introspection_cpp.hpp
+[7.118s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/environment/pythonpath.sh
+[7.126s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/environment/pythonpath.dsv
+[7.134s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions-0.0.0-py3.10.egg-info/PKG-INFO
+[7.142s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions-0.0.0-py3.10.egg-info/SOURCES.txt
+[7.150s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions-0.0.0-py3.10.egg-info/dependency_links.txt
+[7.158s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions-0.0.0-py3.10.egg-info/top_level.txt
+[7.167s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/__init__.py
+[7.175s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/_vitro_ros_definitions_s.ep.rosidl_typesupport_c.c
+[7.182s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/_vitro_ros_definitions_s.ep.rosidl_typesupport_fastrtps_c.c
+[7.190s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/_vitro_ros_definitions_s.ep.rosidl_typesupport_introspection_c.c
+[7.199s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/libvitro_ros_definitions__rosidl_generator_py.so
+[7.207s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv/__init__.py
+[7.215s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv/_set_gimball_angle.py
+[7.222s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv/_set_gimball_angle_s.c
+[7.230s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv/_set_video_settings.py
+[7.238s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv/_set_video_settings_s.c
+[7.246s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so
+[7.254s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so
+[7.262s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so
+[7.270s] -- Up-to-date symlink: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so
+[7.270s] -- Up-to-date symlink: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so
+[7.271s] -- Up-to-date symlink: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so
+[7.271s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/srv/SetGimballAngle.idl
+[7.279s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/srv/SetVideoSettings.idl
+[7.287s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/srv/SetGimballAngle.srv
+[7.295s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/srv/SetGimballAngle_Request.msg
+[7.303s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/srv/SetGimballAngle_Response.msg
+[7.310s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/srv/SetVideoSettings.srv
+[7.319s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/srv/SetVideoSettings_Request.msg
+[7.326s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/srv/SetVideoSettings_Response.msg
+[7.334s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/ament_index/resource_index/package_run_dependencies/vitro_ros_definitions
+[7.343s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/ament_index/resource_index/parent_prefix_path/vitro_ros_definitions
+[7.350s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/environment/ament_prefix_path.sh
+[7.358s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/environment/ament_prefix_path.dsv
+[7.366s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/environment/path.sh
+[7.375s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/environment/path.dsv
+[7.382s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/local_setup.bash
+[7.391s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/local_setup.sh
+[7.398s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/local_setup.zsh
+[7.407s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/local_setup.dsv
+[7.414s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/package.dsv
+[7.422s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/ament_index/resource_index/packages/vitro_ros_definitions
+[7.431s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/rosidl_cmake-extras.cmake
+[7.439s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/ament_cmake_export_include_directories-extras.cmake
+[7.447s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/ament_cmake_export_libraries-extras.cmake
+[7.455s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/ament_cmake_export_targets-extras.cmake
+[7.463s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+[7.471s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/ament_cmake_export_dependencies-extras.cmake
+[7.479s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+[7.487s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitionsConfig.cmake
+[7.495s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitionsConfig-version.cmake
+[7.503s] -- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/package.xml
+[7.511s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_generator_c.so
+[7.512s] -- Set runtime path of "/root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_generator_c.so" to ""
+[7.512s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_fastrtps_c.so
+[7.513s] -- Set runtime path of "/root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_fastrtps_c.so" to ""
+[7.513s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_introspection_c.so
+[7.513s] -- Set runtime path of "/root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_introspection_c.so" to ""
+[7.514s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_c.so
+[7.514s] -- Set runtime path of "/root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_c.so" to ""
+[7.514s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_fastrtps_cpp.so
+[7.515s] -- Set runtime path of "/root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_fastrtps_cpp.so" to ""
+[7.515s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_introspection_cpp.so
+[7.516s] -- Set runtime path of "/root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_introspection_cpp.so" to ""
+[7.516s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_cpp.so
+[7.517s] -- Set runtime path of "/root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_cpp.so" to ""
+[7.549s] Listing '/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions'...
+[7.549s] Compiling '/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/__init__.py'...
+[7.549s] Listing '/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv'...
+[7.549s] Compiling '/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv/__init__.py'...
+[7.549s] Compiling '/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv/_set_gimball_angle.py'...
+[7.549s] Compiling '/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv/_set_video_settings.py'...
+[7.552s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_generator_py.so
+[7.553s] -- Set runtime path of "/root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_generator_py.so" to ""
+[7.553s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_generator_cExport.cmake
+[7.554s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_generator_cExport-noconfig.cmake
+[7.554s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_typesupport_fastrtps_cExport.cmake
+[7.554s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_typesupport_fastrtps_cExport-noconfig.cmake
+[7.555s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitions__rosidl_typesupport_introspection_cExport.cmake
+[7.555s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitions__rosidl_typesupport_introspection_cExport-noconfig.cmake
+[7.555s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitions__rosidl_typesupport_cExport.cmake
+[7.556s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitions__rosidl_typesupport_cExport-noconfig.cmake
+[7.556s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_generator_cppExport.cmake
+[7.557s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_typesupport_fastrtps_cppExport.cmake
+[7.557s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake
+[7.557s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitions__rosidl_typesupport_introspection_cppExport.cmake
+[7.558s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitions__rosidl_typesupport_introspection_cppExport-noconfig.cmake
+[7.558s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitions__rosidl_typesupport_cppExport.cmake
+[7.558s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitions__rosidl_typesupport_cppExport-noconfig.cmake
+[7.559s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_generator_pyExport.cmake
+[7.559s] -- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_generator_pyExport-noconfig.cmake
+[7.562s] Invoked command in '/root/ros2_ws/build/vitro_ros_definitions' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /root/ros2_ws/build/vitro_ros_definitions

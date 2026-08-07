@@ -1,1 +1,0 @@
-/root/ros2_ws/build/vitro_ros_definitions/rosidl_generator_c/vitro_ros_definitions/msg/rosidl_generator_c__visibility_control.h

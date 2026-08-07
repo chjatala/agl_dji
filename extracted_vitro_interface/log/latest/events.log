@@ -1,0 +1,1143 @@
+[0.000000] (-) TimerEvent: {}
+[0.000839] (vitro_ros_definitions) JobQueued: {'identifier': 'vitro_ros_definitions', 'dependencies': OrderedDict()}
+[0.000879] (vitro_interface) JobQueued: {'identifier': 'vitro_interface', 'dependencies': OrderedDict([('vitro_ros_definitions', '/root/ros2_ws/install/vitro_ros_definitions')])}
+[0.000911] (vitro_ros_definitions) JobStarted: {'identifier': 'vitro_ros_definitions'}
+[0.010387] (vitro_ros_definitions) JobProgress: {'identifier': 'vitro_ros_definitions', 'progress': 'cmake'}
+[0.010665] (vitro_ros_definitions) Command: {'cmd': ['/usr/bin/cmake', '/root/ros2_ws/src/vitro_ros_definitions', '-DAMENT_CMAKE_SYMLINK_INSTALL=1', '-DCMAKE_INSTALL_PREFIX=/root/ros2_ws/install/vitro_ros_definitions'], 'cwd': '/root/ros2_ws/build/vitro_ros_definitions', 'env': OrderedDict([('SHLVL', '0'), ('LD_LIBRARY_PATH', '/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/root/ros2_ws'), ('ROS_PYTHON_VERSION', '3'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('NVIDIA_DRIVER_CAPABILITIES', 'graphics'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('LANG', 'C.UTF-8'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('PWD', '/root/ros2_ws/build/vitro_ros_definitions'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('NVIDIA_VISIBLE_DEVICES', 'all'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[0.064024] (vitro_ros_definitions) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.099615] (-) TimerEvent: {}
+[0.115475] (vitro_ros_definitions) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.122874] (vitro_ros_definitions) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.185750] (vitro_ros_definitions) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.192787] (vitro_ros_definitions) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.193124] (vitro_ros_definitions) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.193631] (vitro_ros_definitions) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.196876] (vitro_ros_definitions) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.199698] (-) TimerEvent: {}
+[0.269097] (vitro_ros_definitions) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.276544] (vitro_ros_definitions) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.276924] (vitro_ros_definitions) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.277447] (vitro_ros_definitions) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.280630] (vitro_ros_definitions) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.299794] (-) TimerEvent: {}
+[0.395641] (vitro_ros_definitions) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[0.399881] (-) TimerEvent: {}
+[0.453020] (vitro_ros_definitions) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[0.480903] (vitro_ros_definitions) StdoutLine: {'line': b'-- Found rosidl_default_generators: 1.2.0 (/opt/ros/humble/share/rosidl_default_generators/cmake)\n'}
+[0.484050] (vitro_ros_definitions) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.490867] (vitro_ros_definitions) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.499969] (-) TimerEvent: {}
+[0.529620] (vitro_ros_definitions) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.565629] (vitro_ros_definitions) StdoutLine: {'line': b'-- Found ament_lint_auto: 0.12.11 (/opt/ros/humble/share/ament_lint_auto/cmake)\n'}
+[0.600069] (-) TimerEvent: {}
+[0.700208] (-) TimerEvent: {}
+[0.794760] (vitro_ros_definitions) StdoutLine: {'line': b'-- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)\n'}
+[0.800302] (-) TimerEvent: {}
+[0.900449] (-) TimerEvent: {}
+[0.939935] (vitro_ros_definitions) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[1.000538] (-) TimerEvent: {}
+[1.100695] (-) TimerEvent: {}
+[1.123861] (vitro_ros_definitions) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[1.139586] (vitro_ros_definitions) StdoutLine: {'line': b'-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.10.12", minimum required is "3.6") \n'}
+[1.141268] (vitro_ros_definitions) StdoutLine: {'line': b'-- Found python_cmake_module: 0.10.0 (/opt/ros/humble/share/python_cmake_module/cmake)\n'}
+[1.159944] (vitro_ros_definitions) StdoutLine: {'line': b'-- Found PythonLibs: /usr/lib/x86_64-linux-gnu/libpython3.10.so (found suitable version "3.10.12", minimum required is "3.5") \n'}
+[1.160110] (vitro_ros_definitions) StdoutLine: {'line': b'-- Using PYTHON_EXECUTABLE: /usr/bin/python3\n'}
+[1.160197] (vitro_ros_definitions) StdoutLine: {'line': b'-- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.10\n'}
+[1.160274] (vitro_ros_definitions) StdoutLine: {'line': b'-- Using PYTHON_LIBRARIES: /usr/lib/x86_64-linux-gnu/libpython3.10.so\n'}
+[1.174890] (vitro_ros_definitions) StdoutLine: {'line': b'-- Found PythonExtra: .so  \n'}
+[1.200787] (-) TimerEvent: {}
+[1.216675] (vitro_ros_definitions) StdoutLine: {'line': b"-- Added test 'lint_cmake' to check CMake code style\n"}
+[1.226645] (vitro_ros_definitions) StdoutLine: {'line': b"-- Added test 'xmllint' to check XML markup files\n"}
+[1.234945] (vitro_ros_definitions) StdoutLine: {'line': b'-- Configuring done\n'}
+[1.273626] (vitro_ros_definitions) StdoutLine: {'line': b'-- Generating done\n'}
+[1.277038] (vitro_ros_definitions) StdoutLine: {'line': b'-- Build files have been written to: /root/ros2_ws/build/vitro_ros_definitions\n'}
+[1.282127] (vitro_ros_definitions) CommandEnded: {'returncode': 0}
+[1.282641] (vitro_ros_definitions) JobProgress: {'identifier': 'vitro_ros_definitions', 'progress': 'build'}
+[1.283277] (vitro_ros_definitions) Command: {'cmd': ['/usr/bin/cmake', '--build', '/root/ros2_ws/build/vitro_ros_definitions', '--', '-j2', '-l2'], 'cwd': '/root/ros2_ws/build/vitro_ros_definitions', 'env': OrderedDict([('SHLVL', '0'), ('LD_LIBRARY_PATH', '/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/root/ros2_ws'), ('ROS_PYTHON_VERSION', '3'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('NVIDIA_DRIVER_CAPABILITIES', 'graphics'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('LANG', 'C.UTF-8'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('PWD', '/root/ros2_ws/build/vitro_ros_definitions'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('NVIDIA_VISIBLE_DEVICES', 'all'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[1.300883] (-) TimerEvent: {}
+[1.325851] (vitro_ros_definitions) StdoutLine: {'line': b'[  2%] Generating C code for ROS interfaces\n'}
+[1.337689] (vitro_ros_definitions) StdoutLine: {'line': b'[  5%] Generating C++ code for ROS interfaces\n'}
+[1.400980] (-) TimerEvent: {}
+[1.502601] (-) TimerEvent: {}
+[1.602730] (-) TimerEvent: {}
+[1.702850] (-) TimerEvent: {}
+[1.802969] (-) TimerEvent: {}
+[1.878476] (vitro_ros_definitions) StdoutLine: {'line': b'[  5%] Built target vitro_ros_definitions__cpp\n'}
+[1.903059] (-) TimerEvent: {}
+[1.910719] (vitro_ros_definitions) StdoutLine: {'line': b'[  7%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_generator_c.dir/rosidl_generator_c/vitro_ros_definitions/srv/detail/set_gimball_angle__functions.c.o\n'}
+[1.920550] (vitro_ros_definitions) StdoutLine: {'line': b'[  7%] Built target ament_cmake_python_symlink_vitro_ros_definitions\n'}
+[1.931529] (vitro_ros_definitions) StdoutLine: {'line': b'[ 10%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_generator_c.dir/rosidl_generator_c/vitro_ros_definitions/srv/detail/set_video_settings__functions.c.o\n'}
+[1.989645] (vitro_ros_definitions) StdoutLine: {'line': b'[ 12%] Generating C++ introspection for ROS interfaces\n'}
+[2.004725] (-) TimerEvent: {}
+[2.007680] (vitro_ros_definitions) StdoutLine: {'line': b'[ 15%] Linking C shared library libvitro_ros_definitions__rosidl_generator_c.so\n'}
+[2.056651] (vitro_ros_definitions) StdoutLine: {'line': b'[ 15%] Built target vitro_ros_definitions__rosidl_generator_c\n'}
+[2.073608] (vitro_ros_definitions) StdoutLine: {'line': b'[ 17%] Generating C++ type support dispatch for ROS interfaces\n'}
+[2.104809] (-) TimerEvent: {}
+[2.204959] (-) TimerEvent: {}
+[2.305117] (-) TimerEvent: {}
+[2.405259] (-) TimerEvent: {}
+[2.441242] (vitro_ros_definitions) StdoutLine: {'line': b'[ 20%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/vitro_ros_definitions/srv/detail/set_gimball_angle__type_support.cpp.o\n'}
+[2.458702] (vitro_ros_definitions) StdoutLine: {'line': b'[ 23%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/vitro_ros_definitions/srv/set_gimball_angle__type_support.cpp.o\n'}
+[2.505379] (-) TimerEvent: {}
+[2.605608] (-) TimerEvent: {}
+[2.705831] (-) TimerEvent: {}
+[2.780641] (vitro_ros_definitions) StdoutLine: {'line': b'[ 25%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/vitro_ros_definitions/srv/set_video_settings__type_support.cpp.o\n'}
+[2.805914] (-) TimerEvent: {}
+[2.892925] (vitro_ros_definitions) StdoutLine: {'line': b'[ 28%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/vitro_ros_definitions/srv/detail/set_video_settings__type_support.cpp.o\n'}
+[2.907612] (-) TimerEvent: {}
+[3.007791] (-) TimerEvent: {}
+[3.108012] (-) TimerEvent: {}
+[3.109809] (vitro_ros_definitions) StdoutLine: {'line': b'[ 30%] Linking CXX shared library libvitro_ros_definitions__rosidl_typesupport_cpp.so\n'}
+[3.172664] (vitro_ros_definitions) StdoutLine: {'line': b'[ 30%] Built target vitro_ros_definitions__rosidl_typesupport_cpp\n'}
+[3.186605] (vitro_ros_definitions) StdoutLine: {'line': b'[ 33%] Generating C type support for eProsima Fast-RTPS\n'}
+[3.208092] (-) TimerEvent: {}
+[3.308257] (-) TimerEvent: {}
+[3.358858] (vitro_ros_definitions) StdoutLine: {'line': b'[ 35%] Linking CXX shared library libvitro_ros_definitions__rosidl_typesupport_introspection_cpp.so\n'}
+[3.409608] (-) TimerEvent: {}
+[3.438635] (vitro_ros_definitions) StdoutLine: {'line': b'[ 35%] Built target vitro_ros_definitions__rosidl_typesupport_introspection_cpp\n'}
+[3.450399] (vitro_ros_definitions) StdoutLine: {'line': b'[ 38%] Generating C introspection for ROS interfaces\n'}
+[3.509686] (-) TimerEvent: {}
+[3.609812] (-) TimerEvent: {}
+[3.709950] (-) TimerEvent: {}
+[3.811605] (-) TimerEvent: {}
+[3.895644] (vitro_ros_definitions) StdoutLine: {'line': b'[ 41%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/vitro_ros_definitions/srv/detail/set_gimball_angle__type_support_c.cpp.o\n'}
+[3.911688] (-) TimerEvent: {}
+[3.954877] (vitro_ros_definitions) StdoutLine: {'line': b'[ 43%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/vitro_ros_definitions/srv/detail/set_gimball_angle__type_support.c.o\n'}
+[4.002612] (vitro_ros_definitions) StdoutLine: {'line': b'[ 46%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/vitro_ros_definitions/srv/detail/set_video_settings__type_support.c.o\n'}
+[4.011774] (-) TimerEvent: {}
+[4.052191] (vitro_ros_definitions) StdoutLine: {'line': b'[ 48%] Linking C shared library libvitro_ros_definitions__rosidl_typesupport_introspection_c.so\n'}
+[4.096263] (vitro_ros_definitions) StdoutLine: {'line': b'[ 48%] Built target vitro_ros_definitions__rosidl_typesupport_introspection_c\n'}
+[4.108599] (vitro_ros_definitions) StdoutLine: {'line': b'[ 51%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/vitro_ros_definitions/srv/detail/set_video_settings__type_support_c.cpp.o\n'}
+[4.111860] (-) TimerEvent: {}
+[4.212030] (-) TimerEvent: {}
+[4.312246] (-) TimerEvent: {}
+[4.340797] (vitro_ros_definitions) StdoutLine: {'line': b'[ 53%] Generating C type support dispatch for ROS interfaces\n'}
+[4.412348] (-) TimerEvent: {}
+[4.512540] (-) TimerEvent: {}
+[4.560291] (vitro_ros_definitions) StdoutLine: {'line': b'[ 56%] Linking CXX shared library libvitro_ros_definitions__rosidl_typesupport_fastrtps_c.so\n'}
+[4.612617] (-) TimerEvent: {}
+[4.648548] (vitro_ros_definitions) StdoutLine: {'line': b'[ 56%] Built target vitro_ros_definitions__rosidl_typesupport_fastrtps_c\n'}
+[4.662013] (vitro_ros_definitions) StdoutLine: {'line': b'[ 58%] Generating C++ type support for eProsima Fast-RTPS\n'}
+[4.713604] (-) TimerEvent: {}
+[4.751632] (vitro_ros_definitions) StdoutLine: {'line': b'[ 61%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_c.dir/rosidl_typesupport_c/vitro_ros_definitions/srv/set_gimball_angle__type_support.cpp.o\n'}
+[4.796610] (vitro_ros_definitions) StdoutLine: {'line': b'[ 64%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_c.dir/rosidl_typesupport_c/vitro_ros_definitions/srv/set_video_settings__type_support.cpp.o\n'}
+[4.813688] (-) TimerEvent: {}
+[4.837186] (vitro_ros_definitions) StdoutLine: {'line': b'[ 66%] Linking CXX shared library libvitro_ros_definitions__rosidl_typesupport_c.so\n'}
+[4.895594] (vitro_ros_definitions) StdoutLine: {'line': b'[ 66%] Built target vitro_ros_definitions__rosidl_typesupport_c\n'}
+[4.913771] (-) TimerEvent: {}
+[5.013912] (-) TimerEvent: {}
+[5.114088] (-) TimerEvent: {}
+[5.156644] (vitro_ros_definitions) StdoutLine: {'line': b'[ 69%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/vitro_ros_definitions/srv/detail/dds_fastrtps/set_gimball_angle__type_support.cpp.o\n'}
+[5.163047] (vitro_ros_definitions) StdoutLine: {'line': b'running egg_info\n'}
+[5.163830] (vitro_ros_definitions) StdoutLine: {'line': b'creating vitro_ros_definitions.egg-info\n'}
+[5.164071] (vitro_ros_definitions) StdoutLine: {'line': b'writing vitro_ros_definitions.egg-info/PKG-INFO\n'}
+[5.165732] (vitro_ros_definitions) StdoutLine: {'line': b'writing dependency_links to vitro_ros_definitions.egg-info/dependency_links.txt\n'}
+[5.165857] (vitro_ros_definitions) StdoutLine: {'line': b'writing top-level names to vitro_ros_definitions.egg-info/top_level.txt\n'}
+[5.165954] (vitro_ros_definitions) StdoutLine: {'line': b"writing manifest file 'vitro_ros_definitions.egg-info/SOURCES.txt'\n"}
+[5.166991] (vitro_ros_definitions) StdoutLine: {'line': b"reading manifest file 'vitro_ros_definitions.egg-info/SOURCES.txt'\n"}
+[5.168616] (vitro_ros_definitions) StdoutLine: {'line': b"writing manifest file 'vitro_ros_definitions.egg-info/SOURCES.txt'\n"}
+[5.198684] (vitro_ros_definitions) StdoutLine: {'line': b'[ 69%] Built target ament_cmake_python_build_vitro_ros_definitions_egg\n'}
+[5.209208] (vitro_ros_definitions) StdoutLine: {'line': b'[ 71%] Building CXX object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/vitro_ros_definitions/srv/detail/dds_fastrtps/set_video_settings__type_support.cpp.o\n'}
+[5.214163] (-) TimerEvent: {}
+[5.314321] (-) TimerEvent: {}
+[5.414530] (-) TimerEvent: {}
+[5.515650] (-) TimerEvent: {}
+[5.615905] (-) TimerEvent: {}
+[5.678431] (vitro_ros_definitions) StdoutLine: {'line': b'[ 74%] Linking CXX shared library libvitro_ros_definitions__rosidl_typesupport_fastrtps_cpp.so\n'}
+[5.715993] (-) TimerEvent: {}
+[5.735207] (vitro_ros_definitions) StdoutLine: {'line': b'[ 74%] Built target vitro_ros_definitions__rosidl_typesupport_fastrtps_cpp\n'}
+[5.753272] (vitro_ros_definitions) StdoutLine: {'line': b'[ 74%] Built target vitro_ros_definitions\n'}
+[5.771432] (vitro_ros_definitions) StdoutLine: {'line': b'[ 76%] Generating Python code for ROS interfaces\n'}
+[5.816099] (-) TimerEvent: {}
+[5.916235] (-) TimerEvent: {}
+[6.016364] (-) TimerEvent: {}
+[6.116502] (-) TimerEvent: {}
+[6.218611] (-) TimerEvent: {}
+[6.235766] (vitro_ros_definitions) StdoutLine: {'line': b'[ 76%] Built target vitro_ros_definitions__py\n'}
+[6.257889] (vitro_ros_definitions) StdoutLine: {'line': b'[ 79%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_generator_py.dir/rosidl_generator_py/vitro_ros_definitions/srv/_set_gimball_angle_s.c.o\n'}
+[6.258038] (vitro_ros_definitions) StdoutLine: {'line': b'[ 82%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_generator_py.dir/rosidl_generator_py/vitro_ros_definitions/srv/_set_video_settings_s.c.o\n'}
+[6.319249] (-) TimerEvent: {}
+[6.391106] (vitro_ros_definitions) StdoutLine: {'line': b'[ 84%] Linking C shared library rosidl_generator_py/vitro_ros_definitions/libvitro_ros_definitions__rosidl_generator_py.so\n'}
+[6.419333] (-) TimerEvent: {}
+[6.427095] (vitro_ros_definitions) StdoutLine: {'line': b'[ 84%] Built target vitro_ros_definitions__rosidl_generator_py\n'}
+[6.452236] (vitro_ros_definitions) StdoutLine: {'line': b'[ 89%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_introspection_c__pyext.dir/rosidl_generator_py/vitro_ros_definitions/_vitro_ros_definitions_s.ep.rosidl_typesupport_introspection_c.c.o\n'}
+[6.452375] (vitro_ros_definitions) StdoutLine: {'line': b'[ 89%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_generator_py/vitro_ros_definitions/_vitro_ros_definitions_s.ep.rosidl_typesupport_fastrtps_c.c.o\n'}
+[6.520624] (-) TimerEvent: {}
+[6.585789] (vitro_ros_definitions) StdoutLine: {'line': b'[ 92%] Linking C shared library rosidl_generator_py/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so\n'}
+[6.593694] (vitro_ros_definitions) StdoutLine: {'line': b'[ 94%] Linking C shared library rosidl_generator_py/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so\n'}
+[6.620723] (-) TimerEvent: {}
+[6.630254] (vitro_ros_definitions) StdoutLine: {'line': b'[ 94%] Built target vitro_ros_definitions__rosidl_typesupport_introspection_c__pyext\n'}
+[6.635361] (vitro_ros_definitions) StdoutLine: {'line': b'[ 94%] Built target vitro_ros_definitions__rosidl_typesupport_fastrtps_c__pyext\n'}
+[6.650519] (vitro_ros_definitions) StdoutLine: {'line': b'[ 97%] Building C object CMakeFiles/vitro_ros_definitions__rosidl_typesupport_c__pyext.dir/rosidl_generator_py/vitro_ros_definitions/_vitro_ros_definitions_s.ep.rosidl_typesupport_c.c.o\n'}
+[6.720860] (-) TimerEvent: {}
+[6.736894] (vitro_ros_definitions) StdoutLine: {'line': b'[100%] Linking C shared library rosidl_generator_py/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so\n'}
+[6.767523] (vitro_ros_definitions) StdoutLine: {'line': b'[100%] Built target vitro_ros_definitions__rosidl_typesupport_c__pyext\n'}
+[6.779145] (vitro_ros_definitions) CommandEnded: {'returncode': 0}
+[6.820938] (-) TimerEvent: {}
+[6.854126] (vitro_ros_definitions) JobProgress: {'identifier': 'vitro_ros_definitions', 'progress': 'install'}
+[6.861935] (vitro_ros_definitions) Command: {'cmd': ['/usr/bin/cmake', '--install', '/root/ros2_ws/build/vitro_ros_definitions'], 'cwd': '/root/ros2_ws/build/vitro_ros_definitions', 'env': OrderedDict([('SHLVL', '0'), ('LD_LIBRARY_PATH', '/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/root/ros2_ws'), ('ROS_PYTHON_VERSION', '3'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('NVIDIA_DRIVER_CAPABILITIES', 'graphics'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('LANG', 'C.UTF-8'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('PWD', '/root/ros2_ws/build/vitro_ros_definitions'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('NVIDIA_VISIBLE_DEVICES', 'all'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[6.869330] (vitro_ros_definitions) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[6.870090] (vitro_ros_definitions) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[6.870626] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/ament_index/resource_index/rosidl_interfaces/vitro_ros_definitions\n'}
+[6.879042] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/msg/rosidl_generator_c__visibility_control.h\n'}
+[6.887313] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__functions.h\n'}
+[6.895080] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__struct.h\n'}
+[6.902785] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__type_support.h\n'}
+[6.910876] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__functions.h\n'}
+[6.918471] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__struct.h\n'}
+[6.921023] (-) TimerEvent: {}
+[6.926320] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__type_support.h\n'}
+[6.934438] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/set_gimball_angle.h\n'}
+[6.942088] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/set_video_settings.h\n'}
+[6.950355] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/environment/library_path.sh\n'}
+[6.958529] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/environment/library_path.dsv\n'}
+[6.966626] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/msg/rosidl_typesupport_fastrtps_c__visibility_control.h\n'}
+[6.974781] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__rosidl_typesupport_fastrtps_c.h\n'}
+[6.982938] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__rosidl_typesupport_fastrtps_c.h\n'}
+[6.990914] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/msg/rosidl_typesupport_introspection_c__visibility_control.h\n'}
+[6.998968] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__rosidl_typesupport_introspection_c.h\n'}
+[7.006921] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__rosidl_typesupport_introspection_c.h\n'}
+[7.014882] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__builder.hpp\n'}
+[7.021380] (-) TimerEvent: {}
+[7.023154] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__struct.hpp\n'}
+[7.030859] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__traits.hpp\n'}
+[7.038579] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__builder.hpp\n'}
+[7.046737] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__struct.hpp\n'}
+[7.054459] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__traits.hpp\n'}
+[7.062647] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/set_gimball_angle.hpp\n'}
+[7.070410] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/set_video_settings.hpp\n'}
+[7.078920] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h\n'}
+[7.086510] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[7.094498] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[7.102480] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_gimball_angle__rosidl_typesupport_introspection_cpp.hpp\n'}
+[7.110979] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/include/vitro_ros_definitions/vitro_ros_definitions/srv/detail/set_video_settings__rosidl_typesupport_introspection_cpp.hpp\n'}
+[7.118966] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/environment/pythonpath.sh\n'}
+[7.121468] (-) TimerEvent: {}
+[7.127163] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/environment/pythonpath.dsv\n'}
+[7.135212] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions-0.0.0-py3.10.egg-info/PKG-INFO\n'}
+[7.142984] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions-0.0.0-py3.10.egg-info/SOURCES.txt\n'}
+[7.151032] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions-0.0.0-py3.10.egg-info/dependency_links.txt\n'}
+[7.158674] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions-0.0.0-py3.10.egg-info/top_level.txt\n'}
+[7.167539] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/__init__.py\n'}
+[7.175439] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/_vitro_ros_definitions_s.ep.rosidl_typesupport_c.c\n'}
+[7.183113] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/_vitro_ros_definitions_s.ep.rosidl_typesupport_fastrtps_c.c\n'}
+[7.191311] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/_vitro_ros_definitions_s.ep.rosidl_typesupport_introspection_c.c\n'}
+[7.199484] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/libvitro_ros_definitions__rosidl_generator_py.so\n'}
+[7.207339] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv/__init__.py\n'}
+[7.215369] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv/_set_gimball_angle.py\n'}
+[7.221570] (-) TimerEvent: {}
+[7.223126] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv/_set_gimball_angle_s.c\n'}
+[7.231293] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv/_set_video_settings.py\n'}
+[7.239007] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv/_set_video_settings_s.c\n'}
+[7.247163] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so\n'}
+[7.254921] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so\n'}
+[7.262973] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so\n'}
+[7.270901] (vitro_ros_definitions) StdoutLine: {'line': b'-- Up-to-date symlink: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so\n'}
+[7.271281] (vitro_ros_definitions) StdoutLine: {'line': b'-- Up-to-date symlink: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so\n'}
+[7.271809] (vitro_ros_definitions) StdoutLine: {'line': b'-- Up-to-date symlink: /root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/vitro_ros_definitions_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so\n'}
+[7.272028] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/srv/SetGimballAngle.idl\n'}
+[7.279784] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/srv/SetVideoSettings.idl\n'}
+[7.287718] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/srv/SetGimballAngle.srv\n'}
+[7.295410] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/srv/SetGimballAngle_Request.msg\n'}
+[7.303413] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/srv/SetGimballAngle_Response.msg\n'}
+[7.311182] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/srv/SetVideoSettings.srv\n'}
+[7.319379] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/srv/SetVideoSettings_Request.msg\n'}
+[7.321607] (-) TimerEvent: {}
+[7.327249] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/srv/SetVideoSettings_Response.msg\n'}
+[7.335222] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/ament_index/resource_index/package_run_dependencies/vitro_ros_definitions\n'}
+[7.343527] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/ament_index/resource_index/parent_prefix_path/vitro_ros_definitions\n'}
+[7.351291] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/environment/ament_prefix_path.sh\n'}
+[7.359188] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/environment/ament_prefix_path.dsv\n'}
+[7.367144] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/environment/path.sh\n'}
+[7.375368] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/environment/path.dsv\n'}
+[7.383117] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/local_setup.bash\n'}
+[7.391391] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/local_setup.sh\n'}
+[7.399146] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/local_setup.zsh\n'}
+[7.407397] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/local_setup.dsv\n'}
+[7.415270] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/package.dsv\n'}
+[7.421693] (-) TimerEvent: {}
+[7.423277] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/ament_index/resource_index/packages/vitro_ros_definitions\n'}
+[7.431733] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/rosidl_cmake-extras.cmake\n'}
+[7.439992] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[7.447803] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[7.455782] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/ament_cmake_export_targets-extras.cmake\n'}
+[7.463491] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake\n'}
+[7.471798] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[7.479941] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake\n'}
+[7.487949] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitionsConfig.cmake\n'}
+[7.495733] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitionsConfig-version.cmake\n'}
+[7.503681] (vitro_ros_definitions) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/package.xml\n'}
+[7.512029] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_generator_c.so\n'}
+[7.512711] (vitro_ros_definitions) StdoutLine: {'line': b'-- Set runtime path of "/root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_generator_c.so" to ""\n'}
+[7.512944] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_fastrtps_c.so\n'}
+[7.513522] (vitro_ros_definitions) StdoutLine: {'line': b'-- Set runtime path of "/root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_fastrtps_c.so" to ""\n'}
+[7.513763] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_introspection_c.so\n'}
+[7.514314] (vitro_ros_definitions) StdoutLine: {'line': b'-- Set runtime path of "/root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_introspection_c.so" to ""\n'}
+[7.514506] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_c.so\n'}
+[7.515070] (vitro_ros_definitions) StdoutLine: {'line': b'-- Set runtime path of "/root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_c.so" to ""\n'}
+[7.515261] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_fastrtps_cpp.so\n'}
+[7.515883] (vitro_ros_definitions) StdoutLine: {'line': b'-- Set runtime path of "/root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_fastrtps_cpp.so" to ""\n'}
+[7.516087] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_introspection_cpp.so\n'}
+[7.516682] (vitro_ros_definitions) StdoutLine: {'line': b'-- Set runtime path of "/root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_introspection_cpp.so" to ""\n'}
+[7.516890] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_cpp.so\n'}
+[7.517428] (vitro_ros_definitions) StdoutLine: {'line': b'-- Set runtime path of "/root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_typesupport_cpp.so" to ""\n'}
+[7.521781] (-) TimerEvent: {}
+[7.549625] (vitro_ros_definitions) StdoutLine: {'line': b"Listing '/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions'...\n"}
+[7.549759] (vitro_ros_definitions) StdoutLine: {'line': b"Compiling '/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/__init__.py'...\n"}
+[7.549850] (vitro_ros_definitions) StdoutLine: {'line': b"Listing '/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv'...\n"}
+[7.549934] (vitro_ros_definitions) StdoutLine: {'line': b"Compiling '/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv/__init__.py'...\n"}
+[7.550016] (vitro_ros_definitions) StdoutLine: {'line': b"Compiling '/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv/_set_gimball_angle.py'...\n"}
+[7.550095] (vitro_ros_definitions) StdoutLine: {'line': b"Compiling '/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages/vitro_ros_definitions/srv/_set_video_settings.py'...\n"}
+[7.553298] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_generator_py.so\n'}
+[7.553955] (vitro_ros_definitions) StdoutLine: {'line': b'-- Set runtime path of "/root/ros2_ws/install/vitro_ros_definitions/lib/libvitro_ros_definitions__rosidl_generator_py.so" to ""\n'}
+[7.554161] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_generator_cExport.cmake\n'}
+[7.554473] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_generator_cExport-noconfig.cmake\n'}
+[7.554861] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_typesupport_fastrtps_cExport.cmake\n'}
+[7.555221] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_typesupport_fastrtps_cExport-noconfig.cmake\n'}
+[7.555600] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitions__rosidl_typesupport_introspection_cExport.cmake\n'}
+[7.555960] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitions__rosidl_typesupport_introspection_cExport-noconfig.cmake\n'}
+[7.556326] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitions__rosidl_typesupport_cExport.cmake\n'}
+[7.556697] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitions__rosidl_typesupport_cExport-noconfig.cmake\n'}
+[7.557054] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_generator_cppExport.cmake\n'}
+[7.557415] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_typesupport_fastrtps_cppExport.cmake\n'}
+[7.557793] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake\n'}
+[7.558151] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitions__rosidl_typesupport_introspection_cppExport.cmake\n'}
+[7.558502] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitions__rosidl_typesupport_introspection_cppExport-noconfig.cmake\n'}
+[7.558880] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitions__rosidl_typesupport_cppExport.cmake\n'}
+[7.559233] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/vitro_ros_definitions__rosidl_typesupport_cppExport-noconfig.cmake\n'}
+[7.559606] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_generator_pyExport.cmake\n'}
+[7.559954] (vitro_ros_definitions) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake/export_vitro_ros_definitions__rosidl_generator_pyExport-noconfig.cmake\n'}
+[7.562115] (vitro_ros_definitions) CommandEnded: {'returncode': 0}
+[7.621869] (-) TimerEvent: {}
+[7.658633] (vitro_ros_definitions) JobEnded: {'identifier': 'vitro_ros_definitions', 'rc': 0}
+[7.659512] (vitro_interface) JobStarted: {'identifier': 'vitro_interface'}
+[7.667205] (vitro_interface) JobProgress: {'identifier': 'vitro_interface', 'progress': 'cmake'}
+[7.667455] (vitro_interface) Command: {'cmd': ['/usr/bin/cmake', '/root/ros2_ws/src/vitro_interface', '-DAMENT_CMAKE_SYMLINK_INSTALL=1', '-DCMAKE_INSTALL_PREFIX=/root/ros2_ws/install/vitro_interface'], 'cwd': '/root/ros2_ws/build/vitro_interface', 'env': OrderedDict([('SHLVL', '0'), ('LD_LIBRARY_PATH', '/root/ros2_ws/install/vitro_ros_definitions/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/root/ros2_ws'), ('ROS_PYTHON_VERSION', '3'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('NVIDIA_DRIVER_CAPABILITIES', 'graphics'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('LANG', 'C.UTF-8'), ('AMENT_PREFIX_PATH', '/root/ros2_ws/install/vitro_ros_definitions:/opt/ros/humble'), ('PWD', '/root/ros2_ws/build/vitro_interface'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('NVIDIA_VISIBLE_DEVICES', 'all'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/root/ros2_ws/install/vitro_ros_definitions:/opt/ros/humble')]), 'shell': False}
+[7.718705] (vitro_interface) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[7.721965] (-) TimerEvent: {}
+[7.769576] (vitro_interface) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[7.776790] (vitro_interface) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[7.822073] (-) TimerEvent: {}
+[7.841433] (vitro_interface) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[7.848530] (vitro_interface) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[7.848886] (vitro_interface) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[7.849341] (vitro_interface) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[7.852546] (vitro_interface) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[7.923180] (-) TimerEvent: {}
+[7.928706] (vitro_interface) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[7.935868] (vitro_interface) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[7.936227] (vitro_interface) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[7.936781] (vitro_interface) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[7.939771] (vitro_interface) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[8.023265] (-) TimerEvent: {}
+[8.060643] (vitro_interface) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[8.116942] (vitro_interface) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[8.123346] (-) TimerEvent: {}
+[8.147135] (vitro_interface) StdoutLine: {'line': b'-- Found rclcpp: 16.0.10 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[8.189634] (vitro_interface) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[8.195095] (vitro_interface) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[8.203959] (vitro_interface) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[8.216573] (vitro_interface) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[8.223437] (-) TimerEvent: {}
+[8.233336] (vitro_interface) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[8.280383] (vitro_interface) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[8.283515] (vitro_interface) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[8.323526] (-) TimerEvent: {}
+[8.371119] (vitro_interface) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[8.395309] (vitro_interface) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[8.423613] (-) TimerEvent: {}
+[8.434927] (vitro_interface) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[8.444774] (vitro_interface) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[8.513056] (vitro_interface) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[8.513534] (vitro_interface) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[8.523699] (-) TimerEvent: {}
+[8.581615] (vitro_interface) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[8.582785] (vitro_interface) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[8.623793] (-) TimerEvent: {}
+[8.635821] (vitro_interface) StdoutLine: {'line': b'-- Found std_srvs: 4.2.4 (/opt/ros/humble/share/std_srvs/cmake)\n'}
+[8.646514] (vitro_interface) StdoutLine: {'line': b'-- Found sensor_msgs: 4.2.4 (/opt/ros/humble/share/sensor_msgs/cmake)\n'}
+[8.678378] (vitro_interface) StdoutLine: {'line': b'-- Found nav_msgs: 4.2.4 (/opt/ros/humble/share/nav_msgs/cmake)\n'}
+[8.696304] (vitro_interface) StdoutLine: {'line': b'-- Found geographic_msgs: 1.0.6 (/opt/ros/humble/share/geographic_msgs/cmake)\n'}
+[8.723884] (-) TimerEvent: {}
+[8.728358] (vitro_interface) StdoutLine: {'line': b'-- Found mavros_msgs: 2.8.0 (/opt/ros/humble/share/mavros_msgs/cmake)\n'}
+[8.756693] (vitro_interface) StdoutLine: {'line': b'-- Found tf2_ros: 0.25.8 (/opt/ros/humble/share/tf2_ros/cmake)\n'}
+[8.823977] (-) TimerEvent: {}
+[8.849181] (vitro_interface) StdoutLine: {'line': b'-- Found cv_bridge: 3.2.1 (/opt/ros/humble/share/cv_bridge/cmake)\n'}
+[8.863849] (vitro_interface) StdoutLine: {'line': b'-- Found OpenCV: /usr (found version "4.5.4") \n'}
+[8.873667] (vitro_interface) StdoutLine: {'line': b'-- Found PahoMqttC: /usr/local/lib/libpaho-mqtt3as.so  \n'}
+[8.879087] (vitro_interface) StdoutLine: {'line': b'-- Found nlohmann_json: /usr/lib/cmake/nlohmann_json/nlohmann_jsonConfig.cmake (found suitable version "3.10.5", minimum required is "3.2.0") \n'}
+[8.880003] (vitro_interface) StdoutLine: {'line': b'-- Found vitro_ros_definitions: 0.0.0 (/root/ros2_ws/install/vitro_ros_definitions/share/vitro_ros_definitions/cmake)\n'}
+[8.924070] (-) TimerEvent: {}
+[8.958323] (vitro_interface) StdoutLine: {'line': b'-- Configuring done\n'}
+[8.996974] (vitro_interface) StdoutLine: {'line': b'-- Generating done\n'}
+[8.999099] (vitro_interface) StdoutLine: {'line': b'-- Build files have been written to: /root/ros2_ws/build/vitro_interface\n'}
+[9.008332] (vitro_interface) CommandEnded: {'returncode': 0}
+[9.008888] (vitro_interface) JobProgress: {'identifier': 'vitro_interface', 'progress': 'build'}
+[9.009153] (vitro_interface) Command: {'cmd': ['/usr/bin/cmake', '--build', '/root/ros2_ws/build/vitro_interface', '--', '-j2', '-l2'], 'cwd': '/root/ros2_ws/build/vitro_interface', 'env': OrderedDict([('SHLVL', '0'), ('LD_LIBRARY_PATH', '/root/ros2_ws/install/vitro_ros_definitions/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/root/ros2_ws'), ('ROS_PYTHON_VERSION', '3'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('NVIDIA_DRIVER_CAPABILITIES', 'graphics'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('LANG', 'C.UTF-8'), ('AMENT_PREFIX_PATH', '/root/ros2_ws/install/vitro_ros_definitions:/opt/ros/humble'), ('PWD', '/root/ros2_ws/build/vitro_interface'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('NVIDIA_VISIBLE_DEVICES', 'all'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/root/ros2_ws/install/vitro_ros_definitions:/opt/ros/humble')]), 'shell': False}
+[9.024164] (-) TimerEvent: {}
+[9.060945] (vitro_interface) StdoutLine: {'line': b'[  9%] Building CXX object CMakeFiles/vitro_mqtt.dir/src/generic_mqtt_client.cpp.o\n'}
+[9.124288] (-) TimerEvent: {}
+[9.224494] (-) TimerEvent: {}
+[9.324721] (-) TimerEvent: {}
+[9.425212] (-) TimerEvent: {}
+[9.508761] (vitro_interface) StderrLine: {'line': b'In file included from /root/ros2_ws/src/vitro_interface/src/generic_mqtt_client.cpp:1:\n'}
+[9.509030] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::on_failure(const mqtt::token&)\xe2\x80\x99:\n'}
+[9.509133] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:67:40: warning: unused parameter \xe2\x80\x98tok\xe2\x80\x99 [-Wunused-parameter]\n'}
+[9.509221] (vitro_interface) StderrLine: {'line': b'   67 |     void on_failure(const mqtt::token& tok) override {\n'}
+[9.509300] (vitro_interface) StderrLine: {'line': b'      |                     ~~~~~~~~~~~~~~~~~~~^~~\n'}
+[9.509374] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::on_success(const mqtt::token&)\xe2\x80\x99:\n'}
+[9.509449] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:75:40: warning: unused parameter \xe2\x80\x98tok\xe2\x80\x99 [-Wunused-parameter]\n'}
+[9.509522] (vitro_interface) StderrLine: {'line': b'   75 |     void on_success(const mqtt::token& tok) override {}\n'}
+[9.509651] (vitro_interface) StderrLine: {'line': b'      |                     ~~~~~~~~~~~~~~~~~~~^~~\n'}
+[9.510941] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::connected(const string&)\xe2\x80\x99:\n'}
+[9.511050] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:79:39: warning: unused parameter \xe2\x80\x98cause\xe2\x80\x99 [-Wunused-parameter]\n'}
+[9.511385] (vitro_interface) StderrLine: {'line': b'   79 |     void connected(const std::string& cause) override {\n'}
+[9.511520] (vitro_interface) StderrLine: {'line': b'      |                    ~~~~~~~~~~~~~~~~~~~^~~~~\n'}
+[9.511661] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::delivery_complete(mqtt::delivery_token_ptr)\xe2\x80\x99:\n'}
+[9.511762] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:98:53: warning: unused parameter \xe2\x80\x98token\xe2\x80\x99 [-Wunused-parameter]\n'}
+[9.511861] (vitro_interface) StderrLine: {'line': b'   98 |     void delivery_complete(mqtt::delivery_token_ptr token) override {}\n'}
+[9.511952] (vitro_interface) StderrLine: {'line': b'      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~\n'}
+[9.517219] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In constructor \xe2\x80\x98vitro::GenericMqttClient::GenericMqttClient(std::string, std::string, std::string, std::function<void(std::shared_ptr<const mqtt::message>)>, int)\xe2\x80\x99:\n'}
+[9.517366] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:135:17: warning: \xe2\x80\x98vitro::GenericMqttClient::server\xe2\x80\x99 will be initialized after [-Wreorder]\n'}
+[9.517480] (vitro_interface) StderrLine: {'line': b'  135 |     std::string server;\n'}
+[9.517611] (vitro_interface) StderrLine: {'line': b'      |                 ^~~~~~\n'}
+[9.517732] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:134:17: warning:   \xe2\x80\x98std::string vitro::GenericMqttClient::client_name\xe2\x80\x99 [-Wreorder]\n'}
+[9.517839] (vitro_interface) StderrLine: {'line': b'  134 |     std::string client_name;\n'}
+[9.517947] (vitro_interface) StderrLine: {'line': b'      |                 ^~~~~~~~~~~\n'}
+[9.518053] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/generic_mqtt_client.cpp:5:1: warning:   when initialized here [-Wreorder]\n'}
+[9.518150] (vitro_interface) StderrLine: {'line': b'    5 | GenericMqttClient::GenericMqttClient(std::string server_uri, std::string name, std::string topic,\n'}
+[9.518242] (vitro_interface) StderrLine: {'line': b'      | ^~~~~~~~~~~~~~~~~\n'}
+[9.518326] (vitro_interface) StderrLine: {'line': b'In file included from /root/ros2_ws/src/vitro_interface/src/generic_mqtt_client.cpp:1:\n'}
+[9.518407] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:139:50: warning: \xe2\x80\x98vitro::GenericMqttClient::_callback_func\xe2\x80\x99 will be initialized after [-Wreorder]\n'}
+[9.518492] (vitro_interface) StderrLine: {'line': b'  139 |     std::function<void(mqtt::const_message_ptr)> _callback_func;\n'}
+[9.518613] (vitro_interface) StderrLine: {'line': b'      |                                                  ^~~~~~~~~~~~~~\n'}
+[9.518729] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:131:9: warning:   \xe2\x80\x98int vitro::GenericMqttClient::QOS\xe2\x80\x99 [-Wreorder]\n'}
+[9.518836] (vitro_interface) StderrLine: {'line': b'  131 |     int QOS;\n'}
+[9.518939] (vitro_interface) StderrLine: {'line': b'      |         ^~~\n'}
+[9.519025] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/generic_mqtt_client.cpp:5:1: warning:   when initialized here [-Wreorder]\n'}
+[9.519114] (vitro_interface) StderrLine: {'line': b'    5 | GenericMqttClient::GenericMqttClient(std::string server_uri, std::string name, std::string topic,\n'}
+[9.519210] (vitro_interface) StderrLine: {'line': b'      | ^~~~~~~~~~~~~~~~~\n'}
+[9.519536] (vitro_interface) StderrLine: {'line': b'In file included from /root/ros2_ws/src/vitro_interface/src/generic_mqtt_client.cpp:1:\n'}
+[9.519684] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In constructor \xe2\x80\x98vitro::GenericMqttClient::GenericMqttClient(std::string, std::string, int)\xe2\x80\x99:\n'}
+[9.519788] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:135:17: warning: \xe2\x80\x98vitro::GenericMqttClient::server\xe2\x80\x99 will be initialized after [-Wreorder]\n'}
+[9.519885] (vitro_interface) StderrLine: {'line': b'  135 |     std::string server;\n'}
+[9.519981] (vitro_interface) StderrLine: {'line': b'      |                 ^~~~~~\n'}
+[9.520081] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:134:17: warning:   \xe2\x80\x98std::string vitro::GenericMqttClient::client_name\xe2\x80\x99 [-Wreorder]\n'}
+[9.520198] (vitro_interface) StderrLine: {'line': b'  134 |     std::string client_name;\n'}
+[9.520295] (vitro_interface) StderrLine: {'line': b'      |                 ^~~~~~~~~~~\n'}
+[9.520391] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/generic_mqtt_client.cpp:17:1: warning:   when initialized here [-Wreorder]\n'}
+[9.520489] (vitro_interface) StderrLine: {'line': b'   17 | GenericMqttClient::GenericMqttClient(std::string server_uri, std::string name, int level) : server(server_uri), client_name(name), QOS(level) {\n'}
+[9.520621] (vitro_interface) StderrLine: {'line': b'      | ^~~~~~~~~~~~~~~~~\n'}
+[9.520726] (vitro_interface) StderrLine: {'line': b'In file included from /root/ros2_ws/src/vitro_interface/src/generic_mqtt_client.cpp:1:\n'}
+[9.520825] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:134:17: warning: \xe2\x80\x98vitro::GenericMqttClient::client_name\xe2\x80\x99 will be initialized after [-Wreorder]\n'}
+[9.520920] (vitro_interface) StderrLine: {'line': b'  134 |     std::string client_name;\n'}
+[9.521023] (vitro_interface) StderrLine: {'line': b'      |                 ^~~~~~~~~~~\n'}
+[9.521128] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:131:9: warning:   \xe2\x80\x98int vitro::GenericMqttClient::QOS\xe2\x80\x99 [-Wreorder]\n'}
+[9.521230] (vitro_interface) StderrLine: {'line': b'  131 |     int QOS;\n'}
+[9.521333] (vitro_interface) StderrLine: {'line': b'      |         ^~~\n'}
+[9.521429] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/generic_mqtt_client.cpp:17:1: warning:   when initialized here [-Wreorder]\n'}
+[9.521528] (vitro_interface) StderrLine: {'line': b'   17 | GenericMqttClient::GenericMqttClient(std::string server_uri, std::string name, int level) : server(server_uri), client_name(name), QOS(level) {\n'}
+[9.521657] (vitro_interface) StderrLine: {'line': b'      | ^~~~~~~~~~~~~~~~~\n'}
+[9.525289] (-) TimerEvent: {}
+[9.625472] (-) TimerEvent: {}
+[9.725708] (-) TimerEvent: {}
+[9.825920] (-) TimerEvent: {}
+[9.926102] (-) TimerEvent: {}
+[10.026270] (-) TimerEvent: {}
+[10.126428] (-) TimerEvent: {}
+[10.176154] (vitro_interface) StdoutLine: {'line': b'[ 18%] Linking CXX shared library libvitro_mqtt.so\n'}
+[10.226544] (-) TimerEvent: {}
+[10.249191] (vitro_interface) StdoutLine: {'line': b'[ 18%] Built target vitro_mqtt\n'}
+[10.279672] (vitro_interface) StdoutLine: {'line': b'[ 36%] Building CXX object CMakeFiles/vitro_interface_docking.dir/src/docking_interface.cpp.o\n'}
+[10.279824] (vitro_interface) StdoutLine: {'line': b'[ 36%] Building CXX object CMakeFiles/vitro_interface_executor.dir/src/vitro_interface.cpp.o\n'}
+[10.326600] (-) TimerEvent: {}
+[10.426735] (-) TimerEvent: {}
+[10.526891] (-) TimerEvent: {}
+[10.627075] (-) TimerEvent: {}
+[10.727255] (-) TimerEvent: {}
+[10.827447] (-) TimerEvent: {}
+[10.927650] (-) TimerEvent: {}
+[11.027867] (-) TimerEvent: {}
+[11.128645] (-) TimerEvent: {}
+[11.228870] (-) TimerEvent: {}
+[11.329092] (-) TimerEvent: {}
+[11.429311] (-) TimerEvent: {}
+[11.530645] (-) TimerEvent: {}
+[11.630878] (-) TimerEvent: {}
+[11.731099] (-) TimerEvent: {}
+[11.831326] (-) TimerEvent: {}
+[11.931577] (-) TimerEvent: {}
+[12.031802] (-) TimerEvent: {}
+[12.073184] (vitro_interface) StderrLine: {'line': b'In file included from /root/ros2_ws/src/vitro_interface/include/command_handler_node.hpp:9,\n'}
+[12.073425] (vitro_interface) StderrLine: {'line': b'                 from /root/ros2_ws/src/vitro_interface/src/vitro_interface.cpp:11:\n'}
+[12.073551] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::on_failure(const mqtt::token&)\xe2\x80\x99:\n'}
+[12.073696] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:67:40: warning: unused parameter \xe2\x80\x98tok\xe2\x80\x99 [-Wunused-parameter]\n'}
+[12.073779] (vitro_interface) StderrLine: {'line': b'   67 |     void on_failure(const mqtt::token& tok) override {\n'}
+[12.073851] (vitro_interface) StderrLine: {'line': b'      |                     ~~~~~~~~~~~~~~~~~~~^~~\n'}
+[12.074111] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::on_success(const mqtt::token&)\xe2\x80\x99:\n'}
+[12.074216] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:75:40: warning: unused parameter \xe2\x80\x98tok\xe2\x80\x99 [-Wunused-parameter]\n'}
+[12.074305] (vitro_interface) StderrLine: {'line': b'   75 |     void on_success(const mqtt::token& tok) override {}\n'}
+[12.074397] (vitro_interface) StderrLine: {'line': b'      |                     ~~~~~~~~~~~~~~~~~~~^~~\n'}
+[12.075025] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::connected(const string&)\xe2\x80\x99:\n'}
+[12.075150] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:79:39: warning: unused parameter \xe2\x80\x98cause\xe2\x80\x99 [-Wunused-parameter]\n'}
+[12.075272] (vitro_interface) StderrLine: {'line': b'   79 |     void connected(const std::string& cause) override {\n'}
+[12.075378] (vitro_interface) StderrLine: {'line': b'      |                    ~~~~~~~~~~~~~~~~~~~^~~~~\n'}
+[12.077019] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::delivery_complete(mqtt::delivery_token_ptr)\xe2\x80\x99:\n'}
+[12.077157] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:98:53: warning: unused parameter \xe2\x80\x98token\xe2\x80\x99 [-Wunused-parameter]\n'}
+[12.077264] (vitro_interface) StderrLine: {'line': b'   98 |     void delivery_complete(mqtt::delivery_token_ptr token) override {}\n'}
+[12.077360] (vitro_interface) StderrLine: {'line': b'      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~\n'}
+[12.131900] (-) TimerEvent: {}
+[12.232645] (-) TimerEvent: {}
+[12.332863] (-) TimerEvent: {}
+[12.433078] (-) TimerEvent: {}
+[12.533296] (-) TimerEvent: {}
+[12.634646] (-) TimerEvent: {}
+[12.734879] (-) TimerEvent: {}
+[12.835106] (-) TimerEvent: {}
+[12.935337] (-) TimerEvent: {}
+[13.035584] (-) TimerEvent: {}
+[13.135809] (-) TimerEvent: {}
+[13.236646] (-) TimerEvent: {}
+[13.336876] (-) TimerEvent: {}
+[13.437108] (-) TimerEvent: {}
+[13.537334] (-) TimerEvent: {}
+[13.597795] (vitro_interface) StderrLine: {'line': b'In file included from /root/ros2_ws/src/vitro_interface/include/docking_station_handler_node.hpp:9,\n'}
+[13.598177] (vitro_interface) StderrLine: {'line': b'                 from /root/ros2_ws/src/vitro_interface/src/docking_interface.cpp:12:\n'}
+[13.598296] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::on_failure(const mqtt::token&)\xe2\x80\x99:\n'}
+[13.598415] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:67:40: warning: unused parameter \xe2\x80\x98tok\xe2\x80\x99 [-Wunused-parameter]\n'}
+[13.598512] (vitro_interface) StderrLine: {'line': b'   67 |     void on_failure(const mqtt::token& tok) override {\n'}
+[13.598648] (vitro_interface) StderrLine: {'line': b'      |                     ~~~~~~~~~~~~~~~~~~~^~~\n'}
+[13.598747] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::on_success(const mqtt::token&)\xe2\x80\x99:\n'}
+[13.598845] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:75:40: warning: unused parameter \xe2\x80\x98tok\xe2\x80\x99 [-Wunused-parameter]\n'}
+[13.598934] (vitro_interface) StderrLine: {'line': b'   75 |     void on_success(const mqtt::token& tok) override {}\n'}
+[13.599033] (vitro_interface) StderrLine: {'line': b'      |                     ~~~~~~~~~~~~~~~~~~~^~~\n'}
+[13.599132] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::connected(const string&)\xe2\x80\x99:\n'}
+[13.599249] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:79:39: warning: unused parameter \xe2\x80\x98cause\xe2\x80\x99 [-Wunused-parameter]\n'}
+[13.599350] (vitro_interface) StderrLine: {'line': b'   79 |     void connected(const std::string& cause) override {\n'}
+[13.599450] (vitro_interface) StderrLine: {'line': b'      |                    ~~~~~~~~~~~~~~~~~~~^~~~~\n'}
+[13.603554] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::delivery_complete(mqtt::delivery_token_ptr)\xe2\x80\x99:\n'}
+[13.603713] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:98:53: warning: unused parameter \xe2\x80\x98token\xe2\x80\x99 [-Wunused-parameter]\n'}
+[13.603823] (vitro_interface) StderrLine: {'line': b'   98 |     void delivery_complete(mqtt::delivery_token_ptr token) override {}\n'}
+[13.603922] (vitro_interface) StderrLine: {'line': b'      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~\n'}
+[13.637432] (-) TimerEvent: {}
+[13.737642] (-) TimerEvent: {}
+[13.837861] (-) TimerEvent: {}
+[13.920903] (vitro_interface) StderrLine: {'line': b'In file included from /root/ros2_ws/src/vitro_interface/include/command_handler_node.hpp:13,\n'}
+[13.921111] (vitro_interface) StderrLine: {'line': b'                 from /root/ros2_ws/src/vitro_interface/src/vitro_interface.cpp:11:\n'}
+[13.921200] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/shared_memory_handler.hpp: At global scope:\n'}
+[13.921294] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/shared_memory_handler.hpp:28:1: warning: extra \xe2\x80\x98;\xe2\x80\x99 [-Wpedantic]\n'}
+[13.921368] (vitro_interface) StderrLine: {'line': b'   28 | ;\n'}
+[13.921438] (vitro_interface) StderrLine: {'line': b'      | ^\n'}
+[13.921507] (vitro_interface) StderrLine: {'line': b'      | -\n'}
+[13.939609] (-) TimerEvent: {}
+[14.042774] (-) TimerEvent: {}
+[14.149648] (-) TimerEvent: {}
+[14.249860] (-) TimerEvent: {}
+[14.350061] (-) TimerEvent: {}
+[14.451631] (-) TimerEvent: {}
+[14.551825] (-) TimerEvent: {}
+[14.653645] (-) TimerEvent: {}
+[14.755633] (-) TimerEvent: {}
+[14.855834] (-) TimerEvent: {}
+[14.956037] (-) TimerEvent: {}
+[15.057994] (-) TimerEvent: {}
+[15.158214] (-) TimerEvent: {}
+[15.258442] (-) TimerEvent: {}
+[15.360644] (-) TimerEvent: {}
+[15.460864] (-) TimerEvent: {}
+[15.561155] (-) TimerEvent: {}
+[15.661395] (-) TimerEvent: {}
+[15.761639] (-) TimerEvent: {}
+[15.861869] (-) TimerEvent: {}
+[15.962091] (-) TimerEvent: {}
+[16.062319] (-) TimerEvent: {}
+[16.162548] (-) TimerEvent: {}
+[16.262799] (-) TimerEvent: {}
+[16.363032] (-) TimerEvent: {}
+[16.465648] (-) TimerEvent: {}
+[16.565881] (-) TimerEvent: {}
+[16.666107] (-) TimerEvent: {}
+[16.766350] (-) TimerEvent: {}
+[16.866592] (-) TimerEvent: {}
+[16.966825] (-) TimerEvent: {}
+[17.067058] (-) TimerEvent: {}
+[17.167280] (-) TimerEvent: {}
+[17.244341] (vitro_interface) StdoutLine: {'line': b'[ 45%] Building CXX object CMakeFiles/vitro_interface_docking.dir/src/docking_station_handler_node.cpp.o\n'}
+[17.267366] (-) TimerEvent: {}
+[17.367542] (-) TimerEvent: {}
+[17.467770] (-) TimerEvent: {}
+[17.567979] (-) TimerEvent: {}
+[17.668189] (-) TimerEvent: {}
+[17.768392] (-) TimerEvent: {}
+[17.868622] (-) TimerEvent: {}
+[17.968851] (-) TimerEvent: {}
+[18.069081] (-) TimerEvent: {}
+[18.147071] (vitro_interface) StdoutLine: {'line': b'[ 54%] Building CXX object CMakeFiles/vitro_interface_executor.dir/src/video_stream_node.cpp.o\n'}
+[18.169165] (-) TimerEvent: {}
+[18.269352] (-) TimerEvent: {}
+[18.369581] (-) TimerEvent: {}
+[18.470648] (-) TimerEvent: {}
+[18.570869] (-) TimerEvent: {}
+[18.671069] (-) TimerEvent: {}
+[18.771270] (-) TimerEvent: {}
+[18.781894] (vitro_interface) StderrLine: {'line': b'In file included from /root/ros2_ws/src/vitro_interface/include/docking_station_handler_node.hpp:9,\n'}
+[18.782686] (vitro_interface) StderrLine: {'line': b'                 from /root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:1:\n'}
+[18.782804] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::on_failure(const mqtt::token&)\xe2\x80\x99:\n'}
+[18.782910] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:67:40: warning: unused parameter \xe2\x80\x98tok\xe2\x80\x99 [-Wunused-parameter]\n'}
+[18.783009] (vitro_interface) StderrLine: {'line': b'   67 |     void on_failure(const mqtt::token& tok) override {\n'}
+[18.783104] (vitro_interface) StderrLine: {'line': b'      |                     ~~~~~~~~~~~~~~~~~~~^~~\n'}
+[18.783199] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::on_success(const mqtt::token&)\xe2\x80\x99:\n'}
+[18.783308] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:75:40: warning: unused parameter \xe2\x80\x98tok\xe2\x80\x99 [-Wunused-parameter]\n'}
+[18.783406] (vitro_interface) StderrLine: {'line': b'   75 |     void on_success(const mqtt::token& tok) override {}\n'}
+[18.783498] (vitro_interface) StderrLine: {'line': b'      |                     ~~~~~~~~~~~~~~~~~~~^~~\n'}
+[18.783645] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::connected(const string&)\xe2\x80\x99:\n'}
+[18.783767] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:79:39: warning: unused parameter \xe2\x80\x98cause\xe2\x80\x99 [-Wunused-parameter]\n'}
+[18.783876] (vitro_interface) StderrLine: {'line': b'   79 |     void connected(const std::string& cause) override {\n'}
+[18.783986] (vitro_interface) StderrLine: {'line': b'      |                    ~~~~~~~~~~~~~~~~~~~^~~~~\n'}
+[18.785700] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::delivery_complete(mqtt::delivery_token_ptr)\xe2\x80\x99:\n'}
+[18.785791] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:98:53: warning: unused parameter \xe2\x80\x98token\xe2\x80\x99 [-Wunused-parameter]\n'}
+[18.785880] (vitro_interface) StderrLine: {'line': b'   98 |     void delivery_complete(mqtt::delivery_token_ptr token) override {}\n'}
+[18.785975] (vitro_interface) StderrLine: {'line': b'      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~\n'}
+[18.871483] (-) TimerEvent: {}
+[18.971720] (-) TimerEvent: {}
+[19.071941] (-) TimerEvent: {}
+[19.172163] (-) TimerEvent: {}
+[19.274647] (-) TimerEvent: {}
+[19.374866] (-) TimerEvent: {}
+[19.475084] (-) TimerEvent: {}
+[19.575302] (-) TimerEvent: {}
+[19.675516] (-) TimerEvent: {}
+[19.775760] (-) TimerEvent: {}
+[19.875975] (-) TimerEvent: {}
+[19.976198] (-) TimerEvent: {}
+[20.076423] (-) TimerEvent: {}
+[20.176646] (-) TimerEvent: {}
+[20.276862] (-) TimerEvent: {}
+[20.377093] (-) TimerEvent: {}
+[20.477316] (-) TimerEvent: {}
+[20.579639] (-) TimerEvent: {}
+[20.679854] (-) TimerEvent: {}
+[20.780072] (-) TimerEvent: {}
+[20.880294] (-) TimerEvent: {}
+[20.980530] (-) TimerEvent: {}
+[21.080767] (-) TimerEvent: {}
+[21.180987] (-) TimerEvent: {}
+[21.281221] (-) TimerEvent: {}
+[21.381444] (-) TimerEvent: {}
+[21.481650] (-) TimerEvent: {}
+[21.581872] (-) TimerEvent: {}
+[21.682098] (-) TimerEvent: {}
+[21.777435] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function \xe2\x80\x98void DockingStationHandlerNode::trigger_remote_on(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)\xe2\x80\x99:\n'}
+[21.777698] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:83:106: warning: unused parameter \xe2\x80\x98request\xe2\x80\x99 [-Wunused-parameter]\n'}
+[21.777815] (vitro_interface) StderrLine: {'line': b'   83 | void DockingStationHandlerNode::trigger_remote_on(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,\n'}
+[21.777917] (vitro_interface) StderrLine: {'line': b'      |                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~\n'}
+[21.779428] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function \xe2\x80\x98void DockingStationHandlerNode::trigger_remote_off(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)\xe2\x80\x99:\n'}
+[21.779587] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:99:107: warning: unused parameter \xe2\x80\x98request\xe2\x80\x99 [-Wunused-parameter]\n'}
+[21.779721] (vitro_interface) StderrLine: {'line': b'   99 | void DockingStationHandlerNode::trigger_remote_off(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,\n'}
+[21.779846] (vitro_interface) StderrLine: {'line': b'      |                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~\n'}
+[21.781319] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function \xe2\x80\x98void DockingStationHandlerNode::trigger_canopy_open(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)\xe2\x80\x99:\n'}
+[21.781475] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:115:108: warning: unused parameter \xe2\x80\x98request\xe2\x80\x99 [-Wunused-parameter]\n'}
+[21.781606] (vitro_interface) StderrLine: {'line': b'  115 | void DockingStationHandlerNode::trigger_canopy_open(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,\n'}
+[21.781728] (vitro_interface) StderrLine: {'line': b'      |                                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~\n'}
+[21.783159] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function \xe2\x80\x98void DockingStationHandlerNode::trigger_canopy_close(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)\xe2\x80\x99:\n'}
+[21.783301] (-) TimerEvent: {}
+[21.783331] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:131:109: warning: unused parameter \xe2\x80\x98request\xe2\x80\x99 [-Wunused-parameter]\n'}
+[21.783428] (vitro_interface) StderrLine: {'line': b'  131 | void DockingStationHandlerNode::trigger_canopy_close(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,\n'}
+[21.783527] (vitro_interface) StderrLine: {'line': b'      |                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~\n'}
+[21.785003] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function \xe2\x80\x98void DockingStationHandlerNode::trigger_bars_open(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)\xe2\x80\x99:\n'}
+[21.785130] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:147:106: warning: unused parameter \xe2\x80\x98request\xe2\x80\x99 [-Wunused-parameter]\n'}
+[21.785223] (vitro_interface) StderrLine: {'line': b'  147 | void DockingStationHandlerNode::trigger_bars_open(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,\n'}
+[21.785311] (vitro_interface) StderrLine: {'line': b'      |                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~\n'}
+[21.786729] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function \xe2\x80\x98void DockingStationHandlerNode::trigger_bars_close(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)\xe2\x80\x99:\n'}
+[21.786864] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:163:107: warning: unused parameter \xe2\x80\x98request\xe2\x80\x99 [-Wunused-parameter]\n'}
+[21.786969] (vitro_interface) StderrLine: {'line': b'  163 | void DockingStationHandlerNode::trigger_bars_close(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,\n'}
+[21.787059] (vitro_interface) StderrLine: {'line': b'      |                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~\n'}
+[21.789597] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function \xe2\x80\x98void DockingStationHandlerNode::trigger_charging_start(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)\xe2\x80\x99:\n'}
+[21.789738] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:179:111: warning: unused parameter \xe2\x80\x98request\xe2\x80\x99 [-Wunused-parameter]\n'}
+[21.789838] (vitro_interface) StderrLine: {'line': b'  179 | void DockingStationHandlerNode::trigger_charging_start(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,\n'}
+[21.789943] (vitro_interface) StderrLine: {'line': b'      |                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~\n'}
+[21.790315] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function \xe2\x80\x98void DockingStationHandlerNode::trigger_charging_stop(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)\xe2\x80\x99:\n'}
+[21.790435] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:195:110: warning: unused parameter \xe2\x80\x98request\xe2\x80\x99 [-Wunused-parameter]\n'}
+[21.790549] (vitro_interface) StderrLine: {'line': b'  195 | void DockingStationHandlerNode::trigger_charging_stop(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,\n'}
+[21.790691] (vitro_interface) StderrLine: {'line': b'      |                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~\n'}
+[21.792117] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function \xe2\x80\x98void DockingStationHandlerNode::trigger_battery_on(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)\xe2\x80\x99:\n'}
+[21.792256] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:211:107: warning: unused parameter \xe2\x80\x98request\xe2\x80\x99 [-Wunused-parameter]\n'}
+[21.792357] (vitro_interface) StderrLine: {'line': b'  211 | void DockingStationHandlerNode::trigger_battery_on(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,\n'}
+[21.792464] (vitro_interface) StderrLine: {'line': b'      |                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~\n'}
+[21.795711] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp: In member function \xe2\x80\x98void DockingStationHandlerNode::trigger_battery_off(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)\xe2\x80\x99:\n'}
+[21.795857] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/docking_station_handler_node.cpp:227:108: warning: unused parameter \xe2\x80\x98request\xe2\x80\x99 [-Wunused-parameter]\n'}
+[21.795978] (vitro_interface) StderrLine: {'line': b'  227 | void DockingStationHandlerNode::trigger_battery_off(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,\n'}
+[21.796081] (vitro_interface) StderrLine: {'line': b'      |                                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~\n'}
+[21.883440] (-) TimerEvent: {}
+[21.984661] (-) TimerEvent: {}
+[22.084874] (-) TimerEvent: {}
+[22.185088] (-) TimerEvent: {}
+[22.285315] (-) TimerEvent: {}
+[22.385543] (-) TimerEvent: {}
+[22.485785] (-) TimerEvent: {}
+[22.586646] (-) TimerEvent: {}
+[22.686867] (-) TimerEvent: {}
+[22.787083] (-) TimerEvent: {}
+[22.887312] (-) TimerEvent: {}
+[22.988645] (-) TimerEvent: {}
+[23.088874] (-) TimerEvent: {}
+[23.189098] (-) TimerEvent: {}
+[23.289324] (-) TimerEvent: {}
+[23.389546] (-) TimerEvent: {}
+[23.489785] (-) TimerEvent: {}
+[23.590641] (-) TimerEvent: {}
+[23.690946] (-) TimerEvent: {}
+[23.791172] (-) TimerEvent: {}
+[23.891404] (-) TimerEvent: {}
+[23.992645] (-) TimerEvent: {}
+[24.092864] (-) TimerEvent: {}
+[24.193091] (-) TimerEvent: {}
+[24.293317] (-) TimerEvent: {}
+[24.393547] (-) TimerEvent: {}
+[24.493797] (-) TimerEvent: {}
+[24.595645] (-) TimerEvent: {}
+[24.695855] (-) TimerEvent: {}
+[24.796060] (-) TimerEvent: {}
+[24.896260] (-) TimerEvent: {}
+[24.996469] (-) TimerEvent: {}
+[25.096649] (-) TimerEvent: {}
+[25.196862] (-) TimerEvent: {}
+[25.297071] (-) TimerEvent: {}
+[25.397274] (-) TimerEvent: {}
+[25.497485] (-) TimerEvent: {}
+[25.599628] (-) TimerEvent: {}
+[25.699829] (-) TimerEvent: {}
+[25.800039] (-) TimerEvent: {}
+[25.900262] (-) TimerEvent: {}
+[26.000459] (-) TimerEvent: {}
+[26.100634] (-) TimerEvent: {}
+[26.200827] (-) TimerEvent: {}
+[26.301021] (-) TimerEvent: {}
+[26.401222] (-) TimerEvent: {}
+[26.501414] (-) TimerEvent: {}
+[26.601626] (-) TimerEvent: {}
+[26.701837] (-) TimerEvent: {}
+[26.802044] (-) TimerEvent: {}
+[26.839101] (vitro_interface) StdoutLine: {'line': b'[ 63%] Linking CXX executable vitro_interface_docking\n'}
+[26.902142] (-) TimerEvent: {}
+[27.002333] (-) TimerEvent: {}
+[27.069486] (vitro_interface) StdoutLine: {'line': b'[ 63%] Built target vitro_interface_docking\n'}
+[27.081418] (vitro_interface) StdoutLine: {'line': b'[ 72%] Building CXX object CMakeFiles/vitro_interface_executor.dir/src/data_publish_node.cpp.o\n'}
+[27.102411] (-) TimerEvent: {}
+[27.202572] (-) TimerEvent: {}
+[27.302725] (-) TimerEvent: {}
+[27.402899] (-) TimerEvent: {}
+[27.503086] (-) TimerEvent: {}
+[27.603269] (-) TimerEvent: {}
+[27.703453] (-) TimerEvent: {}
+[27.803641] (-) TimerEvent: {}
+[27.904638] (-) TimerEvent: {}
+[28.004847] (-) TimerEvent: {}
+[28.105046] (-) TimerEvent: {}
+[28.205249] (-) TimerEvent: {}
+[28.305469] (-) TimerEvent: {}
+[28.405646] (-) TimerEvent: {}
+[28.507635] (-) TimerEvent: {}
+[28.607831] (-) TimerEvent: {}
+[28.708036] (-) TimerEvent: {}
+[28.752624] (vitro_interface) StderrLine: {'line': b'In file included from /root/ros2_ws/src/vitro_interface/include/data_publish_node.hpp:11,\n'}
+[28.752836] (vitro_interface) StderrLine: {'line': b'                 from /root/ros2_ws/src/vitro_interface/src/data_publish_node.cpp:1:\n'}
+[28.752941] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::on_failure(const mqtt::token&)\xe2\x80\x99:\n'}
+[28.753039] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:67:40: warning: unused parameter \xe2\x80\x98tok\xe2\x80\x99 [-Wunused-parameter]\n'}
+[28.753133] (vitro_interface) StderrLine: {'line': b'   67 |     void on_failure(const mqtt::token& tok) override {\n'}
+[28.753226] (vitro_interface) StderrLine: {'line': b'      |                     ~~~~~~~~~~~~~~~~~~~^~~\n'}
+[28.754719] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::on_success(const mqtt::token&)\xe2\x80\x99:\n'}
+[28.754843] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:75:40: warning: unused parameter \xe2\x80\x98tok\xe2\x80\x99 [-Wunused-parameter]\n'}
+[28.754931] (vitro_interface) StderrLine: {'line': b'   75 |     void on_success(const mqtt::token& tok) override {}\n'}
+[28.755018] (vitro_interface) StderrLine: {'line': b'      |                     ~~~~~~~~~~~~~~~~~~~^~~\n'}
+[28.755096] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::connected(const string&)\xe2\x80\x99:\n'}
+[28.755174] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:79:39: warning: unused parameter \xe2\x80\x98cause\xe2\x80\x99 [-Wunused-parameter]\n'}
+[28.755250] (vitro_interface) StderrLine: {'line': b'   79 |     void connected(const std::string& cause) override {\n'}
+[28.755327] (vitro_interface) StderrLine: {'line': b'      |                    ~~~~~~~~~~~~~~~~~~~^~~~~\n'}
+[28.756022] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::delivery_complete(mqtt::delivery_token_ptr)\xe2\x80\x99:\n'}
+[28.756150] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:98:53: warning: unused parameter \xe2\x80\x98token\xe2\x80\x99 [-Wunused-parameter]\n'}
+[28.756247] (vitro_interface) StderrLine: {'line': b'   98 |     void delivery_complete(mqtt::delivery_token_ptr token) override {}\n'}
+[28.756338] (vitro_interface) StderrLine: {'line': b'      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~\n'}
+[28.808121] (-) TimerEvent: {}
+[28.908310] (-) TimerEvent: {}
+[29.010640] (-) TimerEvent: {}
+[29.110849] (-) TimerEvent: {}
+[29.211063] (-) TimerEvent: {}
+[29.311287] (-) TimerEvent: {}
+[29.411490] (-) TimerEvent: {}
+[29.511705] (-) TimerEvent: {}
+[29.611922] (-) TimerEvent: {}
+[29.712125] (-) TimerEvent: {}
+[29.812342] (-) TimerEvent: {}
+[29.912551] (-) TimerEvent: {}
+[30.012783] (-) TimerEvent: {}
+[30.112998] (-) TimerEvent: {}
+[30.213203] (-) TimerEvent: {}
+[30.315644] (-) TimerEvent: {}
+[30.415849] (-) TimerEvent: {}
+[30.516062] (-) TimerEvent: {}
+[30.616288] (-) TimerEvent: {}
+[30.632921] (vitro_interface) StderrLine: {'line': b'In file included from /root/ros2_ws/src/vitro_interface/include/data_publish_node.hpp:18,\n'}
+[30.633134] (vitro_interface) StderrLine: {'line': b'                 from /root/ros2_ws/src/vitro_interface/src/data_publish_node.cpp:1:\n'}
+[30.633247] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/shared_memory_handler.hpp: At global scope:\n'}
+[30.633352] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/shared_memory_handler.hpp:28:1: warning: extra \xe2\x80\x98;\xe2\x80\x99 [-Wpedantic]\n'}
+[30.633463] (vitro_interface) StderrLine: {'line': b'   28 | ;\n'}
+[30.633589] (vitro_interface) StderrLine: {'line': b'      | ^\n'}
+[30.633701] (vitro_interface) StderrLine: {'line': b'      | -\n'}
+[30.716403] (-) TimerEvent: {}
+[30.816619] (-) TimerEvent: {}
+[30.916823] (-) TimerEvent: {}
+[31.017025] (-) TimerEvent: {}
+[31.119637] (-) TimerEvent: {}
+[31.219851] (-) TimerEvent: {}
+[31.320074] (-) TimerEvent: {}
+[31.420285] (-) TimerEvent: {}
+[31.520489] (-) TimerEvent: {}
+[31.620722] (-) TimerEvent: {}
+[31.720939] (-) TimerEvent: {}
+[31.821156] (-) TimerEvent: {}
+[31.921366] (-) TimerEvent: {}
+[32.021602] (-) TimerEvent: {}
+[32.121827] (-) TimerEvent: {}
+[32.222040] (-) TimerEvent: {}
+[32.322265] (-) TimerEvent: {}
+[32.422484] (-) TimerEvent: {}
+[32.522716] (-) TimerEvent: {}
+[32.624657] (-) TimerEvent: {}
+[32.724871] (-) TimerEvent: {}
+[32.825099] (-) TimerEvent: {}
+[32.925337] (-) TimerEvent: {}
+[33.025587] (-) TimerEvent: {}
+[33.125792] (-) TimerEvent: {}
+[33.226014] (-) TimerEvent: {}
+[33.298730] (vitro_interface) StdoutLine: {'line': b'[ 81%] Building CXX object CMakeFiles/vitro_interface_executor.dir/src/command_handler_node.cpp.o\n'}
+[33.326093] (-) TimerEvent: {}
+[33.426273] (-) TimerEvent: {}
+[33.527642] (-) TimerEvent: {}
+[33.627858] (-) TimerEvent: {}
+[33.728072] (-) TimerEvent: {}
+[33.828290] (-) TimerEvent: {}
+[33.928497] (-) TimerEvent: {}
+[34.028714] (-) TimerEvent: {}
+[34.128928] (-) TimerEvent: {}
+[34.230638] (-) TimerEvent: {}
+[34.330856] (-) TimerEvent: {}
+[34.431078] (-) TimerEvent: {}
+[34.531297] (-) TimerEvent: {}
+[34.631532] (-) TimerEvent: {}
+[34.731771] (-) TimerEvent: {}
+[34.831989] (-) TimerEvent: {}
+[34.933460] (-) TimerEvent: {}
+[34.970994] (vitro_interface) StderrLine: {'line': b'In file included from /root/ros2_ws/src/vitro_interface/include/command_handler_node.hpp:9,\n'}
+[34.971220] (vitro_interface) StderrLine: {'line': b'                 from /root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp:1:\n'}
+[34.971333] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::on_failure(const mqtt::token&)\xe2\x80\x99:\n'}
+[34.971459] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:67:40: warning: unused parameter \xe2\x80\x98tok\xe2\x80\x99 [-Wunused-parameter]\n'}
+[34.971586] (vitro_interface) StderrLine: {'line': b'   67 |     void on_failure(const mqtt::token& tok) override {\n'}
+[34.971709] (vitro_interface) StderrLine: {'line': b'      |                     ~~~~~~~~~~~~~~~~~~~^~~\n'}
+[34.973751] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::on_success(const mqtt::token&)\xe2\x80\x99:\n'}
+[34.973898] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:75:40: warning: unused parameter \xe2\x80\x98tok\xe2\x80\x99 [-Wunused-parameter]\n'}
+[34.974008] (vitro_interface) StderrLine: {'line': b'   75 |     void on_success(const mqtt::token& tok) override {}\n'}
+[34.974129] (vitro_interface) StderrLine: {'line': b'      |                     ~~~~~~~~~~~~~~~~~~~^~~\n'}
+[34.974230] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::connected(const string&)\xe2\x80\x99:\n'}
+[34.974328] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:79:39: warning: unused parameter \xe2\x80\x98cause\xe2\x80\x99 [-Wunused-parameter]\n'}
+[34.974420] (vitro_interface) StderrLine: {'line': b'   79 |     void connected(const std::string& cause) override {\n'}
+[34.974512] (vitro_interface) StderrLine: {'line': b'      |                    ~~~~~~~~~~~~~~~~~~~^~~~~\n'}
+[34.974636] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp: In member function \xe2\x80\x98virtual void vitro::Callback::delivery_complete(mqtt::delivery_token_ptr)\xe2\x80\x99:\n'}
+[34.974740] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/generic_mqtt_client.hpp:98:53: warning: unused parameter \xe2\x80\x98token\xe2\x80\x99 [-Wunused-parameter]\n'}
+[34.974836] (vitro_interface) StderrLine: {'line': b'   98 |     void delivery_complete(mqtt::delivery_token_ptr token) override {}\n'}
+[34.974932] (vitro_interface) StderrLine: {'line': b'      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~\n'}
+[35.036656] (-) TimerEvent: {}
+[35.045863] (vitro_interface) StderrLine: {'line': b'In file included from /root/ros2_ws/src/vitro_interface/include/data_publish_node.hpp:10,\n'}
+[35.046065] (vitro_interface) StderrLine: {'line': b'                 from /root/ros2_ws/src/vitro_interface/src/data_publish_node.cpp:1:\n'}
+[35.046171] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/drone_list.hpp: In member function \xe2\x80\x98vitro::Drone::SDK vitro::Drone::getSDK()\xe2\x80\x99:\n'}
+[35.046272] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/drone_list.hpp:36:5: warning: control reaches end of non-void function [-Wreturn-type]\n'}
+[35.046377] (vitro_interface) StderrLine: {'line': b'   36 |     };\n'}
+[35.046470] (vitro_interface) StderrLine: {'line': b'      |     ^\n'}
+[35.136793] (-) TimerEvent: {}
+[35.237650] (-) TimerEvent: {}
+[35.337880] (-) TimerEvent: {}
+[35.438111] (-) TimerEvent: {}
+[35.538343] (-) TimerEvent: {}
+[35.638579] (-) TimerEvent: {}
+[35.738794] (-) TimerEvent: {}
+[35.839015] (-) TimerEvent: {}
+[35.939232] (-) TimerEvent: {}
+[36.040646] (-) TimerEvent: {}
+[36.140872] (-) TimerEvent: {}
+[36.241098] (-) TimerEvent: {}
+[36.341327] (-) TimerEvent: {}
+[36.441552] (-) TimerEvent: {}
+[36.541790] (-) TimerEvent: {}
+[36.642016] (-) TimerEvent: {}
+[36.743650] (-) TimerEvent: {}
+[36.843897] (-) TimerEvent: {}
+[36.928938] (vitro_interface) StderrLine: {'line': b'In file included from /root/ros2_ws/src/vitro_interface/include/command_handler_node.hpp:13,\n'}
+[36.929169] (vitro_interface) StderrLine: {'line': b'                 from /root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp:1:\n'}
+[36.929277] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/shared_memory_handler.hpp: At global scope:\n'}
+[36.929383] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/shared_memory_handler.hpp:28:1: warning: extra \xe2\x80\x98;\xe2\x80\x99 [-Wpedantic]\n'}
+[36.929486] (vitro_interface) StderrLine: {'line': b'   28 | ;\n'}
+[36.929610] (vitro_interface) StderrLine: {'line': b'      | ^\n'}
+[36.929717] (vitro_interface) StderrLine: {'line': b'      | -\n'}
+[36.943974] (-) TimerEvent: {}
+[37.046645] (-) TimerEvent: {}
+[37.146861] (-) TimerEvent: {}
+[37.247072] (-) TimerEvent: {}
+[37.347284] (-) TimerEvent: {}
+[37.447484] (-) TimerEvent: {}
+[37.547649] (-) TimerEvent: {}
+[37.647861] (-) TimerEvent: {}
+[37.748080] (-) TimerEvent: {}
+[37.848288] (-) TimerEvent: {}
+[37.948501] (-) TimerEvent: {}
+[38.048746] (-) TimerEvent: {}
+[38.148964] (-) TimerEvent: {}
+[38.249178] (-) TimerEvent: {}
+[38.349393] (-) TimerEvent: {}
+[38.449620] (-) TimerEvent: {}
+[38.518064] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp: In member function \xe2\x80\x98void CommandHandlerNode::set_gimball_angle(std::shared_ptr<vitro_ros_definitions::srv::SetGimballAngle_Request_<std::allocator<void> > >, std::shared_ptr<vitro_ros_definitions::srv::SetGimballAngle_Response_<std::allocator<void> > >)\xe2\x80\x99:\n'}
+[38.518296] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp:333:39: warning: catching polymorphic type \xe2\x80\x98class GoalNotReachedException\xe2\x80\x99 by value [-Wcatch-value=]\n'}
+[38.518415] (vitro_interface) StderrLine: {'line': b'  333 |     }  catch (GoalNotReachedException e) {\n'}
+[38.518529] (vitro_interface) StderrLine: {'line': b'      |                                       ^\n'}
+[38.522597] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp: In member function \xe2\x80\x98void CommandHandlerNode::get_gimbal_pitch(geometry_msgs::msg::QuaternionStamped&, double&)\xe2\x80\x99:\n'}
+[38.522735] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp:380:58: warning: catching polymorphic type \xe2\x80\x98class SharedMemoryHandlerUnintializedException\xe2\x80\x99 by value [-Wcatch-value=]\n'}
+[38.522835] (vitro_interface) StderrLine: {'line': b'  380 |         }catch (SharedMemoryHandlerUnintializedException e){\n'}
+[38.522930] (vitro_interface) StderrLine: {'line': b'      |                                                          ^\n'}
+[38.538434] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp: In member function \xe2\x80\x98void CommandHandlerNode::save_photo(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)\xe2\x80\x99:\n'}
+[38.538596] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp:474:92: warning: unused parameter \xe2\x80\x98request\xe2\x80\x99 [-Wunused-parameter]\n'}
+[38.538715] (vitro_interface) StderrLine: {'line': b'  474 | void CommandHandlerNode::save_photo(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,\n'}
+[38.538811] (vitro_interface) StderrLine: {'line': b'      |                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~\n'}
+[38.546605] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp: In member function \xe2\x80\x98void CommandHandlerNode::control_automatic_navigation(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >, std::string)\xe2\x80\x99:\n'}
+[38.546766] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/src/command_handler_node.cpp:514:110: warning: unused parameter \xe2\x80\x98request\xe2\x80\x99 [-Wunused-parameter]\n'}
+[38.546885] (vitro_interface) StderrLine: {'line': b'  514 | void CommandHandlerNode::control_automatic_navigation(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,\n'}
+[38.547003] (vitro_interface) StderrLine: {'line': b'      |                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~\n'}
+[38.549695] (-) TimerEvent: {}
+[38.649864] (-) TimerEvent: {}
+[38.751640] (-) TimerEvent: {}
+[38.851845] (-) TimerEvent: {}
+[38.952055] (-) TimerEvent: {}
+[39.052266] (-) TimerEvent: {}
+[39.152479] (-) TimerEvent: {}
+[39.252649] (-) TimerEvent: {}
+[39.352858] (-) TimerEvent: {}
+[39.453077] (-) TimerEvent: {}
+[39.553307] (-) TimerEvent: {}
+[39.653517] (-) TimerEvent: {}
+[39.754641] (-) TimerEvent: {}
+[39.854847] (-) TimerEvent: {}
+[39.955083] (-) TimerEvent: {}
+[40.055315] (-) TimerEvent: {}
+[40.155534] (-) TimerEvent: {}
+[40.256642] (-) TimerEvent: {}
+[40.356859] (-) TimerEvent: {}
+[40.457071] (-) TimerEvent: {}
+[40.557280] (-) TimerEvent: {}
+[40.657485] (-) TimerEvent: {}
+[40.757700] (-) TimerEvent: {}
+[40.858639] (-) TimerEvent: {}
+[40.958836] (-) TimerEvent: {}
+[41.059041] (-) TimerEvent: {}
+[41.159240] (-) TimerEvent: {}
+[41.259448] (-) TimerEvent: {}
+[41.360641] (-) TimerEvent: {}
+[41.460849] (-) TimerEvent: {}
+[41.561063] (-) TimerEvent: {}
+[41.661282] (-) TimerEvent: {}
+[41.761502] (-) TimerEvent: {}
+[41.861732] (-) TimerEvent: {}
+[41.963641] (-) TimerEvent: {}
+[42.063848] (-) TimerEvent: {}
+[42.164054] (-) TimerEvent: {}
+[42.264257] (-) TimerEvent: {}
+[42.364459] (-) TimerEvent: {}
+[42.464643] (-) TimerEvent: {}
+[42.564850] (-) TimerEvent: {}
+[42.665058] (-) TimerEvent: {}
+[42.765269] (-) TimerEvent: {}
+[42.865474] (-) TimerEvent: {}
+[42.965644] (-) TimerEvent: {}
+[43.067639] (-) TimerEvent: {}
+[43.167849] (-) TimerEvent: {}
+[43.269630] (-) TimerEvent: {}
+[43.369829] (-) TimerEvent: {}
+[43.470031] (-) TimerEvent: {}
+[43.570241] (-) TimerEvent: {}
+[43.670445] (-) TimerEvent: {}
+[43.770649] (-) TimerEvent: {}
+[43.870841] (-) TimerEvent: {}
+[43.971036] (-) TimerEvent: {}
+[44.071243] (-) TimerEvent: {}
+[44.110129] (vitro_interface) StdoutLine: {'line': b'[ 90%] Building CXX object CMakeFiles/vitro_interface_executor.dir/src/shared_memory_handler.cpp.o\n'}
+[44.171350] (-) TimerEvent: {}
+[44.273665] (-) TimerEvent: {}
+[44.373878] (-) TimerEvent: {}
+[44.474094] (-) TimerEvent: {}
+[44.574309] (-) TimerEvent: {}
+[44.674524] (-) TimerEvent: {}
+[44.774760] (-) TimerEvent: {}
+[44.874973] (-) TimerEvent: {}
+[44.877758] (vitro_interface) StderrLine: {'line': b'In file included from /root/ros2_ws/src/vitro_interface/src/shared_memory_handler.cpp:1:\n'}
+[44.877970] (vitro_interface) StderrLine: {'line': b'/root/ros2_ws/src/vitro_interface/include/shared_memory_handler.hpp:28:1: warning: extra \xe2\x80\x98;\xe2\x80\x99 [-Wpedantic]\n'}
+[44.878072] (vitro_interface) StderrLine: {'line': b'   28 | ;\n'}
+[44.878169] (vitro_interface) StderrLine: {'line': b'      | ^\n'}
+[44.878261] (vitro_interface) StderrLine: {'line': b'      | -\n'}
+[44.975097] (-) TimerEvent: {}
+[45.075304] (-) TimerEvent: {}
+[45.175508] (-) TimerEvent: {}
+[45.275725] (-) TimerEvent: {}
+[45.375914] (-) TimerEvent: {}
+[45.476104] (-) TimerEvent: {}
+[45.576312] (-) TimerEvent: {}
+[45.676526] (-) TimerEvent: {}
+[45.776750] (-) TimerEvent: {}
+[45.876932] (-) TimerEvent: {}
+[45.977130] (-) TimerEvent: {}
+[46.077324] (-) TimerEvent: {}
+[46.177529] (-) TimerEvent: {}
+[46.277748] (-) TimerEvent: {}
+[46.377944] (-) TimerEvent: {}
+[46.478132] (-) TimerEvent: {}
+[46.578319] (-) TimerEvent: {}
+[46.678499] (-) TimerEvent: {}
+[46.778715] (-) TimerEvent: {}
+[46.878907] (-) TimerEvent: {}
+[46.979091] (-) TimerEvent: {}
+[47.079272] (-) TimerEvent: {}
+[47.179460] (-) TimerEvent: {}
+[47.280010] (-) TimerEvent: {}
+[47.380217] (-) TimerEvent: {}
+[47.480447] (-) TimerEvent: {}
+[47.580652] (-) TimerEvent: {}
+[47.680874] (-) TimerEvent: {}
+[47.781061] (-) TimerEvent: {}
+[47.881239] (-) TimerEvent: {}
+[47.981415] (-) TimerEvent: {}
+[48.081615] (-) TimerEvent: {}
+[48.181794] (-) TimerEvent: {}
+[48.281970] (-) TimerEvent: {}
+[48.382145] (-) TimerEvent: {}
+[48.482310] (-) TimerEvent: {}
+[48.582485] (-) TimerEvent: {}
+[48.682657] (-) TimerEvent: {}
+[48.782825] (-) TimerEvent: {}
+[48.882981] (-) TimerEvent: {}
+[48.983137] (-) TimerEvent: {}
+[49.083296] (-) TimerEvent: {}
+[49.183464] (-) TimerEvent: {}
+[49.283619] (-) TimerEvent: {}
+[49.383772] (-) TimerEvent: {}
+[49.483929] (-) TimerEvent: {}
+[49.584110] (-) TimerEvent: {}
+[49.684319] (-) TimerEvent: {}
+[49.784515] (-) TimerEvent: {}
+[49.884703] (-) TimerEvent: {}
+[49.984896] (-) TimerEvent: {}
+[50.085112] (-) TimerEvent: {}
+[50.185339] (-) TimerEvent: {}
+[50.285524] (-) TimerEvent: {}
+[50.385723] (-) TimerEvent: {}
+[50.485893] (-) TimerEvent: {}
+[50.586053] (-) TimerEvent: {}
+[50.686208] (-) TimerEvent: {}
+[50.786365] (-) TimerEvent: {}
+[50.886527] (-) TimerEvent: {}
+[50.986705] (-) TimerEvent: {}
+[51.086881] (-) TimerEvent: {}
+[51.187045] (-) TimerEvent: {}
+[51.287208] (-) TimerEvent: {}
+[51.387382] (-) TimerEvent: {}
+[51.487551] (-) TimerEvent: {}
+[51.587728] (-) TimerEvent: {}
+[51.687890] (-) TimerEvent: {}
+[51.788051] (-) TimerEvent: {}
+[51.888214] (-) TimerEvent: {}
+[51.988382] (-) TimerEvent: {}
+[52.088555] (-) TimerEvent: {}
+[52.188746] (-) TimerEvent: {}
+[52.288911] (-) TimerEvent: {}
+[52.389079] (-) TimerEvent: {}
+[52.489246] (-) TimerEvent: {}
+[52.589417] (-) TimerEvent: {}
+[52.689600] (-) TimerEvent: {}
+[52.789768] (-) TimerEvent: {}
+[52.889932] (-) TimerEvent: {}
+[52.990095] (-) TimerEvent: {}
+[53.090265] (-) TimerEvent: {}
+[53.190442] (-) TimerEvent: {}
+[53.290609] (-) TimerEvent: {}
+[53.390772] (-) TimerEvent: {}
+[53.490942] (-) TimerEvent: {}
+[53.591113] (-) TimerEvent: {}
+[53.691290] (-) TimerEvent: {}
+[53.791460] (-) TimerEvent: {}
+[53.891624] (-) TimerEvent: {}
+[53.991788] (-) TimerEvent: {}
+[54.091950] (-) TimerEvent: {}
+[54.192130] (-) TimerEvent: {}
+[54.292330] (-) TimerEvent: {}
+[54.392525] (-) TimerEvent: {}
+[54.492716] (-) TimerEvent: {}
+[54.592899] (-) TimerEvent: {}
+[54.693080] (-) TimerEvent: {}
+[54.793249] (-) TimerEvent: {}
+[54.893443] (-) TimerEvent: {}
+[54.993639] (-) TimerEvent: {}
+[55.032954] (vitro_interface) StdoutLine: {'line': b'[100%] Linking CXX executable vitro_interface_executor\n'}
+[55.093759] (-) TimerEvent: {}
+[55.194169] (-) TimerEvent: {}
+[55.296646] (-) TimerEvent: {}
+[55.396840] (-) TimerEvent: {}
+[55.497060] (-) TimerEvent: {}
+[55.597280] (-) TimerEvent: {}
+[55.618514] (vitro_interface) StdoutLine: {'line': b'[100%] Built target vitro_interface_executor\n'}
+[55.629547] (vitro_interface) CommandEnded: {'returncode': 0}
+[55.670438] (vitro_interface) JobProgress: {'identifier': 'vitro_interface', 'progress': 'install'}
+[55.670703] (vitro_interface) Command: {'cmd': ['/usr/bin/cmake', '--install', '/root/ros2_ws/build/vitro_interface'], 'cwd': '/root/ros2_ws/build/vitro_interface', 'env': OrderedDict([('SHLVL', '0'), ('LD_LIBRARY_PATH', '/root/ros2_ws/install/vitro_ros_definitions/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/root/ros2_ws'), ('ROS_PYTHON_VERSION', '3'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('NVIDIA_DRIVER_CAPABILITIES', 'graphics'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('LANG', 'C.UTF-8'), ('AMENT_PREFIX_PATH', '/root/ros2_ws/install/vitro_ros_definitions:/opt/ros/humble'), ('PWD', '/root/ros2_ws/build/vitro_interface'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/root/ros2_ws/install/vitro_ros_definitions/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('NVIDIA_VISIBLE_DEVICES', 'all'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/root/ros2_ws/install/vitro_ros_definitions:/opt/ros/humble')]), 'shell': False}
+[55.677922] (vitro_interface) StdoutLine: {'line': b'-- Install configuration: "Release"\n'}
+[55.678523] (vitro_interface) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[55.678990] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/environment/library_path.sh\n'}
+[55.686913] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/environment/library_path.dsv\n'}
+[55.695273] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/lib/vitro_interface/vitro_interface_docking\n'}
+[55.697357] (-) TimerEvent: {}
+[55.703779] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/command_handler_node.hpp\n'}
+[55.711751] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/data_publish_node.hpp\n'}
+[55.719551] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/docking_station_handler_node.hpp\n'}
+[55.728023] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/drone_list.hpp\n'}
+[55.736240] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/generic_mqtt_client.hpp\n'}
+[55.744481] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/shared_memory_handler.hpp\n'}
+[55.752244] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/utils.h\n'}
+[55.760435] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/video_stream_node.hpp\n'}
+[55.768728] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/include/include/vitro_exceptions.hpp\n'}
+[55.776697] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/lib/vitro_interface/vitro_interface_executor\n'}
+[55.784938] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cfg/camera_config.json\n'}
+[55.792789] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cfg/config.yaml\n'}
+[55.797444] (-) TimerEvent: {}
+[55.800774] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cfg/docking/d80.yaml\n'}
+[55.808701] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cfg/rviz/viz_orientation.rviz\n'}
+[55.816516] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cfg/test.yaml\n'}
+[55.824918] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/launch/docking.launch.py\n'}
+[55.832752] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share//entrypoint.sh\n'}
+[55.841220] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/ament_index/resource_index/package_run_dependencies/vitro_interface\n'}
+[55.849192] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/ament_index/resource_index/parent_prefix_path/vitro_interface\n'}
+[55.857510] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/environment/ament_prefix_path.sh\n'}
+[55.865938] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/environment/ament_prefix_path.dsv\n'}
+[55.873803] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/environment/path.sh\n'}
+[55.881756] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/environment/path.dsv\n'}
+[55.889655] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/local_setup.bash\n'}
+[55.897534] (-) TimerEvent: {}
+[55.898019] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/local_setup.sh\n'}
+[55.906377] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/local_setup.zsh\n'}
+[55.914242] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/local_setup.dsv\n'}
+[55.922225] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/package.dsv\n'}
+[55.930353] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/ament_index/resource_index/packages/vitro_interface\n'}
+[55.938330] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cmake/ament_cmake_export_targets-extras.cmake\n'}
+[55.946660] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cmake/vitro_interfaceConfig.cmake\n'}
+[55.954968] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cmake/vitro_interfaceConfig-version.cmake\n'}
+[55.962838] (vitro_interface) StdoutLine: {'line': b'-- Symlinking: /root/ros2_ws/install/vitro_interface/share/vitro_interface/package.xml\n'}
+[55.971243] (vitro_interface) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_interface/lib/libvitro_mqtt.so\n'}
+[55.971979] (vitro_interface) StdoutLine: {'line': b'-- Set runtime path of "/root/ros2_ws/install/vitro_interface/lib/libvitro_mqtt.so" to ""\n'}
+[55.972179] (vitro_interface) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cmake/vitro_mqttExport.cmake\n'}
+[55.972477] (vitro_interface) StdoutLine: {'line': b'-- Installing: /root/ros2_ws/install/vitro_interface/share/vitro_interface/cmake/vitro_mqttExport-release.cmake\n'}
+[55.974372] (vitro_interface) CommandEnded: {'returncode': 0}
+[55.997610] (-) TimerEvent: {}
+[56.028587] (vitro_interface) JobEnded: {'identifier': 'vitro_interface', 'rc': 0}
+[56.029419] (-) EventReactorShutdown: {}

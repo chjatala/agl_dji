@@ -1,1 +1,0 @@
-/root/ros2_ws/build/vitro_ros_definitions/rosidl_generator_py/vitro_ros_definitions/srv/_set_video_settings_s.c

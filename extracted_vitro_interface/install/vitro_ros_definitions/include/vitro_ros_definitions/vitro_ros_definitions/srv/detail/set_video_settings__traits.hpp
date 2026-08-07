@@ -1,1 +1,0 @@
-/root/ros2_ws/build/vitro_ros_definitions/rosidl_generator_cpp/vitro_ros_definitions/srv/detail/set_video_settings__traits.hpp

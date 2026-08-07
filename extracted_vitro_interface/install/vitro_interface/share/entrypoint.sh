@@ -1,1 +1,0 @@
-/root/ros2_ws/src/vitro_interface/scripts/entrypoint.sh

@@ -1,1 +1,0 @@
-/root/ros2_ws/build/vitro_ros_definitions/rosidl_cmake/srv/SetVideoSettings_Response.msg

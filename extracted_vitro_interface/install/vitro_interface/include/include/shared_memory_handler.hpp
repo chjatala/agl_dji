@@ -1,1 +1,0 @@
-/root/ros2_ws/src/vitro_interface/include/shared_memory_handler.hpp

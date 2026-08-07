@@ -2,20 +2,26 @@
 
 xhost +local:root
 
-if [[ -e /dev/ttyACM0 ]]
-then
-    echo ""
+# The UWB unit enumerates as /dev/ttyACM0. Set skip_uwb_wait=1 to go straight to
+# startup without it - needed when bench-testing the PSDK link on its own, since
+# the aircraft side does not depend on the UWB.
+skip_uwb_wait="${skip_uwb_wait:-0}"
+
+if [[ "$skip_uwb_wait" == "1" ]]; then
+    echo "Skipping UWB wait (skip_uwb_wait=1); agilica_uwb will fail if /dev/ttyACM0 is absent."
 else
-    echo "UWB is not found, please plug in the UWB"
+    if [[ ! -e /dev/ttyACM0 ]]; then
+        echo "UWB is not found, please plug in the UWB"
+    fi
+
+    while [[ ! (-e /dev/ttyACM0) ]]
+    do
+        sleep 5
+        echo "Waiting for UWB ..."
+    done
+
+    echo "UWB is found, starting drone application ..."
 fi
-
-while [[ ! (-e /dev/ttyACM0) ]]
-do
-    sleep 5
-    echo "Waiting for UWB ..."
-done
-
-echo "UWB is found, starting drone application ..."
 
 # use_psdk_msdk=1 (default) -> use DJI MSDK (vitro_interface)
 # use_psdk_msdk=0           -> use DJI PSDK (psdk_bridge)

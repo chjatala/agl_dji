@@ -1,0 +1,92 @@
+# VITRO + DJI PSDK runtime for the Raspberry Pi 4 (arm64).
+#
+# Build context is the REPO ROOT, not this directory:
+#     docker build -f docker/Dockerfile.vitro-arm64 -t vitro_arm64:humble .
+#
+# Why Humble and not Jazzy: the VITRO GNC packages (drone_control, sensor_fusion,
+# drone_gnc_launch, nmea_parser) ship only as compiled .pyc, built for Python
+# 3.10. .pyc is bytecode-version-locked, so it loads under Humble's 3.10 and not
+# under Jazzy's 3.12. The jazzy Dockerfile Flanders Make supplied is a useful
+# reference for the venv/entrypoint pattern, but cannot be the base here.
+#
+# Why headless: the Pi has 3.7 GB RAM and ~12 GB free disk. ros-humble-desktop
+# (RViz, Gazebo, PyQt) does not fit sensibly alongside the rest. Run drone_gui on
+# a laptop over the network instead.
+#
+# The image is assembled in three layers:
+#   1. message packages regenerated for arm64 from their .msg/.srv/.action
+#   2. psdk_wrapper (C, links DJI's aarch64 libpayloadsdk.a) + dji_psdk_bridge
+#   3. the pure-Python VITRO packages, grafted in as-is (no rebuild possible)
+
+FROM ros:humble-ros-base
+
+ARG ROS_DIST=humble
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Brussels
+
+SHELL ["/bin/bash", "-l", "-c"]
+
+# Toolchain for psdk_wrapper, colcon for the workspace, and the message packages
+# the interface depends on: mavros_msgs carries GlobalPositionTarget (the setpoint
+# topic) and geographic_msgs carries GeoPointStamped (the position topic).
+#
+# Deliberately NOT installed: ros-humble-vision-msgs. VITRO ships its own package
+# also called vision_msgs (VisionResult/VisionResultArray), unrelated to the
+# upstream perception one. Installing both would shadow ours in the overlay.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        cmake \
+        git \
+        python3-colcon-common-extensions \
+        python3-numpy \
+        python3-pip \
+        python3-yaml \
+        ros-${ROS_DIST}-geographic-msgs \
+        ros-${ROS_DIST}-mavros-msgs \
+        ros-${ROS_DIST}-rosidl-default-generators \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /root/ros2_ws
+
+# --- Layer 1+2: sources we can actually build -------------------------------
+# Message packages reconstructed by tools/reconstruct_msgs.py, plus the two
+# packages Agilica owns. psdk_wrapper's CMakeLists picks
+# third_party/psdk_lib/lib/aarch64-linux-gnu-gcc/libpayloadsdk.a off `uname -m`,
+# so it resolves correctly when built here on the Pi.
+COPY msgs_src/ /root/ros2_ws/src/
+COPY extracted_gnc/src/psdk_wrapper/ /root/ros2_ws/src/psdk_wrapper/
+COPY extracted_gnc/src/dji_psdk_bridge/ /root/ros2_ws/src/dji_psdk_bridge/
+
+# Plain (non-symlink) install: this is a final baked image, not an iterative dev
+# tree, and the build/ directory is deleted right after. --symlink-install would
+# leave install/ full of symlinks pointing into build/, all dangling once it's gone.
+RUN source /opt/ros/${ROS_DIST}/setup.bash \
+    && colcon build \
+    && rm -rf /root/ros2_ws/build /root/ros2_ws/log
+
+# --- Layer 3: the pure-Python VITRO packages --------------------------------
+# Copied after the build so colcon does not touch them. They are architecture
+# independent, so they drop straight into the isolated install layout; colcon's
+# local_setup discovers them at source time by scanning for share/<pkg>/package.dsv
+# (see _local_setup_util_sh.py), which each of them carries.
+#
+# The destination path must stay /root/ros2_ws/install - the setup scripts inside
+# these packages have that prefix baked in from the original prod image.
+COPY extracted_gnc/install/drone_control/     /root/ros2_ws/install/drone_control/
+COPY extracted_gnc/install/sensor_fusion/     /root/ros2_ws/install/sensor_fusion/
+COPY extracted_gnc/install/drone_gnc_launch/  /root/ros2_ws/install/drone_gnc_launch/
+COPY extracted_gnc/install/nmea_parser/       /root/ros2_ws/install/nmea_parser/
+
+RUN echo "source /opt/ros/${ROS_DIST}/setup.bash" >> /root/.bashrc \
+    && echo "source /root/ros2_ws/install/setup.bash" >> /root/.bashrc
+
+RUN printf '%s\n' \
+        '#!/usr/bin/bash' \
+        "source /opt/ros/${ROS_DIST}/setup.bash" \
+        'source /root/ros2_ws/install/setup.bash' \
+        'exec "$@"' \
+        > /entrypoint.sh \
+    && chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["bash"]

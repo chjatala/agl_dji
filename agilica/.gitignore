@@ -1,1 +1,4 @@
 *.img
+
+# DJI developer app credentials - never commit. See .env.example.
+.env
