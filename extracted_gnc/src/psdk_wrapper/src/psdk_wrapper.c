@@ -35,9 +35,57 @@
 #include <string.h>
 #include <stdbool.h>
 #include <math.h>
+#include <pthread.h>
 
 static bool s_platformRegistered = false;
 static bool s_connected = false;
+
+/* ------------------------------------------------------------------------ */
+/* Telemetry cache (callback-populated, NOT polling)                        */
+/* ------------------------------------------------------------------------ */
+
+/* DjiFcSubscription_GetLatestValueOfTopic() - the documented polling API -
+ * reliably segfaults inside DJI's own closed-source library on this PSDK build
+ * (confirmed via gdb backtrace: crashes inside an internal, undocumented
+ * function, DjiDataSubscriptionDds_v2_GetLastValueOfTopic, reached from the
+ * public API with correct arguments, a successfully-subscribed topic, and a
+ * stable connection - not something fixable on our side). The callback-push
+ * subscription model exercises different internal code paths in the library
+ * and works correctly. So: subscribe with real callbacks, cache each topic's
+ * latest value here as it arrives, and have psdk_get_telemetry() read the
+ * cache instead of ever calling GetLatestValueOfTopic. */
+static pthread_mutex_t s_telemetryLock = PTHREAD_MUTEX_INITIALIZER;
+static bool s_haveQuaternion = false;
+static bool s_haveVelocity = false;
+static bool s_havePositionFused = false;
+static bool s_haveHeightFusion = false;
+static bool s_haveBatteryInfo = false;
+static T_DjiFcSubscriptionQuaternion s_quaternion = {0};
+static T_DjiFcSubscriptionVelocity s_velocity = {0};
+static T_DjiFcSubscriptionPositionFused s_positionFused = {0};
+static T_DjiFcSubscriptionHeightFusion s_heightFusion = 0;
+static T_DjiFcSubscriptionSingleBatteryInfo s_batteryInfo = {0};
+
+#define TELEMETRY_CALLBACK(NAME, VAR, HAVE_FLAG) \
+    static T_DjiReturnCode NAME(const uint8_t *data, uint16_t dataSize, \
+                                const T_DjiDataTimestamp *timestamp) \
+    { \
+        (void) timestamp; \
+        if (dataSize < sizeof(VAR)) { \
+            return DJI_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER; \
+        } \
+        pthread_mutex_lock(&s_telemetryLock); \
+        memcpy(&VAR, data, sizeof(VAR)); \
+        HAVE_FLAG = true; \
+        pthread_mutex_unlock(&s_telemetryLock); \
+        return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS; \
+    }
+
+TELEMETRY_CALLBACK(QuaternionCallback, s_quaternion, s_haveQuaternion)
+TELEMETRY_CALLBACK(VelocityCallback, s_velocity, s_haveVelocity)
+TELEMETRY_CALLBACK(PositionFusedCallback, s_positionFused, s_havePositionFused)
+TELEMETRY_CALLBACK(HeightFusionCallback, s_heightFusion, s_haveHeightFusion)
+TELEMETRY_CALLBACK(BatteryInfoCallback, s_batteryInfo, s_haveBatteryInfo)
 
 /* ------------------------------------------------------------------------ */
 /* Console logging                                                          */
@@ -188,11 +236,47 @@ static void PsdkWrapper_ConfigureJoystickMode(void)
 
 static void PsdkWrapper_SubscribeTelemetry(void)
 {
-    DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_QUATERNION, DJI_DATA_SUBSCRIPTION_TOPIC_5_HZ, NULL);
-    DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_VELOCITY, DJI_DATA_SUBSCRIPTION_TOPIC_5_HZ, NULL);
-    DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_POSITION_FUSED, DJI_DATA_SUBSCRIPTION_TOPIC_5_HZ, NULL);
-    DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_HEIGHT_RELATIVE, DJI_DATA_SUBSCRIPTION_TOPIC_5_HZ, NULL);
-    DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_BATTERY_INFO, DJI_DATA_SUBSCRIPTION_TOPIC_1_HZ, NULL);
+    /* Real callbacks, not NULL - see the comment on the telemetry cache above.
+     * Return codes checked and logged since we now know silent failures here are
+     * exactly the kind of thing worth catching early. */
+    T_DjiReturnCode rc;
+
+    rc = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_QUATERNION,
+                                           DJI_DATA_SUBSCRIPTION_TOPIC_5_HZ, QuaternionCallback);
+    if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        fprintf(stderr, "[psdk_wrapper] subscribe QUATERNION failed: 0x%08llX\n", (unsigned long long) rc);
+    }
+
+    rc = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_VELOCITY,
+                                           DJI_DATA_SUBSCRIPTION_TOPIC_5_HZ, VelocityCallback);
+    if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        fprintf(stderr, "[psdk_wrapper] subscribe VELOCITY failed: 0x%08llX\n", (unsigned long long) rc);
+    }
+
+    rc = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_POSITION_FUSED,
+                                           DJI_DATA_SUBSCRIPTION_TOPIC_5_HZ, PositionFusedCallback);
+    if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        fprintf(stderr, "[psdk_wrapper] subscribe POSITION_FUSED failed: 0x%08llX\n", (unsigned long long) rc);
+    }
+
+    /* Not HEIGHT_RELATIVE - that topic returns NOT_FOUND (0x100) on this aircraft.
+     * HEIGHT_FUSION is the same underlying data (ultrasonic/VO fused height above
+     * ground, per the SDK header's own doc comments - the two topics are near-
+     * duplicates) and this one is actually available here. */
+    rc = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_HEIGHT_FUSION,
+                                           DJI_DATA_SUBSCRIPTION_TOPIC_5_HZ, HeightFusionCallback);
+    if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        fprintf(stderr, "[psdk_wrapper] subscribe HEIGHT_FUSION failed: 0x%08llX\n", (unsigned long long) rc);
+    }
+
+    /* Not BATTERY_INFO (the multi-battery aggregate, for dual/quad-battery aircraft
+     * like the M300/M350) - that also returns NOT_FOUND here. Mavic 3E has a single
+     * battery, so BATTERY_SINGLE_INFO_INDEX1 is the topic that's actually populated. */
+    rc = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_BATTERY_SINGLE_INFO_INDEX1,
+                                           DJI_DATA_SUBSCRIPTION_TOPIC_1_HZ, BatteryInfoCallback);
+    if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        fprintf(stderr, "[psdk_wrapper] subscribe BATTERY_SINGLE_INFO_INDEX1 failed: 0x%08llX\n", (unsigned long long) rc);
+    }
 }
 
 /* ------------------------------------------------------------------------ */
@@ -230,12 +314,16 @@ int psdk_connect(void)
         return -1;
     }
 
+    /* DJI_MOUNT_POSITION_TYPE_PAYLOAD_PORT (SkyPort-style gimbal/camera mounts) is not
+     * the only legitimate connection type - E-Port reports as
+     * DJI_MOUNT_POSITION_TYPE_EXTENSION_PORT (2), which is DJI's own designation for a
+     * general-purpose companion-computer port and is exactly what's expected here. Only
+     * UNKNOWN (0) is an actual red flag - it means the SDK doesn't recognize the link at all. */
     T_DjiAircraftInfoBaseInfo baseInfo;
     if (DjiAircraftInfo_GetBaseInfo(&baseInfo) == DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        if (baseInfo.mountPositionType != DJI_MOUNT_POSITION_TYPE_PAYLOAD_PORT) {
-            fprintf(stderr, "[psdk_wrapper] warning: mount position type is %d, not a payload "
-                            "port - is this aircraft/adapter combination PSDK-capable?\n",
-                    (int) baseInfo.mountPositionType);
+        if (baseInfo.mountPositionType == DJI_MOUNT_POSITION_TYPE_UNKNOWN) {
+            fprintf(stderr, "[psdk_wrapper] warning: mount position type is UNKNOWN - the SDK "
+                            "does not recognize this as a valid PSDK connection.\n");
         }
     }
 
@@ -369,35 +457,32 @@ int psdk_get_telemetry(double *latDeg, double *lonDeg, double *altM,
         return -1;
     }
 
-    T_DjiFcSubscriptionPositionFused pos = {0};
-    T_DjiFcSubscriptionVelocity vel = {0};
-    T_DjiFcSubscriptionQuaternion quat = {0};
-    T_DjiFcSubscriptionHeightRelative heightRel = 0;
-    T_DjiFcSubscriptionWholeBatteryInfo battery = {0};
+    /* Read from the callback-populated cache - see the comment above it for why
+     * this doesn't call DjiFcSubscription_GetLatestValueOfTopic() (it segfaults
+     * inside DJI's own library on this PSDK build; confirmed via gdb). Returns -1
+     * until at least one callback has landed for every topic, rather than
+     * silently handing back zeros that look like valid-but-wrong telemetry. */
+    pthread_mutex_lock(&s_telemetryLock);
+    bool haveAll = s_haveQuaternion && s_haveVelocity && s_havePositionFused &&
+                   s_haveHeightFusion && s_haveBatteryInfo;
+    if (!haveAll) {
+        pthread_mutex_unlock(&s_telemetryLock);
+        return -1;
+    }
 
-    DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_POSITION_FUSED,
-                                             (uint8_t *) &pos, sizeof(pos), NULL);
-    DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_VELOCITY,
-                                             (uint8_t *) &vel, sizeof(vel), NULL);
-    DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_QUATERNION,
-                                             (uint8_t *) &quat, sizeof(quat), NULL);
-    DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_HEIGHT_RELATIVE,
-                                             (uint8_t *) &heightRel, sizeof(heightRel), NULL);
-    DjiFcSubscription_GetLatestValueOfTopic(DJI_FC_SUBSCRIPTION_TOPIC_BATTERY_INFO,
-                                             (uint8_t *) &battery, sizeof(battery), NULL);
-
-    if (latDeg) *latDeg = pos.latitude * 180.0 / M_PI;
-    if (lonDeg) *lonDeg = pos.longitude * 180.0 / M_PI;
-    if (altM) *altM = pos.altitude;
-    if (vx) *vx = vel.data.x;
-    if (vy) *vy = vel.data.y;
-    if (vz) *vz = vel.data.z;
-    if (qw) *qw = quat.q0;
-    if (qx) *qx = quat.q1;
-    if (qy) *qy = quat.q2;
-    if (qz) *qz = quat.q3;
-    if (heightRelM) *heightRelM = heightRel;
-    if (batteryPercent) *batteryPercent = battery.percentage;
+    if (latDeg) *latDeg = s_positionFused.latitude * 180.0 / M_PI;
+    if (lonDeg) *lonDeg = s_positionFused.longitude * 180.0 / M_PI;
+    if (altM) *altM = s_positionFused.altitude;
+    if (vx) *vx = s_velocity.data.x;
+    if (vy) *vy = s_velocity.data.y;
+    if (vz) *vz = s_velocity.data.z;
+    if (qw) *qw = s_quaternion.q0;
+    if (qx) *qx = s_quaternion.q1;
+    if (qy) *qy = s_quaternion.q2;
+    if (qz) *qz = s_quaternion.q3;
+    if (heightRelM) *heightRelM = s_heightFusion;
+    if (batteryPercent) *batteryPercent = s_batteryInfo.batteryCapacityPercent;
+    pthread_mutex_unlock(&s_telemetryLock);
 
     return 0;
 }
@@ -411,5 +496,14 @@ int psdk_disconnect(void)
     DjiFlightController_DeInit();
     DjiCore_DeInit();
     s_connected = false;
+
+    pthread_mutex_lock(&s_telemetryLock);
+    s_haveQuaternion = false;
+    s_haveVelocity = false;
+    s_havePositionFused = false;
+    s_haveHeightFusion = false;
+    s_haveBatteryInfo = false;
+    pthread_mutex_unlock(&s_telemetryLock);
+
     return 0;
 }

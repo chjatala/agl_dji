@@ -1,6 +1,7 @@
-# Two mutually exclusive drone-link profiles:
-#   COMPOSE_PROFILES=psdk  -> psdk_bridge, Agilica's PSDK module (the Pi/arm64 path)
-#   COMPOSE_PROFILES=msdk  -> vitro_interface, Flanders Make's MSDK bridge
+# Two mutually exclusive drone-link profiles, plus an independent add-on:
+#   COMPOSE_PROFILES=psdk      -> psdk_bridge, Agilica's PSDK module (the Pi/arm64 path)
+#   COMPOSE_PROFILES=msdk      -> vitro_interface, Flanders Make's MSDK bridge
+#   add ",uwb"                 -> also start agilica_uwb (needs /dev/ttyACM0 present)
 #
 # The msdk services below stay pinned to the original x86_64 prod images. That
 # path cannot run on the Pi: vitro_interface is native C++ built for x86_64 and
@@ -73,8 +74,12 @@ services:
     network_mode: "host"
     command: ros2 launch /demo_agilica_launch.py
 
+  # Not part of the default run - the UWB positioning module is a later
+  # integration step. Requires ./cfg/parser_params.yaml and /dev/ttyACM0 (the
+  # UWB unit) to actually be present; add "uwb" to COMPOSE_PROFILES once wired up.
   agilica_uwb:
     container_name: agilica_uwb
+    profiles: ["uwb"]
     image: vitro_arm64:humble
     volumes:
       - /dev/shm:/dev/shm
@@ -124,4 +129,21 @@ services:
     # image-build time, so there is no colcon build here - the static whole-archive
     # link against libpayloadsdk.a is slow on a Pi 4 and pointless to repeat on
     # every start. The entrypoint already sources ROS and the workspace.
-    command: ros2 run dji_psdk_bridge psdk_bridge_node --ros-args -r __ns:=/dji
+    # Executable is "psdk_bridge", not "psdk_bridge_node" - that's the module
+    # name inside setup.py's entry_points, the registered console script is
+    # shorter (confirm with `ros2 pkg executables dji_psdk_bridge`).
+    command: ros2 run dji_psdk_bridge psdk_bridge --ros-args -r __ns:=/dji
+
+  # No `profiles:` key on purpose - unlike psdk/msdk/gui, this should start
+  # alongside whichever drone link is active. Exposes the live ROS graph
+  # (position, battery, attitude, ...) to Foxglove Studio (app.foxglove.dev, or
+  # the desktop app) from any laptop on the same network: connect to
+  # ws://<pi-ip>:8765. Telemetry/plots only - no video, since the PSDK bridge
+  # does not publish a camera topic (see psdk_wrapper/README.md TODOs).
+  foxglove_bridge:
+    container_name: foxglove_bridge
+    image: vitro_arm64:humble
+    network_mode: "host"
+    volumes:
+      - /dev/shm:/dev/shm
+    command: ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8765

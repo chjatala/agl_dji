@@ -2,14 +2,23 @@
 
 xhost +local:root
 
-# The UWB unit enumerates as /dev/ttyACM0. Set skip_uwb_wait=1 to go straight to
-# startup without it - needed when bench-testing the PSDK link on its own, since
-# the aircraft side does not depend on the UWB.
-skip_uwb_wait="${skip_uwb_wait:-0}"
-
-if [[ "$skip_uwb_wait" == "1" ]]; then
-    echo "Skipping UWB wait (skip_uwb_wait=1); agilica_uwb will fail if /dev/ttyACM0 is absent."
+# use_psdk_msdk=1 (default) -> use DJI MSDK (vitro_interface)
+# use_psdk_msdk=0           -> use DJI PSDK (psdk_bridge)
+use_psdk_msdk="${use_psdk_msdk:-1}"
+if [[ "$use_psdk_msdk" == "1" ]]; then
+    echo "Using DJI MSDK (vitro_interface)"
+    link_profile="msdk"
 else
+    echo "Using DJI PSDK (psdk_bridge)"
+    link_profile="psdk"
+fi
+
+# use_uwb=0 (default) -> skip agilica_uwb entirely, no wait, not started.
+# use_uwb=1           -> wait for the UWB unit (/dev/ttyACM0), then start it too.
+# UWB is a separate integration step from the drone link - only wait for it
+# when it's actually been asked for, not on every run.
+use_uwb="${use_uwb:-0}"
+if [[ "$use_uwb" == "1" ]]; then
     if [[ ! -e /dev/ttyACM0 ]]; then
         echo "UWB is not found, please plug in the UWB"
     fi
@@ -20,18 +29,11 @@ else
         echo "Waiting for UWB ..."
     done
 
-    echo "UWB is found, starting drone application ..."
-fi
-
-# use_psdk_msdk=1 (default) -> use DJI MSDK (vitro_interface)
-# use_psdk_msdk=0           -> use DJI PSDK (psdk_bridge)
-use_psdk_msdk="${use_psdk_msdk:-1}"
-if [[ "$use_psdk_msdk" == "1" ]]; then
-    echo "Using DJI MSDK (vitro_interface)"
-    export COMPOSE_PROFILES=msdk
+    echo "UWB is found."
+    export COMPOSE_PROFILES="${link_profile},uwb"
 else
-    echo "Using DJI PSDK (psdk_bridge)"
-    export COMPOSE_PROFILES=psdk
+    echo "Skipping UWB (use_uwb=0) - agilica_uwb will not start."
+    export COMPOSE_PROFILES="${link_profile}"
 fi
 
 docker compose down --remove-orphans

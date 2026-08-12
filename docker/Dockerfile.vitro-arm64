@@ -30,6 +30,12 @@ SHELL ["/bin/bash", "-l", "-c"]
 # the interface depends on: mavros_msgs carries GlobalPositionTarget (the setpoint
 # topic) and geographic_msgs carries GeoPointStamped (the position topic).
 #
+# ros-humble-foxglove-bridge: a WebSocket bridge exposing the live ROS graph
+# (topics, telemetry) to Foxglove Studio running on any laptop's browser - a
+# lightweight stand-in for the full drone_gui, which needs a separate x86_64
+# machine (see the "gui" compose profile). Does not carry video - the PSDK
+# bridge does not publish a camera topic (see psdk_wrapper/README.md TODOs).
+#
 # Deliberately NOT installed: ros-humble-vision-msgs. VITRO ships its own package
 # also called vision_msgs (VisionResult/VisionResultArray), unrelated to the
 # upstream perception one. Installing both would shadow ours in the overlay.
@@ -41,6 +47,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-numpy \
         python3-pip \
         python3-yaml \
+        ros-${ROS_DIST}-foxglove-bridge \
         ros-${ROS_DIST}-geographic-msgs \
         ros-${ROS_DIST}-mavros-msgs \
         ros-${ROS_DIST}-rosidl-default-generators \
