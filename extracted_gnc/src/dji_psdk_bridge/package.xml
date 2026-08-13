@@ -10,10 +10,13 @@
 
   <depend>rclpy</depend>
   <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
   <depend>geometry_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>geographic_msgs</depend>
   <depend>mavros_msgs</depend>
+  <!-- SetGimballAngle / SetVideoSettings, for the documented VITRO service surface -->
+  <depend>vitro_ros_definitions</depend>
 
   <exec_depend>python3</exec_depend>
 

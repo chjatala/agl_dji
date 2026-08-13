@@ -6,6 +6,9 @@
 
 !msgs_src
 
+# Agilica-owned source packages (nmea_parser repackaged for Jazzy, ...)
+!src
+
 !extracted_gnc
 extracted_gnc/*
 

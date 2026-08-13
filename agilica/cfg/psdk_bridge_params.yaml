@@ -1,0 +1,64 @@
+# psdk_bridge - the Agilica PSDK module's side of the VITRO ROS2 interface.
+#
+# Applies to the node however it is namespaced (compose runs it under /dji), hence the
+# /**/ wildcard, matching the style of cfg/dji_interface.yaml.
+/**/psdk_bridge:
+  ros__parameters:
+
+    # ---- topic naming -----------------------------------------------------------------
+    # false (default) -> the names currently deployed and consumed by
+    #                    cfg/gnc/demo_agilica/sf_config.yaml: drone/pos, drone/spd,
+    #                    drone/attitude, height_from_ground, battery, gimbal_attitude.
+    # true            -> the names in "ROS2 Interface - VITRO Framework 0.0.1":
+    #                    data/drone/location, data/drone/velocity_global, ...
+    #
+    # Which one VITRO actually subscribes is still an open question with Flanders Make
+    # (Jia Wan said the documentation is unclear and that he will update it), so this is
+    # deliberately a switch rather than a decision baked into the code.
+    use_documented_topic_names: false
+
+    # Per-topic overrides. Empty means "use whichever table the flag above selected".
+    # Names without a leading "/" are relative and pick up the node's namespace (/dji);
+    # prefix with "/" to publish at the root instead. The interface document writes the
+    # names with a leading slash, but VITRO's own sf_config.yaml mixes relative
+    # (drone/attitude) and absolute (/agilica_pose), so neither can be assumed.
+    topic_location: ""
+    topic_velocity: ""
+    topic_attitude: ""
+    topic_gimbal_angle: ""
+    topic_height_above_ground: ""
+    topic_battery_state: ""
+    topic_log: ""
+    topic_setpoint: ""
+    topic_action: ""
+
+    # Service name overrides, same convention. Note "gimball_angle_service" is spelled
+    # with two l's in the VITRO documentation and in the .srv filename; that spelling is
+    # the contract and is kept verbatim.
+    service_enable_automatic_navigation: ""
+    service_disable_automatic_navigation: ""
+    service_gimbal_angle: ""
+    service_save_photo: ""
+    service_video_settings: ""
+
+    # ---- rates ------------------------------------------------------------------------
+    # psdk_wrapper subscribes the flight-controller topics at 5 Hz and the battery at 1 Hz
+    # (see PsdkWrapper_SubscribeTelemetry). Publishing faster only repeats cached values
+    # and would present VITRO's EKF with data that looks higher-rate than it is. To go
+    # faster, raise DJI_DATA_SUBSCRIPTION_TOPIC_*_HZ in psdk_wrapper.c first - QUATERNION
+    # and VELOCITY both support up to 200 Hz.
+    telemetry_rate: 5.0
+    battery_rate: 1.0
+
+    # ---- safety -----------------------------------------------------------------------
+    # If setpoints stop arriving while a command is still latched, command hover rather
+    # than letting the aircraft hold the last velocity indefinitely. This matters most in
+    # the interim split deployment, where VITRO runs on a laptop and the control loop
+    # crosses WiFi.
+    setpoint_watchdog_enabled: true
+    setpoint_timeout: 0.5
+
+    # When true, setpoints are only forwarded between enable_automatic_navigation and
+    # disable_automatic_navigation. Off by default so behaviour is unchanged for callers
+    # that drive cmd/drone/setpoint directly without using the services.
+    require_automatic_navigation: false

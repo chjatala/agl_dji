@@ -128,9 +128,18 @@ class PSDKAdapter:
     def get_telemetry(self):
         """Fetch the latest FC telemetry from the native wrapper.
 
-        Returns a dict with lat/lon/alt (deg, deg, m), vx/vy/vz (m/s, ground frame),
-        qw/qx/qy/qz (aircraft attitude quaternion), height_rel (m, above takeoff point)
-        and battery_percent (0-100), or None if not connected / the call failed.
+        Returns a dict with lat/lon/alt (deg, deg, m), vx/vy/vz, qw/qx/qy/qz,
+        height_rel (m, above takeoff point) and battery_percent (0-100), or None if not
+        connected / the call failed.
+
+        These are DJI's values verbatim, in DJI's frames - not the frames the VITRO
+        interface publishes:
+
+        * vx/vy/vz are ground-fixed **NEU** (m/s), i.e. NED with the Z sign flipped.
+        * qw/qx/qy/qz rotate **body FRD -> ground NED** (Hamilton, q0 = w).
+
+        Callers converting to the interface frames should use
+        ``psdk_bridge_node.ground_neu_to_body_frd()`` rather than reimplementing it.
         """
         if not (self.lib and self.connected and hasattr(self.lib, 'psdk_get_telemetry')):
             return None

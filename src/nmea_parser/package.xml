@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>nmea_parser</name>
+  <version>0.0.1</version>
+  <description>NMEA parser ROS2 package with pose publisher</description>
+  <maintainer email="maintainer@example.com">Package Maintainer</maintainer>
+  <license>MIT</license>
+
+  <depend>rclpy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
+  <!-- nmea_parser.py does `import serial` at module scope; the node dies on startup
+       without it. Undeclared in the original package.xml. -->
+  <depend>python3-serial</depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

@@ -36,6 +36,9 @@ SHELL ["/bin/bash", "-l", "-c"]
 # machine (see the "gui" compose profile). Does not carry video - the PSDK
 # bridge does not publish a camera topic (see psdk_wrapper/README.md TODOs).
 #
+# python3-serial: nmea_parser does `import serial` at module scope, so the UWB
+# node dies on startup without it. Nothing else in the image pulls pyserial in.
+#
 # Deliberately NOT installed: ros-humble-vision-msgs. VITRO ships its own package
 # also called vision_msgs (VisionResult/VisionResultArray), unrelated to the
 # upstream perception one. Installing both would shadow ours in the overlay.
@@ -46,6 +49,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-colcon-common-extensions \
         python3-numpy \
         python3-pip \
+        python3-serial \
         python3-yaml \
         ros-${ROS_DIST}-foxglove-bridge \
         ros-${ROS_DIST}-geographic-msgs \

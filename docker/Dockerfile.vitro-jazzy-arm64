@@ -1,0 +1,127 @@
+# DJI PSDK interface module for VITRO - Raspberry Pi 4 (arm64), ROS 2 Jazzy.
+#
+# Build context is the REPO ROOT, not this directory:
+#     docker build -f docker/Dockerfile.vitro-jazzy-arm64 -t vitro_arm64:jazzy .
+#
+# Why Jazzy: Flanders Make upgraded VITRO from Humble to Jazzy and recommends we match
+# (Ubuntu 24.04 / Python 3.12 / ROS 2 Jazzy - Jia Wan, 13 Aug 2026). They will supply the
+# arm64 VITRO images including the `sundae` package; until then VITRO runs on a laptop and
+# this image carries only the PSDK bridge and the UWB parser.
+#
+# What is deliberately NOT here, unlike Dockerfile.vitro-arm64 (Humble):
+#   drone_control, sensor_fusion, drone_gnc_launch - they ship as Python-3.10 .pyc, which
+#   is bytecode-version-locked and will not load under Jazzy's 3.12. They also all import
+#   `sundae`, which we do not have, so they could not run here anyway. They arrive rebuilt
+#   inside Flanders Make's arm64 images.
+#
+# nmea_parser is the exception: it shipped as plain .py source, so it follows us to 3.12.
+# It lives in src/nmea_parser/ as a proper buildable package (the original was an installed
+# tree with no setup.py).
+#
+# Base is ros-base, not the perception/desktop image Jia's dev Dockerfile uses: that one
+# targets an x86 laptop, while this Pi has 3.7 GB RAM and ~12 GB free disk. Run GUIs
+# elsewhere; observability here is foxglove_bridge over the network.
+
+FROM ros:jazzy-ros-base
+
+ARG ROS_DIST=jazzy
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Brussels
+
+SHELL ["/bin/bash", "-l", "-c"]
+
+# Toolchain for psdk_wrapper, colcon for the workspace, and the message packages the
+# interface depends on: mavros_msgs carries GlobalPositionTarget (the setpoint topic) and
+# geographic_msgs carries GeoPointStamped (the position topic).
+#
+# python3-serial: nmea_parser does `import serial` at module scope, so the UWB node dies on
+# startup without it. Nothing else in the image pulls pyserial in.
+#
+# rosbag2-storage-mcap: compose records with `-s mcap`.
+#
+# Deliberately NOT installed: ros-jazzy-vision-msgs. VITRO ships its own package also
+# called vision_msgs (VisionResult/VisionResultArray), unrelated to the upstream perception
+# one. Installing both would shadow ours in the overlay.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        cmake \
+        git \
+        python3-colcon-common-extensions \
+        python3-numpy \
+        python3-pip \
+        python3-serial \
+        python3-venv \
+        python3-yaml \
+        ros-${ROS_DIST}-foxglove-bridge \
+        ros-${ROS_DIST}-geographic-msgs \
+        ros-${ROS_DIST}-mavros-msgs \
+        ros-${ROS_DIST}-rosbag2-storage-mcap \
+        ros-${ROS_DIST}-rosidl-default-generators \
+    && rm -rf /var/lib/apt/lists/*
+
+# Ubuntu 24.04 marks the system Python as externally managed (PEP 668), so plain
+# `pip install` into it fails. Mirror Flanders Make's own pattern from
+# drone_dev_jazzy_AG.Dockerfile - a venv with --system-site-packages, activated ahead of
+# ROS - so that rosdep-installed ROS packages stay visible while pip-installed ones (such
+# as `sundae`, once it arrives) have somewhere to go.
+RUN python3 -m venv /root/venv --system-site-packages
+
+WORKDIR /root/ros2_ws
+
+# The build is deliberately split into two layers, ordered by how often each changes.
+#
+# rosidl generation for the message packages takes ~11 minutes on a Pi 4, while our own
+# three packages build in well under a minute. Docker invalidates every layer after a
+# changed COPY, so building them together meant that editing one line of the bridge paid
+# the full 11 minutes again. Messages first (they change almost never), our code second.
+#
+# Plain (non-symlink) install: this is a final baked image, not an iterative dev tree, and
+# the build/ directory is deleted right after. --symlink-install would leave install/ full
+# of symlinks pointing into build/, all dangling once it's gone.
+
+# --- Layer 1: message packages, reconstructed by tools/reconstruct_msgs.py --------------
+COPY msgs_src/ /root/ros2_ws/src/
+RUN source /root/venv/bin/activate \
+    && source /opt/ros/${ROS_DIST}/setup.bash \
+    && colcon build \
+    && rm -rf /root/ros2_ws/build /root/ros2_ws/log
+
+# --- Layer 2: the packages we actually iterate on ---------------------------------------
+# psdk_wrapper's CMakeLists picks third_party/psdk_lib/lib/aarch64-linux-gnu-gcc/
+# libpayloadsdk.a off `uname -m`, so it resolves correctly when built here on the Pi - that
+# selection is by architecture, not by ROS distro, so the move to Jazzy does not affect it.
+#
+# install/setup.bash is sourced so --packages-select can resolve the message dependencies
+# built in layer 1 without rebuilding them (their build/ directory is gone).
+COPY extracted_gnc/src/psdk_wrapper/    /root/ros2_ws/src/psdk_wrapper/
+COPY extracted_gnc/src/dji_psdk_bridge/ /root/ros2_ws/src/dji_psdk_bridge/
+COPY src/nmea_parser/                   /root/ros2_ws/src/nmea_parser/
+RUN source /root/venv/bin/activate \
+    && source /opt/ros/${ROS_DIST}/setup.bash \
+    && source /root/ros2_ws/install/setup.bash \
+    && colcon build --packages-select psdk_wrapper dji_psdk_bridge nmea_parser \
+    && rm -rf /root/ros2_ws/build /root/ros2_ws/log
+
+# When Flanders Make delivers the arm64 VITRO bundle, add it here - the pip package into
+# the venv, the ROS packages into the overlay - then flip `vitro_location=pi` in
+# start_demo.sh to run fusion and control on the drone instead of the laptop:
+#
+#   COPY vendor/sundae*.whl /tmp/
+#   RUN source /root/venv/bin/activate && pip install /tmp/sundae*.whl
+#   COPY vendor/vitro_jazzy_install/ /root/ros2_ws/install/
+
+RUN echo "source /root/venv/bin/activate" >> /root/.bashrc \
+    && echo "source /opt/ros/${ROS_DIST}/setup.bash" >> /root/.bashrc \
+    && echo "source /root/ros2_ws/install/setup.bash" >> /root/.bashrc
+
+RUN printf '%s\n' \
+        '#!/usr/bin/bash' \
+        'source /root/venv/bin/activate' \
+        "source /opt/ros/${ROS_DIST}/setup.bash" \
+        'source /root/ros2_ws/install/setup.bash' \
+        'exec "$@"' \
+        > /entrypoint.sh \
+    && chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["bash"]

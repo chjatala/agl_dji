@@ -1,11 +1,37 @@
-# Two mutually exclusive drone-link profiles, plus an independent add-on:
+# Two mutually exclusive drone-link profiles, plus independent add-ons:
 #   COMPOSE_PROFILES=psdk      -> psdk_bridge, Agilica's PSDK module (the Pi/arm64 path)
 #   COMPOSE_PROFILES=msdk      -> vitro_interface, Flanders Make's MSDK bridge
-#   add ",uwb"                 -> also start agilica_uwb (needs /dev/ttyACM0 present)
+#   add ",uwb"                 -> also start agilica_uwb (needs the UWB module plugged in)
+#   add ",gnc"                 -> also run VITRO (drone_gnc) here rather than on a laptop
+#
+# Prefer driving these through start_demo.sh (use_psdk_msdk / use_uwb / vitro_location)
+# rather than setting COMPOSE_PROFILES by hand - it also resolves the serial ports.
+#
+# Host serial devices come in as UWB_UART_DEV / PSDK_UART_DEV, resolved by USB
+# product string in scripts/detect_serial.sh - both adapters are FTDI, so the
+# ttyUSB* index depends on plug order and cannot be hardcoded. The fallbacks
+# below are intentionally non-existent paths: compose interpolates every service
+# regardless of the active profile, so a required-variable (:?) form would break
+# the msdk path too, while a real device default risks opening the wrong port.
 #
 # The msdk services below stay pinned to the original x86_64 prod images. That
 # path cannot run on the Pi: vitro_interface is native C++ built for x86_64 and
 # we have no source for it. It is precisely what psdk_bridge replaces.
+
+# Shared ROS 2 environment for the services that actually run on the Pi.
+#
+# When VITRO runs on a laptop (vitro_location=laptop, the default), that laptop must use the
+# same ROS_DOMAIN_ID *and* the same ROS distro - ROS 2 does not support cross-distro
+# communication, so a Jazzy Pi will not talk to a Humble laptop image.
+#
+# Every service uses host networking, so DDS multicast discovery works across the LAN
+# unchanged. Where multicast is blocked, set VITRO_HOST to the laptop's IP; start_demo.sh
+# passes it through as ROS_STATIC_PEERS and discovery falls back to unicast.
+x-ros-env: &ros_env
+  ROS_DOMAIN_ID: ${ROS_DOMAIN_ID:-0}
+  ROS_AUTOMATIC_DISCOVERY_RANGE: ${ROS_AUTOMATIC_DISCOVERY_RANGE:-SUBNET}
+  ROS_STATIC_PEERS: ${ROS_STATIC_PEERS:-}
+
 services:
   vitro_startup_config:
     container_name: vitro_startup_config
@@ -61,11 +87,21 @@ services:
       # - ./cfg/gui_cfg.yaml:/root/drone_cfg_home/gui_cfg.yaml
     command: ros2 run drone_gui dev_gui --ros-args -r __ns:=/dji -p cfg_file:=gui_cfg.yaml
 
+  # VITRO's fusion + control + mission layer. Behind the "gnc" profile because it runs on a
+  # laptop for now (vitro_location=laptop): sensor_fusion and drone_control both import the
+  # `sundae` package, which is not in the extracted tree - Flanders Make will deliver it
+  # inside arm64 images (expected end of Aug 2026). Until those are baked into the image,
+  # starting this here fails on ModuleNotFoundError.
+  #
+  # Override VITRO_GNC_IMAGE to point at their bundle when it arrives, then switch
+  # vitro_location=pi.
   drone_gnc:
     container_name: drone_gnc
-    image: vitro_arm64:humble
+    profiles: ["gnc"]
+    image: ${VITRO_GNC_IMAGE:-vitro_arm64:jazzy}
     environment:
-      - DISPLAY=${DISPLAY}
+      <<: *ros_env
+      DISPLAY: ${DISPLAY}
     volumes:
       - /dev/shm:/dev/shm
       - ./log/sundae:/root/log
@@ -75,64 +111,86 @@ services:
     command: ros2 launch /demo_agilica_launch.py
 
   # Not part of the default run - the UWB positioning module is a later
-  # integration step. Requires ./cfg/parser_params.yaml and /dev/ttyACM0 (the
-  # UWB unit) to actually be present; add "uwb" to COMPOSE_PROFILES once wired up.
+  # integration step. Requires ./cfg/parser_params.yaml and the UWB unit to
+  # actually be present; add "uwb" to COMPOSE_PROFILES once wired up.
+  #
+  # The module is an FTDI FT231X enumerating as /dev/ttyUSBn (NOT ttyACM0 - it is
+  # not a CDC-ACM device). Host side is resolved at launch; container side stays
+  # /dev/ttyAgilica to match the `port` in cfg/parser_params.yaml.
   agilica_uwb:
     container_name: agilica_uwb
     profiles: ["uwb"]
-    image: vitro_arm64:humble
+    image: vitro_arm64:jazzy
+    environment:
+      <<: *ros_env
     volumes:
       - /dev/shm:/dev/shm
-      - /dev/ttyACM0:/dev/ttyAgilica
+      - ${UWB_UART_DEV:-/dev/uwb-not-detected}:/dev/ttyAgilica
       - ./log/sundae:/root/log
       - ./cfg/parser_params.yaml:/parser_params.yaml
     privileged: true
     network_mode: "host"
     command: ros2 launch nmea_parser parser.launch.py params_file:=/parser_params.yaml
 
+  # Records the interface topics rather than `-a`. On a Pi 4 (3.7 GB RAM, ~12 GB free disk)
+  # recording every topic alongside the bridge, the parser and - later - a 40 Hz EKF costs
+  # real CPU and fills the card fast. Add topics here as the interface grows; the previous
+  # `-a -x '(.*)image(.*)'` form is the fallback if you need a broad capture while debugging.
   ros_log_record:
     container_name: ros_log_record
-    image: vitro_arm64:humble
+    image: vitro_arm64:jazzy
+    environment:
+      <<: *ros_env
     volumes:
       - ./log/ros:/root/bag_record
       - /dev/shm:/dev/shm
     network_mode: "host"
     working_dir: /root/bag_record
-    command: ros2 bag record -a -s mcap -x '(.*)image(.*)'
+    # --regex (not a fixed topic list) so topics that appear after the recorder starts - which
+    # is normal here, since the bridge takes a moment to connect - are still picked up.
+    command: >-
+      ros2 bag record -s mcap
+      --regex '^/(agilica_pose|dji/.*)$'
+      -x '(.*)image(.*)'
 
   psdk_bridge:
     container_name: psdk_bridge
     profiles: ["psdk"]
-    image: vitro_arm64:humble
+    image: vitro_arm64:jazzy
     network_mode: "host"
     environment:
-      - DISPLAY=${DISPLAY}
+      <<: *ros_env
+      DISPLAY: ${DISPLAY}
       # DJI developer app credentials (create/obtain at https://developer.dji.com/user/apps).
       # Export these in the host shell (or a .env file next to this compose.yaml) before
       # `use_psdk_msdk=0 ./start_demo.sh` - psdk_wrapper refuses to connect without them.
-      - PSDK_APP_NAME=${PSDK_APP_NAME:-}
-      - PSDK_APP_ID=${PSDK_APP_ID:-}
-      - PSDK_APP_KEY=${PSDK_APP_KEY:-}
-      - PSDK_APP_LICENSE=${PSDK_APP_LICENSE:-}
-      - PSDK_DEV_ACCOUNT=${PSDK_DEV_ACCOUNT:-}
-      - PSDK_BAUD_RATE=${PSDK_BAUD_RATE:-460800}
-      - PSDK_UART_DEV1=/dev/ttyUSB0
-      - PSDK_LIB_PATH=/root/ros2_ws/install/psdk_wrapper/lib/libpsdk_wrapper.so
+      PSDK_APP_NAME: ${PSDK_APP_NAME:-}
+      PSDK_APP_ID: ${PSDK_APP_ID:-}
+      PSDK_APP_KEY: ${PSDK_APP_KEY:-}
+      PSDK_APP_LICENSE: ${PSDK_APP_LICENSE:-}
+      PSDK_DEV_ACCOUNT: ${PSDK_DEV_ACCOUNT:-}
+      PSDK_BAUD_RATE: ${PSDK_BAUD_RATE:-460800}
+      PSDK_UART_DEV1: /dev/ttyUSB0
+      PSDK_LIB_PATH: /root/ros2_ws/install/psdk_wrapper/lib/libpsdk_wrapper.so
     devices:
-      # UART link to the aircraft's payload port (E-Port/X-Port/SkyPort). Override the
-      # host side via PSDK_UART_DEV if your adapter doesn't enumerate as ttyUSB0.
-      - "${PSDK_UART_DEV:-/dev/ttyUSB0}:/dev/ttyUSB0"
+      # UART link to the aircraft's payload port (E-Port/X-Port/SkyPort). Host side is
+      # detected by USB product string (FTDI TTL232R-3V3) at launch; set PSDK_UART_DEV
+      # in the shell or .env to pin a specific port instead.
+      - "${PSDK_UART_DEV:-/dev/aircraft-uart-not-detected}:/dev/ttyUSB0"
     volumes:
       - /dev/shm:/dev/shm
       - ./log/sundae:/root/log
-    # psdk_wrapper and dji_psdk_bridge are compiled into vitro_arm64:humble at
+      - ./cfg/psdk_bridge_params.yaml:/psdk_bridge_params.yaml
+    # psdk_wrapper and dji_psdk_bridge are compiled into vitro_arm64:jazzy at
     # image-build time, so there is no colcon build here - the static whole-archive
     # link against libpayloadsdk.a is slow on a Pi 4 and pointless to repeat on
     # every start. The entrypoint already sources ROS and the workspace.
     # Executable is "psdk_bridge", not "psdk_bridge_node" - that's the module
     # name inside setup.py's entry_points, the registered console script is
     # shorter (confirm with `ros2 pkg executables dji_psdk_bridge`).
-    command: ros2 run dji_psdk_bridge psdk_bridge --ros-args -r __ns:=/dji
+    command: >-
+      ros2 run dji_psdk_bridge psdk_bridge --ros-args -r __ns:=/dji
+                                           --params-file /psdk_bridge_params.yaml
 
   # No `profiles:` key on purpose - unlike psdk/msdk/gui, this should start
   # alongside whichever drone link is active. Exposes the live ROS graph
@@ -142,7 +200,9 @@ services:
   # does not publish a camera topic (see psdk_wrapper/README.md TODOs).
   foxglove_bridge:
     container_name: foxglove_bridge
-    image: vitro_arm64:humble
+    image: vitro_arm64:jazzy
+    environment:
+      <<: *ros_env
     network_mode: "host"
     volumes:
       - /dev/shm:/dev/shm

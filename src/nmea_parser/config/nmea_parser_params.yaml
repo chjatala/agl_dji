@@ -1,10 +1,7 @@
 nmea_parser:
   ros__parameters:
     # Serial port configuration
-    # Container-side name; compose maps the detected host port onto it.
-    port: "/dev/ttyAgilica"
-    # The module streams at 460800. At 9600 the port opens fine and yields only
-    # line noise, so the parser stays silent instead of failing visibly.
+    port: "/dev/ttyUSB0"
     baudrate: 460800
     timeout: 1.0
 
