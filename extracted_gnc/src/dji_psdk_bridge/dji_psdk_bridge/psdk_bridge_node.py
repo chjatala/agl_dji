@@ -206,8 +206,22 @@ class PSDKBridgeNode(Node):
     # -- helpers ----------------------------------------------------------------
 
     def publish_log(self, message: str, level: str = 'info'):
-        """Log locally and mirror onto the interface's log topic."""
-        getattr(self.get_logger(), level, self.get_logger().info)(message)
+        """Log locally and mirror onto the interface's log topic.
+
+        The severity must be dispatched to a *different source line* per level. rclpy caches
+        a logger's severity against the call site (file/function/line), and raises
+        "Logger severity cannot be changed between calls" if the same site is later used at a
+        different level. Funnelling every level through one `getattr(logger, level)(...)` line
+        therefore threw the first time the watchdog logged a warning after an earlier info -
+        inside a timer callback, which killed the node outright.
+        """
+        logger = self.get_logger()
+        if level == 'error':
+            logger.error(message)
+        elif level == 'warning':
+            logger.warning(message)
+        else:
+            logger.info(message)
         self.log_pub.publish(String(data=message))
 
     # -- commands ---------------------------------------------------------------
@@ -267,12 +281,19 @@ class PSDKBridgeNode(Node):
         if age < self.setpoint_timeout:
             return
 
+        # Command hover first, report second. An exception raised inside a timer callback
+        # takes the whole node down - which is how a logging bug once killed the bridge the
+        # first time this fired - so the safety action must already have happened, and the
+        # reporting must not be able to undo it.
         self._setpoint_latched = False
         self.send_psdk_command('hold')
-        self.publish_log(
-            f'setpoint watchdog: no setpoint for {age:.2f}s '
-            f'(timeout {self.setpoint_timeout}s) - commanding hover',
-            level='warning')
+        try:
+            self.publish_log(
+                f'setpoint watchdog: no setpoint for {age:.2f}s '
+                f'(timeout {self.setpoint_timeout}s) - commanding hover',
+                level='warning')
+        except Exception as exc:  # noqa: BLE001 - never let reporting kill the watchdog
+            self.get_logger().error(f'watchdog reporting failed: {exc}')
 
     def send_psdk_command(self, command_name: str, payload=None):
         payload_json = json.dumps(payload) if payload is not None else ''

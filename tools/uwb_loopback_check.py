@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 """Integration check for nmea_parser in the Jazzy image, without needing UWB anchor lock.
 
-Creates a pty, replays real sentences captured from the Agilica module at 40 Hz into it,
-points the node at that pty, and asserts on what lands on /agilica_pose. This exercises the
-actual installed package (serial read loop, sentence dispatch, cm->m scaling, Y negation,
+Creates a pty, replays real sentences captured from the Agilica module into it, points the
+node at that pty, and asserts on what lands on /agilica_pose. This exercises the actual
+installed package (serial read loop, sentence dispatch, cm->m scaling, Y negation,
 publishing) so a hardware fix outage doesn't block verification of the build.
+
+HZ below is the rate the sentences were observed arriving on the *wire* (~40 Hz), which is
+not necessarily the tag's position update rate - Agilica report the tag updates at ~10 Hz, so
+the stream may repeat each fix. That distinction matters for the fusion downstream, not for
+this check; see the plan's "UWB wire rate vs update rate" note.
 """
 import os
 import pty
