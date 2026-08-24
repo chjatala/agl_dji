@@ -299,7 +299,18 @@ class PSDKBridgeNode(Node):
         payload_json = json.dumps(payload) if payload is not None else ''
         if self.psdk.connected:
             rc = self.psdk.send_command(command_name, payload_json)
-            self.get_logger().debug(f'psdk send_command rc={rc}')
+            # Commands are rare and consequential (arm takes flight-control authority;
+            # land/hold change what the aircraft is doing), so their result belongs in the
+            # normal log, not at debug. A silently-failed 'arm' otherwise looks identical
+            # to a successful one from outside.
+            if rc == 0:
+                self.publish_log(f"PSDK command '{command_name}' accepted")
+            else:
+                self.publish_log(
+                    f"PSDK command '{command_name}' REJECTED by the aircraft (rc={rc}). "
+                    f"For 'arm', the usual cause is the RC flight-mode switch not being in "
+                    f"N/P mode - the aircraft refuses to hand over joystick authority.",
+                    level='warning')
             return rc == 0
         data = {'command': command_name, 'payload': payload}
         text = json.dumps(data)
@@ -311,7 +322,15 @@ class PSDKBridgeNode(Node):
         payload = json.dumps(setpoint)
         if self.psdk.connected:
             rc = self.psdk.send_setpoint(payload)
-            self.get_logger().debug(f'psdk send_setpoint rc={rc}')
+            # Setpoints arrive at up to 40 Hz, so success stays at debug to avoid flooding
+            # the log - but a *failure* is throttled-warned, since silently dropping control
+            # commands is exactly the failure you need to see.
+            if rc == 0:
+                self.get_logger().debug(f'psdk send_setpoint rc={rc}')
+            else:
+                self.get_logger().warning(
+                    f'psdk send_setpoint REJECTED (rc={rc}) - is joystick authority held?',
+                    throttle_duration_sec=5.0)
             return rc == 0
         text = json.dumps({'setpoint': setpoint})
         self.get_logger().info(f'Mapped to PSDK setpoint (stub): {text}')
