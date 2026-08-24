@@ -1,5 +1,12 @@
 agilica/log
 agilica/*.img
 
+# Build artefacts from running the bridge outside a container. The .pyc here are our
+# own sources' bytecode - unrelated to the VITRO .pyc under extracted_gnc/install,
+# which are the only shipped form of those packages and must stay tracked.
+__pycache__/
+*.py[cod]
+!extracted_gnc/install/**/*.pyc
+
 
 
