@@ -49,6 +49,7 @@ services:
 
   mqtt_broker:
     container_name: mqtt_broker
+    restart: unless-stopped
     image: eclipse-mosquitto:2.0.18
     network_mode: "host"
     volumes:
@@ -98,7 +99,7 @@ services:
   drone_gnc:
     container_name: drone_gnc
     profiles: ["gnc"]
-    image: ${VITRO_GNC_IMAGE:-vitro_arm64:jazzy}
+    image: ${VITRO_GNC_IMAGE:-${VITRO_IMAGE:-vitro_arm64:jazzy}}
     environment:
       <<: *ros_env
       DISPLAY: ${DISPLAY}
@@ -119,8 +120,9 @@ services:
   # /dev/ttyAgilica to match the `port` in cfg/parser_params.yaml.
   agilica_uwb:
     container_name: agilica_uwb
+    restart: unless-stopped
     profiles: ["uwb"]
-    image: vitro_arm64:jazzy
+    image: ${VITRO_IMAGE:-vitro_arm64:jazzy}
     environment:
       <<: *ros_env
     volumes:
@@ -138,7 +140,7 @@ services:
   # `-a -x '(.*)image(.*)'` form is the fallback if you need a broad capture while debugging.
   ros_log_record:
     container_name: ros_log_record
-    image: vitro_arm64:jazzy
+    image: ${VITRO_IMAGE:-vitro_arm64:jazzy}
     environment:
       <<: *ros_env
     volumes:
@@ -148,6 +150,9 @@ services:
     working_dir: /root/bag_record
     # --regex (not a fixed topic list) so topics that appear after the recorder starts - which
     # is normal here, since the bridge takes a moment to connect - are still picked up.
+    # -x, not --exclude-regex: Humble spells the exclude flag -x/--exclude and rejects
+    # --exclude-regex, which is Jazzy's name for it. The stack runs on Humble because the
+    # VITRO packages ship as Python 3.10 .pyc, so Humble's spelling is the one that counts.
     command: >-
       ros2 bag record -s mcap
       --regex '^/(agilica_pose|dji/.*)$'
@@ -155,8 +160,9 @@ services:
 
   psdk_bridge:
     container_name: psdk_bridge
+    restart: unless-stopped
     profiles: ["psdk"]
-    image: vitro_arm64:jazzy
+    image: ${VITRO_IMAGE:-vitro_arm64:jazzy}
     network_mode: "host"
     environment:
       <<: *ros_env
@@ -177,6 +183,8 @@ services:
       # detected by USB product string (FTDI TTL232R-3V3) at launch; set PSDK_UART_DEV
       # in the shell or .env to pin a specific port instead.
       - "${PSDK_UART_DEV:-/dev/aircraft-uart-not-detected}:/dev/ttyUSB0"
+    cap_add:
+      - NET_ADMIN
     volumes:
       - /dev/shm:/dev/shm
       - ./log/sundae:/root/log
@@ -196,11 +204,13 @@ services:
   # alongside whichever drone link is active. Exposes the live ROS graph
   # (position, battery, attitude, ...) to Foxglove Studio (app.foxglove.dev, or
   # the desktop app) from any laptop on the same network: connect to
-  # ws://<pi-ip>:8765. Telemetry/plots only - no video, since the PSDK bridge
-  # does not publish a camera topic (see psdk_wrapper/README.md TODOs).
+  # ws://<pi-ip>:8765. Telemetry/plots only in practice: the PSDK bridge can publish
+  # H.264 chunks, but liveview is off by default because enabling it currently breaks
+  # the aircraft link entirely (see cfg/psdk_bridge_params.yaml).
   foxglove_bridge:
     container_name: foxglove_bridge
-    image: vitro_arm64:jazzy
+    restart: unless-stopped
+    image: ${VITRO_IMAGE:-vitro_arm64:jazzy}
     environment:
       <<: *ros_env
     network_mode: "host"
