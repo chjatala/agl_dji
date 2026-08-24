@@ -1,0 +1,143 @@
+{
+  "configById": {
+    "Gauge!battery": {
+      "path": "/dji/battery.percentage",
+      "minValue": 0,
+      "maxValue": 1,
+      "colorMode": "colormap",
+      "colorMap": "red-yellow-green",
+      "gradient": ["#f44336", "#4caf50"],
+      "reverse": false
+    },
+    "Plot!attitude": {
+      "title": "Attitude (quaternion, body-FRD -> ground-NED)",
+      "paths": [
+        { "value": "/dji/drone/attitude.quaternion.w", "enabled": true, "timestampMethod": "receiveTime" },
+        { "value": "/dji/drone/attitude.quaternion.x", "enabled": true, "timestampMethod": "receiveTime" },
+        { "value": "/dji/drone/attitude.quaternion.y", "enabled": true, "timestampMethod": "receiveTime" },
+        { "value": "/dji/drone/attitude.quaternion.z", "enabled": true, "timestampMethod": "receiveTime" }
+      ],
+      "minYValue": -1.1,
+      "maxYValue": 1.1,
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": true,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "followingViewWidth": 30
+    },
+    "Plot!uwbtrack": {
+      "title": "UWB track (Y vs X, top-down)",
+      "paths": [
+        { "value": "/agilica_pose.pose.position.y", "enabled": true, "timestampMethod": "receiveTime" }
+      ],
+      "xAxisVal": "custom",
+      "xAxisPath": { "value": "/agilica_pose.pose.position.x", "enabled": true },
+      "showLegend": false,
+      "showPlotValuesInLegend": true,
+      "isSynced": false
+    },
+    "Plot!uwbxyz": {
+      "title": "UWB position (m)",
+      "paths": [
+        { "value": "/agilica_pose.pose.position.x", "enabled": true, "timestampMethod": "receiveTime" },
+        { "value": "/agilica_pose.pose.position.y", "enabled": true, "timestampMethod": "receiveTime" },
+        { "value": "/agilica_pose.pose.position.z", "enabled": true, "timestampMethod": "receiveTime" }
+      ],
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": true,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "followingViewWidth": 30
+    },
+    "Plot!velocity": {
+      "title": "Velocity body-FRD (m/s)",
+      "paths": [
+        { "value": "/dji/drone/spd.vector.x", "enabled": true, "timestampMethod": "receiveTime" },
+        { "value": "/dji/drone/spd.vector.y", "enabled": true, "timestampMethod": "receiveTime" },
+        { "value": "/dji/drone/spd.vector.z", "enabled": true, "timestampMethod": "receiveTime" }
+      ],
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": true,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "followingViewWidth": 30
+    },
+    "Plot!height": {
+      "title": "Height above ground (m) + WGS-84 altitude",
+      "paths": [
+        { "value": "/dji/height_from_ground.range", "enabled": true, "timestampMethod": "receiveTime" },
+        { "value": "/dji/drone/pos.position.altitude", "enabled": true, "timestampMethod": "receiveTime" }
+      ],
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": true,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "followingViewWidth": 30
+    },
+    "Plot!setpoint": {
+      "title": "Commanded velocity setpoint (m/s)",
+      "paths": [
+        { "value": "/dji/cmd/drone/setpoint.velocity.x", "enabled": true, "timestampMethod": "receiveTime" },
+        { "value": "/dji/cmd/drone/setpoint.velocity.y", "enabled": true, "timestampMethod": "receiveTime" },
+        { "value": "/dji/cmd/drone/setpoint.velocity.z", "enabled": true, "timestampMethod": "receiveTime" },
+        { "value": "/dji/cmd/drone/setpoint.yaw", "enabled": true, "timestampMethod": "receiveTime" }
+      ],
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": true,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "followingViewWidth": 30
+    },
+    "RawMessages!log": { "topicPath": "/dji/drone/log" },
+    "RawMessages!action": { "topicPath": "/dji/cmd/drone/action" }
+  },
+  "globalVariables": {},
+  "userNodes": {},
+  "playbackConfig": { "speed": 1 },
+  "layout": {
+    "direction": "column",
+    "splitPercentage": 42,
+    "first": {
+      "direction": "row",
+      "splitPercentage": 38,
+      "first": "Plot!attitude",
+      "second": {
+        "direction": "row",
+        "splitPercentage": 55,
+        "first": "Plot!uwbtrack",
+        "second": {
+          "direction": "column",
+          "splitPercentage": 55,
+          "first": "Gauge!battery",
+          "second": "RawMessages!log"
+        }
+      }
+    },
+    "second": {
+      "direction": "row",
+      "splitPercentage": 50,
+      "first": {
+        "direction": "row",
+        "splitPercentage": 50,
+        "first": "Plot!uwbxyz",
+        "second": "Plot!velocity"
+      },
+      "second": {
+        "direction": "row",
+        "splitPercentage": 50,
+        "first": "Plot!height",
+        "second": {
+          "direction": "column",
+          "splitPercentage": 60,
+          "first": "Plot!setpoint",
+          "second": "RawMessages!action"
+        }
+      }
+    }
+  }
+}
