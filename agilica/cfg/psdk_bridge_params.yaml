@@ -31,6 +31,7 @@
     topic_log: ""
     topic_setpoint: ""
     topic_action: ""
+    topic_camera_h264: ""
 
     # Service name overrides, same convention. Note "gimball_angle_service" is spelled
     # with two l's in the VITRO documentation and in the .srv filename; that spelling is
@@ -40,6 +41,7 @@
     service_gimbal_angle: ""
     service_save_photo: ""
     service_video_settings: ""
+    service_liveview_keyframe: ""
 
     # ---- rates ------------------------------------------------------------------------
     # psdk_wrapper subscribes the flight-controller topics at 5 Hz and the battery at 1 Hz
@@ -49,6 +51,23 @@
     # and VELOCITY both support up to 200 Hz.
     telemetry_rate: 5.0
     battery_rate: 1.0
+
+    # ---- liveview --------------------------------------------------------------------
+    # When enabled, publishes raw H.264 elementary-stream chunks as
+    # sensor_msgs/CompressedImage (format "h264") on topic_camera_h264. Position/source 1
+    # selects the Mavic 3E visible-light camera; position 7 selects the FPV camera on
+    # supported airframes.
+    #
+    # MUST STAY false FOR FLIGHT. Enabling this makes psdk_wrapper register the PSDK
+    # network handler, and on this aircraft that makes DjiCore_Init fail with 0xE1
+    # (TIMEOUT) - no telemetry, no control, no link at all. Measured 24 Aug 2026 with two
+    # builds differing only in that registration; see the comment in psdk_wrapper.c.
+    # Enable only to work on the video path, knowing the aircraft link is forfeit.
+    liveview_enabled: false
+    liveview_position: 1
+    liveview_source: 1
+    liveview_bitrate_kbps: 4000
+    liveview_drain_rate: 100.0
 
     # ---- safety -----------------------------------------------------------------------
     # If setpoints stop arriving while a command is still latched, command hover rather

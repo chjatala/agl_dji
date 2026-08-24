@@ -185,6 +185,94 @@ class PSDKAdapter:
             'height_rel': height_rel.value, 'battery_percent': battery_percent.value,
         }
 
+    # -- liveview (H.264 video) -------------------------------------------------
+    #
+    # The Pi forwards the H.264 elementary stream untouched; decoding happens on the
+    # laptop, where VITRO's aruco_detector already runs. Nothing here parses NAL units:
+    # ffmpeg/PyAV handle arbitrary chunking, and boundary logic on the Pi would be risk
+    # without benefit.
+
+    #: Drain buffer, allocated once. liveview_read runs at frame rate, so a fresh
+    #: allocation per call would churn the heap for no reason.
+    LIVEVIEW_READ_CHUNK = 262144  # 256 KiB
+
+    def _ensure_liveview_buffer(self):
+        if getattr(self, '_lv_buf', None) is None:
+            self._lv_buf = ctypes.create_string_buffer(self.LIVEVIEW_READ_CHUNK)
+            self._lv_len = ctypes.c_uint32()
+        return self._lv_buf
+
+    def liveview_start(self, position=1, source=1, bitrate_kbps=4000):
+        """Start the H.264 stream. position/source default to the Mavic 3E's payload-port
+        visible-light camera; position 7 is the FPV camera if that returns NONSUPPORT."""
+        if not (self.lib and self.connected and hasattr(self.lib, 'psdk_liveview_start')):
+            return -1
+        try:
+            self.lib.psdk_liveview_start.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int]
+            self.lib.psdk_liveview_start.restype = ctypes.c_int
+            return self.lib.psdk_liveview_start(int(position), int(source), int(bitrate_kbps))
+        except Exception as e:  # noqa: BLE001
+            self.logger.error(f'psdk_liveview_start error: {e}')
+            return -1
+
+    def liveview_stop(self):
+        if not (self.lib and hasattr(self.lib, 'psdk_liveview_stop')):
+            return -1
+        try:
+            self.lib.psdk_liveview_stop.restype = ctypes.c_int
+            return self.lib.psdk_liveview_stop()
+        except Exception as e:  # noqa: BLE001
+            self.logger.error(f'psdk_liveview_stop error: {e}')
+            return -1
+
+    def liveview_read(self):
+        """Drain whatever the ring buffer holds. Returns bytes (possibly empty), or None
+        if liveview is not running. Empty is the normal idle case, not an error."""
+        if not (self.lib and self.connected and hasattr(self.lib, 'psdk_liveview_read')):
+            return None
+        buf = self._ensure_liveview_buffer()
+        try:
+            self.lib.psdk_liveview_read.argtypes = [
+                ctypes.POINTER(ctypes.c_uint8), ctypes.c_uint32, ctypes.POINTER(ctypes.c_uint32)]
+            self.lib.psdk_liveview_read.restype = ctypes.c_int
+            rc = self.lib.psdk_liveview_read(
+                ctypes.cast(buf, ctypes.POINTER(ctypes.c_uint8)),
+                ctypes.c_uint32(self.LIVEVIEW_READ_CHUNK),
+                ctypes.byref(self._lv_len))
+            if rc != 0:
+                return None
+            return buf.raw[:self._lv_len.value]
+        except Exception as e:  # noqa: BLE001
+            self.logger.error(f'psdk_liveview_read error: {e}')
+            return None
+
+    def liveview_request_keyframe(self):
+        """Ask for an IDR frame - a decoder that joined mid-stream cannot render until one."""
+        if not (self.lib and hasattr(self.lib, 'psdk_liveview_request_keyframe')):
+            return -1
+        try:
+            self.lib.psdk_liveview_request_keyframe.restype = ctypes.c_int
+            return self.lib.psdk_liveview_request_keyframe()
+        except Exception as e:  # noqa: BLE001
+            self.logger.error(f'psdk_liveview_request_keyframe error: {e}')
+            return -1
+
+    def liveview_stats(self):
+        """(bytes_in, dropped) since liveview_start, or None."""
+        if not (self.lib and hasattr(self.lib, 'psdk_liveview_stats')):
+            return None
+        try:
+            b = ctypes.c_ulonglong()
+            d = ctypes.c_ulonglong()
+            self.lib.psdk_liveview_stats.argtypes = [
+                ctypes.POINTER(ctypes.c_ulonglong), ctypes.POINTER(ctypes.c_ulonglong)]
+            self.lib.psdk_liveview_stats.restype = ctypes.c_int
+            self.lib.psdk_liveview_stats(ctypes.byref(b), ctypes.byref(d))
+            return b.value, d.value
+        except Exception as e:  # noqa: BLE001
+            self.logger.error(f'psdk_liveview_stats error: {e}')
+            return None
+
     def disconnect(self):
         if self.lib and hasattr(self.lib, 'psdk_disconnect'):
             try:

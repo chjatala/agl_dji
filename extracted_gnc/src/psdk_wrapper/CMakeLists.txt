@@ -22,6 +22,7 @@ add_library(psdk_wrapper SHARED
     third_party/platform/osal/osal_fs.c
     third_party/platform/osal/osal_socket.c
     third_party/platform/hal/hal_uart.c
+    third_party/platform/hal/hal_network.c
 )
 
 target_include_directories(psdk_wrapper PRIVATE

@@ -6,7 +6,7 @@ Native shim (`libpsdk_wrapper.so`) around DJI's [Payload SDK](https://github.com
 so it has no ROS dependency itself, just a plain C ABI:
 
 `psdk_connect`, `psdk_arm`, `psdk_takeoff`, `psdk_land`, `psdk_setpoint`, `psdk_command`,
-`psdk_get_telemetry`, `psdk_disconnect`.
+`psdk_get_telemetry`, `psdk_disconnect`, and the liveview H.264 stream functions.
 
 ## Before this will actually fly anything
 
@@ -74,6 +74,19 @@ more ground-frame subscriptions (acceleration, angular rate), route them through
 helper.
 
 ## TODO
-Not implemented (out of scope for this bridge): gimbal control, camera/video, waypoint
-missions, RTK, obstacle avoidance config. Add calls against the corresponding
-`dji_*.h` header under `third_party/psdk_lib/include` if you need them.
+Not implemented (out of scope for this bridge): gimbal control, still-photo capture,
+waypoint missions, RTK, obstacle avoidance config.
+
+Liveview video is implemented as a raw H.264 stream: enable `liveview_enabled` in
+`cfg/psdk_bridge_params.yaml` and consume the `sensor_msgs/msg/CompressedImage` chunks
+(`format: "h264"`) from `topic_camera_h264`; use the `service_liveview_keyframe` Trigger
+service to request an IDR frame after joining or recovering from dropped bytes.
+
+**Liveview is off by default and currently cannot be used in flight.** It needs the PSDK
+high-speed data channel, which requires registering a network handler
+(`DjiPlatform_RegHalNetworkHandler`, see `third_party/platform/hal/hal_network.c`). On our
+Mavic 3E that registration makes `DjiCore_Init` fail with `0xE1` (TIMEOUT), costing
+telemetry and control outright. Measured 24 Aug 2026 with two builds differing only in that
+registration, cross-checked in both the Humble and Jazzy containers; the failure is in the
+core handshake, before `HalNetwork_Init` is ever called, and is unaffected by whether
+`iproute2` is present. Unresolved - open question for Flanders Make / DJI.

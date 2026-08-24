@@ -15,6 +15,7 @@ own config mixes relative and absolute, so this is left to configuration rather 
 """
 
 import json
+import os
 import time
 
 import rclpy
@@ -23,7 +24,7 @@ from rclpy.node import Node
 from geographic_msgs.msg import GeoPointStamped
 from geometry_msgs.msg import QuaternionStamped, Vector3Stamped
 from mavros_msgs.msg import GlobalPositionTarget
-from sensor_msgs.msg import BatteryState, Range
+from sensor_msgs.msg import BatteryState, CompressedImage, Range
 from std_msgs.msg import String
 from std_srvs.srv import Trigger
 from vitro_ros_definitions.srv import SetGimballAngle, SetVideoSettings
@@ -37,6 +38,7 @@ LEGACY_TOPICS = {
     'gimbal_angle': 'gimbal_attitude',
     'height_above_ground': 'height_from_ground',
     'battery_state': 'battery',
+    'camera_h264': 'camera_h264',
     'log': 'drone/log',
     'setpoint': 'cmd/drone/setpoint',
     'action': 'cmd/drone/action',
@@ -49,6 +51,7 @@ DOCUMENTED_TOPICS = {
     'gimbal_angle': 'data/camera/gimbal_angle',
     'height_above_ground': 'data/drone/height_above_ground',
     'battery_state': 'data/drone/battery_state',
+    'camera_h264': 'data/camera/h264',
     'log': 'data/drone/log',
     'setpoint': 'cmd/drone/setpoint',
     'action': 'cmd/drone/action',
@@ -62,6 +65,7 @@ SERVICE_NAMES = {
     'gimbal_angle': 'gimball_angle_service',
     'save_photo': 'save_photo_service',
     'video_settings': 'video_settings_service',
+    'liveview_keyframe': 'liveview_keyframe',
 }
 
 
@@ -129,6 +133,15 @@ class PSDKBridgeNode(Node):
         self.declare_parameter('telemetry_rate', 5.0)
         self.declare_parameter('battery_rate', 1.0)
 
+        # Liveview is opt-in because it needs the aircraft's high-speed network link and
+        # can consume substantial bandwidth. The publisher carries raw H.264 chunks; the
+        # receiver is responsible for joining chunks into an elementary stream.
+        self.declare_parameter('liveview_enabled', False)
+        self.declare_parameter('liveview_position', 1)
+        self.declare_parameter('liveview_source', 1)
+        self.declare_parameter('liveview_bitrate_kbps', 4000)
+        self.declare_parameter('liveview_drain_rate', 100.0)
+
         # Setpoint watchdog. Matters most in the split deployment, where VITRO runs on a
         # laptop and the 40 Hz control loop crosses WiFi: a dropout must not leave the last
         # velocity command latched on the aircraft.
@@ -141,9 +154,21 @@ class PSDKBridgeNode(Node):
 
         self.telemetry_rate = float(self.get_parameter('telemetry_rate').value)
         self.battery_rate = float(self.get_parameter('battery_rate').value)
+        self.liveview_enabled = bool(self.get_parameter('liveview_enabled').value)
+        self.liveview_position = int(self.get_parameter('liveview_position').value)
+        self.liveview_source = int(self.get_parameter('liveview_source').value)
+        self.liveview_bitrate_kbps = int(self.get_parameter('liveview_bitrate_kbps').value)
+        self.liveview_drain_rate = float(self.get_parameter('liveview_drain_rate').value)
         self.setpoint_timeout = float(self.get_parameter('setpoint_timeout').value)
         self.watchdog_enabled = bool(self.get_parameter('setpoint_watchdog_enabled').value)
         self.require_auto_nav = bool(self.get_parameter('require_automatic_navigation').value)
+
+        # psdk_wrapper decides whether to register the PSDK network handler by reading
+        # PSDK_ENABLE_LIVEVIEW at connect time, so export it from the ROS parameter rather
+        # than making the operator set both. Registering that handler currently costs the
+        # core link entirely - DjiCore_Init returns 0xE1 - so liveview_enabled trades
+        # telemetry and control for video. Must be set before psdk_connect() runs.
+        os.environ['PSDK_ENABLE_LIVEVIEW'] = '1' if self.liveview_enabled else '0'
 
         def topic(key):
             self.declare_parameter(f'topic_{key}', '')
@@ -160,6 +185,8 @@ class PSDKBridgeNode(Node):
         self.ultra_pub = self.create_publisher(Range, topic('height_above_ground'), 10)
         self.batt_pub = self.create_publisher(BatteryState, topic('battery_state'), 10)
         self.log_pub = self.create_publisher(String, topic('log'), 10)
+        self.camera_h264_pub = self.create_publisher(
+            CompressedImage, topic('camera_h264'), 10)
 
         # Debug publisher to inspect mapped PSDK commands
         self.debug_pub = self.create_publisher(String, 'psdk_bridge/debug', 10)
@@ -178,6 +205,8 @@ class PSDKBridgeNode(Node):
         self.create_service(Trigger, service('save_photo'), self.save_photo_callback)
         self.create_service(
             SetVideoSettings, service('video_settings'), self.set_video_settings_callback)
+        self.create_service(
+            Trigger, service('liveview_keyframe'), self.liveview_keyframe_callback)
 
         self.auto_nav_enabled = False
         self._last_setpoint_monotonic = None
@@ -186,11 +215,21 @@ class PSDKBridgeNode(Node):
         self.psdk = PSDKAdapter(self.get_logger())
         if self.psdk.connect():
             self.publish_log('PSDK adapter connected')
+            if self.liveview_enabled:
+                rc = self.psdk.liveview_start(
+                    self.liveview_position, self.liveview_source, self.liveview_bitrate_kbps)
+                if rc == 0:
+                    self.publish_log('PSDK liveview started')
+                else:
+                    self.publish_log(
+                        f'PSDK liveview failed to start (rc={rc})', level='warning')
         else:
             self.get_logger().warning('PSDK adapter not available; running in stub mode')
 
         self.create_timer(1.0 / self.telemetry_rate, self._publish_fast_telemetry)
         self.create_timer(1.0 / self.battery_rate, self._publish_battery)
+        if self.liveview_enabled:
+            self.create_timer(1.0 / self.liveview_drain_rate, self._drain_liveview)
         if self.watchdog_enabled:
             # Check at least twice per timeout so a stale command is caught promptly.
             self.create_timer(
@@ -200,7 +239,8 @@ class PSDKBridgeNode(Node):
             f"topic names: {'documented' if documented else 'legacy'}; "
             f"telemetry {self.telemetry_rate} Hz; "
             f"watchdog {'on' if self.watchdog_enabled else 'off'} "
-            f"@ {self.setpoint_timeout}s"
+            f"@ {self.setpoint_timeout}s; "
+            f"liveview {'on' if self.liveview_enabled else 'off'}"
         )
 
     # -- helpers ----------------------------------------------------------------
@@ -392,6 +432,30 @@ class PSDKBridgeNode(Node):
         response.status = self._UNIMPLEMENTED.format(area='camera')
         self.publish_log(f'video_settings_service: {response.status}', level='warning')
         return response
+
+    def liveview_keyframe_callback(self, request, response):
+        rc = self.psdk.liveview_request_keyframe() if self.liveview_enabled else -1
+        response.success = rc == 0
+        response.message = (
+            'liveview keyframe requested' if response.success
+            else 'liveview keyframe request failed: liveview is not running'
+        )
+        self.publish_log(response.message, level='info' if response.success else 'warning')
+        return response
+
+    def _drain_liveview(self):
+        # Per the contract with the laptop-side decoder: sensor_msgs/CompressedImage,
+        # format "h264", one liveview callback buffer verbatim per message. `data=chunk`
+        # passes the bytes straight through - no per-byte list conversion, which matters
+        # at up to LIVEVIEW_READ_CHUNK (256 KiB) per drain, at up to 100 Hz, sharing this
+        # process with telemetry and the setpoint watchdog.
+        chunk = self.psdk.liveview_read()
+        if chunk:
+            msg = CompressedImage()
+            msg.header.stamp = self.get_clock().now().to_msg()
+            msg.format = 'h264'
+            msg.data = chunk
+            self.camera_h264_pub.publish(msg)
 
     # -- telemetry --------------------------------------------------------------
 

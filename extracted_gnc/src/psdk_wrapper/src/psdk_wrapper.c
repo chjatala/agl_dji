@@ -24,11 +24,13 @@
 #include <dji_aircraft_info.h>
 #include <dji_flight_controller.h>
 #include <dji_fc_subscription.h>
+#include <dji_liveview.h>
 
 #include "osal/osal.h"
 #include "osal/osal_fs.h"
 #include "osal/osal_socket.h"
 #include "hal/hal_uart.h"
+#include "hal/hal_network.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -86,6 +88,73 @@ TELEMETRY_CALLBACK(VelocityCallback, s_velocity, s_haveVelocity)
 TELEMETRY_CALLBACK(PositionFusedCallback, s_positionFused, s_havePositionFused)
 TELEMETRY_CALLBACK(HeightFusionCallback, s_heightFusion, s_haveHeightFusion)
 TELEMETRY_CALLBACK(BatteryInfoCallback, s_batteryInfo, s_haveBatteryInfo)
+
+/* ------------------------------------------------------------------------ */
+/* Liveview H.264 ring buffer                                               */
+/* ------------------------------------------------------------------------ */
+
+/* DJI delivers liveview as an H.264 elementary stream over the high-speed data
+ * channel (the E-Port's USB RNDIS link, not the UART). The decoded-frame API,
+ * DjiLiveview_StartImageStream, is Manifold-3 only per dji_liveview.h, so on a Pi
+ * the only option is the raw H.264 callback and someone else does the decoding.
+ *
+ * The callback runs on a PSDK thread. It does the minimum: memcpy into this ring
+ * and return. No ROS, no allocation, no blocking - the same discipline as the
+ * telemetry callbacks above. */
+#define LIVEVIEW_RING_BYTES (1u << 20)  /* 1 MiB ~= 2 s at 4 Mbps */
+
+static pthread_mutex_t s_liveviewLock = PTHREAD_MUTEX_INITIALIZER;
+static uint8_t s_liveviewRing[LIVEVIEW_RING_BYTES];
+static uint32_t s_liveviewHead = 0;      /* write cursor */
+static uint32_t s_liveviewTail = 0;      /* read cursor  */
+static uint32_t s_liveviewUsed = 0;
+static uint64_t s_liveviewBytesIn = 0;   /* total received, for rate logging */
+static uint64_t s_liveviewDropped = 0;   /* bytes discarded on overflow */
+static bool s_liveviewRunning = false;
+static E_DjiLiveViewCameraPosition s_liveviewPosition = DJI_LIVEVIEW_CAMERA_POSITION_NO_1;
+static E_DjiLiveViewCameraSource s_liveviewSource = DJI_LIVEVIEW_CAMERA_SOURCE_M3E_VIS;
+
+static void PsdkWrapper_LiveviewH264Callback(E_DjiLiveViewCameraPosition position,
+                                              const uint8_t *buf, uint32_t len)
+{
+    (void) position;
+    if (buf == NULL || len == 0) {
+        return;
+    }
+
+    pthread_mutex_lock(&s_liveviewLock);
+    s_liveviewBytesIn += len;
+
+    /* Drop oldest on overflow. Losing the tail of a stream the decoder can resync from
+     * beats blocking a PSDK callback thread. Drops are counted so the ROS layer can
+     * report them and request a keyframe. */
+    if (len >= LIVEVIEW_RING_BYTES) {
+        s_liveviewDropped += len;
+        pthread_mutex_unlock(&s_liveviewLock);
+        return;
+    }
+    while (s_liveviewUsed + len > LIVEVIEW_RING_BYTES) {
+        uint32_t discard = (LIVEVIEW_RING_BYTES / 8u);
+        if (discard > s_liveviewUsed) {
+            discard = s_liveviewUsed;
+        }
+        s_liveviewTail = (s_liveviewTail + discard) % LIVEVIEW_RING_BYTES;
+        s_liveviewUsed -= discard;
+        s_liveviewDropped += discard;
+    }
+
+    uint32_t firstChunk = LIVEVIEW_RING_BYTES - s_liveviewHead;
+    if (firstChunk > len) {
+        firstChunk = len;
+    }
+    memcpy(&s_liveviewRing[s_liveviewHead], buf, firstChunk);
+    if (len > firstChunk) {
+        memcpy(&s_liveviewRing[0], buf + firstChunk, len - firstChunk);
+    }
+    s_liveviewHead = (s_liveviewHead + len) % LIVEVIEW_RING_BYTES;
+    s_liveviewUsed += len;
+    pthread_mutex_unlock(&s_liveviewLock);
+}
 
 /* ------------------------------------------------------------------------ */
 /* Console logging                                                          */
@@ -183,6 +252,46 @@ static T_DjiReturnCode PsdkWrapper_RegisterPlatform(void)
     rc = DjiPlatform_RegSocketHandler(&socketHandler);
     if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         return rc;
+    }
+
+    /* Required for the high-speed data channel, which is what liveview video rides on.
+     * OFF by default, because registering it breaks the core link on this aircraft.
+     *
+     * Measured 24 Aug against the live Mavic 3E, two builds differing only in whether
+     * this block runs: without it DjiCore_Init returns SUCCESS every time, with it
+     * DjiCore_Init returns 0xE1 (TIMEOUT) every time. Cross-tested both .so files in
+     * the humble and jazzy containers - the result follows the library, not the ROS
+     * distro or the runtime.
+     *
+     * The failure is in the core handshake, not in this handler: HalNetwork_Init is
+     * never reached (none of its messages are printed), and installing iproute2 - the
+     * `ip` binary it shells out to - does not change the outcome. Registering a network
+     * handler makes DjiCore_Init negotiate a high-speed data channel, and on this
+     * aircraft that negotiation does not complete. The rest is inside DJI's closed
+     * library. NOTE: an earlier comment here claimed this had been ruled out; that test
+     * ran with no working control to compare against and its conclusion was wrong.
+     *
+     * So: telemetry and control - everything the flight loop needs - work with this
+     * disabled. Set PSDK_ENABLE_LIVEVIEW=1 to trade the core link for a shot at video. */
+    const char *enableLiveview = getenv("PSDK_ENABLE_LIVEVIEW");
+    if (enableLiveview && (enableLiveview[0] == '1' || enableLiveview[0] == 't' ||
+                           enableLiveview[0] == 'T' || enableLiveview[0] == 'y' ||
+                           enableLiveview[0] == 'Y')) {
+        static T_DjiHalNetworkHandler networkHandler = {
+            .NetworkInit = HalNetwork_Init,
+            .NetworkDeInit = HalNetwork_DeInit,
+            .NetworkGetDeviceInfo = HalNetwork_GetDeviceInfo,
+        };
+        fprintf(stderr, "[psdk_wrapper] PSDK_ENABLE_LIVEVIEW set: registering the network "
+                        "handler. If DjiCore_Init now fails with 0xE1, this is why - unset "
+                        "it to restore telemetry and control.\n");
+        rc = DjiPlatform_RegHalNetworkHandler(&networkHandler);
+        if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            fprintf(stderr, "[psdk_wrapper] network handler registration failed: 0x%08llX "
+                            "(liveview will be unavailable; telemetry and control are unaffected)\n",
+                    (unsigned long long) rc);
+            /* Not fatal: the UART path carries telemetry and control regardless. */
+        }
     }
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
@@ -487,11 +596,146 @@ int psdk_get_telemetry(double *latDeg, double *lonDeg, double *altM,
     return 0;
 }
 
+/* ------------------------------------------------------------------------ */
+/* Liveview (H.264 video) - exported C ABI                                  */
+/* ------------------------------------------------------------------------ */
+
+/* position/source are ints so the ROS layer can select the camera without this
+ * header's enums leaking into Python. Defaults suit the Mavic 3E:
+ *   position 1 = DJI_LIVEVIEW_CAMERA_POSITION_NO_1 (the payload port)
+ *   source   1 = DJI_LIVEVIEW_CAMERA_SOURCE_M3E_VIS (visible-light camera)
+ * If NO_1 returns NONSUPPORT, try position 7 (DJI_LIVEVIEW_CAMERA_POSITION_FPV). */
+int psdk_liveview_start(int position, int source, int bitrateKbps)
+{
+    T_DjiReturnCode rc;
+
+    if (!s_connected) {
+        return -1;
+    }
+    if (s_liveviewRunning) {
+        return 0;
+    }
+
+    rc = DjiLiveview_Init();  /* must follow DjiCore_Init, per dji_liveview.h */
+    if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        fprintf(stderr, "[psdk_wrapper] DjiLiveview_Init failed: 0x%08llX (is the network "
+                        "handler registered and the E-Port RNDIS link up?)\n",
+                (unsigned long long) rc);
+        return -1;
+    }
+
+    s_liveviewPosition = (E_DjiLiveViewCameraPosition) position;
+    s_liveviewSource = (E_DjiLiveViewCameraSource) source;
+
+    pthread_mutex_lock(&s_liveviewLock);
+    s_liveviewHead = s_liveviewTail = s_liveviewUsed = 0;
+    s_liveviewBytesIn = s_liveviewDropped = 0;
+    pthread_mutex_unlock(&s_liveviewLock);
+
+    rc = DjiLiveview_StartH264Stream(s_liveviewPosition, s_liveviewSource,
+                                      PsdkWrapper_LiveviewH264Callback);
+    if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        fprintf(stderr, "[psdk_wrapper] DjiLiveview_StartH264Stream(pos=%d, src=%d) failed: "
+                        "0x%08llX%s\n", position, source, (unsigned long long) rc,
+                rc == DJI_ERROR_SYSTEM_MODULE_CODE_NONSUPPORT
+                    ? " (NONSUPPORT - try position 7, the FPV camera)" : "");
+        DjiLiveview_Deinit();
+        return -1;
+    }
+
+    s_liveviewRunning = true;
+
+    /* Encoding strategy only after the stream is up - the header is explicit about the
+     * order. Bitrate is capped deliberately: this shares the wifi with VITRO's control
+     * loop, so DJI's suggested 12-20 Mbps would starve it. Failure here is not fatal;
+     * the stream simply runs at the aircraft's default rate. */
+    if (bitrateKbps > 0) {
+        T_DjiLiveviewCodecParamItem codecParam = {
+            .bitrate_kbps = (int16_t) bitrateKbps,
+        };
+        rc = DjiLiveview_SetEncodingStrategy(s_liveviewPosition, s_liveviewSource, &codecParam);
+        if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            fprintf(stderr, "[psdk_wrapper] SetEncodingStrategy(%d kbps) failed: 0x%08llX "
+                            "- continuing at the aircraft default rate\n",
+                    bitrateKbps, (unsigned long long) rc);
+        }
+    }
+
+    fprintf(stderr, "[psdk_wrapper] liveview started (position=%d source=%d bitrate=%d kbps)\n",
+            position, source, bitrateKbps);
+    return 0;
+}
+
+int psdk_liveview_stop(void)
+{
+    if (!s_liveviewRunning) {
+        return 0;
+    }
+    DjiLiveview_StopH264Stream(s_liveviewPosition, s_liveviewSource);
+    DjiLiveview_Deinit();
+    s_liveviewRunning = false;
+    return 0;
+}
+
+/* Drains up to bufLen bytes from the ring. Returns 0 with *outLen == 0 when idle,
+ * which is the normal case between frames - not an error. */
+int psdk_liveview_read(uint8_t *buf, uint32_t bufLen, uint32_t *outLen)
+{
+    if (buf == NULL || outLen == NULL || bufLen == 0) {
+        return -1;
+    }
+    *outLen = 0;
+    if (!s_liveviewRunning) {
+        return -1;
+    }
+
+    pthread_mutex_lock(&s_liveviewLock);
+    uint32_t n = s_liveviewUsed < bufLen ? s_liveviewUsed : bufLen;
+    if (n > 0) {
+        uint32_t firstChunk = LIVEVIEW_RING_BYTES - s_liveviewTail;
+        if (firstChunk > n) {
+            firstChunk = n;
+        }
+        memcpy(buf, &s_liveviewRing[s_liveviewTail], firstChunk);
+        if (n > firstChunk) {
+            memcpy(buf + firstChunk, &s_liveviewRing[0], n - firstChunk);
+        }
+        s_liveviewTail = (s_liveviewTail + n) % LIVEVIEW_RING_BYTES;
+        s_liveviewUsed -= n;
+    }
+    pthread_mutex_unlock(&s_liveviewLock);
+
+    *outLen = n;
+    return 0;
+}
+
+/* Ask the aircraft for an IDR frame. A decoder that joined mid-stream, or one that
+ * lost bytes to a ring overflow, cannot produce a picture until the next keyframe. */
+int psdk_liveview_request_keyframe(void)
+{
+    if (!s_liveviewRunning) {
+        return -1;
+    }
+    return (DjiLiveview_RequestIntraframeFrameData(s_liveviewPosition, s_liveviewSource)
+            == DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) ? 0 : -1;
+}
+
+/* Counters for the ROS layer to log; both are cumulative since liveview_start. */
+int psdk_liveview_stats(unsigned long long *bytesIn, unsigned long long *dropped)
+{
+    pthread_mutex_lock(&s_liveviewLock);
+    if (bytesIn) *bytesIn = s_liveviewBytesIn;
+    if (dropped) *dropped = s_liveviewDropped;
+    pthread_mutex_unlock(&s_liveviewLock);
+    return 0;
+}
+
 int psdk_disconnect(void)
 {
     if (!s_connected) {
         return 0;
     }
+    psdk_liveview_stop();
     DjiFcSubscription_DeInit();
     DjiFlightController_DeInit();
     DjiCore_DeInit();
