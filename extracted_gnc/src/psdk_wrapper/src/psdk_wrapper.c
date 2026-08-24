@@ -254,37 +254,40 @@ static T_DjiReturnCode PsdkWrapper_RegisterPlatform(void)
         return rc;
     }
 
-    /* Required for the high-speed data channel, which is what liveview video rides on.
-     * OFF by default, because registering it breaks the core link on this aircraft.
+    /* OFF by default: registering this breaks the core link on this aircraft.
      *
      * Measured 24 Aug against the live Mavic 3E, two builds differing only in whether
      * this block runs: without it DjiCore_Init returns SUCCESS every time, with it
      * DjiCore_Init returns 0xE1 (TIMEOUT) every time. Cross-tested both .so files in
      * the humble and jazzy containers - the result follows the library, not the ROS
-     * distro or the runtime.
-     *
-     * The failure is in the core handshake, not in this handler: HalNetwork_Init is
+     * distro or the runtime. The failure is in the core handshake: HalNetwork_Init is
      * never reached (none of its messages are printed), and installing iproute2 - the
-     * `ip` binary it shells out to - does not change the outcome. Registering a network
-     * handler makes DjiCore_Init negotiate a high-speed data channel, and on this
-     * aircraft that negotiation does not complete. The rest is inside DJI's closed
-     * library. NOTE: an earlier comment here claimed this had been ruled out; that test
-     * ran with no working control to compare against and its conclusion was wrong.
+     * `ip` binary it shells out to - does not change the outcome.
      *
-     * So: telemetry and control - everything the flight loop needs - work with this
-     * disabled. Set PSDK_ENABLE_LIVEVIEW=1 to trade the core link for a shot at video. */
-    const char *enableLiveview = getenv("PSDK_ENABLE_LIVEVIEW");
-    if (enableLiveview && (enableLiveview[0] == '1' || enableLiveview[0] == 't' ||
-                           enableLiveview[0] == 'T' || enableLiveview[0] == 'y' ||
-                           enableLiveview[0] == 'Y')) {
+     * This is NOT required for liveview, despite what an earlier version of this comment
+     * and of hal_network.c claimed. dji_liveview.h documents no network-handler
+     * dependency on DjiLiveview_Init or DjiLiveview_StartH264Stream; the only interfaces
+     * that document one are DjiHighSpeedDataChannel_SetBandwidthProportion and
+     * DjiPayloadCamera_GetVideoStreamRemoteAddress, both concerned with the payload
+     * *sending* a video stream out, which is the opposite direction from receiving the
+     * aircraft's camera. So liveview is worth trying with this left off - untested
+     * against the aircraft as of 24 Aug, since it was charging.
+     *
+     * Enable only to work on outbound payload-camera video or high-speed bandwidth
+     * control, knowing the aircraft link is forfeit while it is on. */
+    const char *regNetHandler = getenv("PSDK_REGISTER_NETWORK_HANDLER");
+    if (regNetHandler && (regNetHandler[0] == '1' || regNetHandler[0] == 't' ||
+                          regNetHandler[0] == 'T' || regNetHandler[0] == 'y' ||
+                          regNetHandler[0] == 'Y')) {
         static T_DjiHalNetworkHandler networkHandler = {
             .NetworkInit = HalNetwork_Init,
             .NetworkDeInit = HalNetwork_DeInit,
             .NetworkGetDeviceInfo = HalNetwork_GetDeviceInfo,
         };
-        fprintf(stderr, "[psdk_wrapper] PSDK_ENABLE_LIVEVIEW set: registering the network "
-                        "handler. If DjiCore_Init now fails with 0xE1, this is why - unset "
-                        "it to restore telemetry and control.\n");
+        fprintf(stderr, "[psdk_wrapper] PSDK_REGISTER_NETWORK_HANDLER set: registering the "
+                        "network handler. If DjiCore_Init now fails with 0xE1, this is why - "
+                        "unset it to restore telemetry and control. Liveview does not need "
+                        "this.\n");
         rc = DjiPlatform_RegHalNetworkHandler(&networkHandler);
         if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             fprintf(stderr, "[psdk_wrapper] network handler registration failed: 0x%08llX "

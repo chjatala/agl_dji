@@ -133,14 +133,19 @@ class PSDKBridgeNode(Node):
         self.declare_parameter('telemetry_rate', 5.0)
         self.declare_parameter('battery_rate', 1.0)
 
-        # Liveview is opt-in because it needs the aircraft's high-speed network link and
-        # can consume substantial bandwidth. The publisher carries raw H.264 chunks; the
-        # receiver is responsible for joining chunks into an elementary stream.
+        # Liveview is opt-in because it can consume substantial bandwidth. The publisher
+        # carries raw H.264 chunks; the receiver joins them into an elementary stream.
         self.declare_parameter('liveview_enabled', False)
         self.declare_parameter('liveview_position', 1)
         self.declare_parameter('liveview_source', 1)
         self.declare_parameter('liveview_bitrate_kbps', 4000)
         self.declare_parameter('liveview_drain_rate', 100.0)
+
+        # Registers T_DjiHalNetworkHandler. Separate from liveview_enabled on purpose, and
+        # off by default: on this aircraft it makes DjiCore_Init fail with 0xE1, taking
+        # telemetry and control with it. Needed only for outbound payload-camera video and
+        # high-speed bandwidth control - not for receiving liveview.
+        self.declare_parameter('network_handler_enabled', False)
 
         # Setpoint watchdog. Matters most in the split deployment, where VITRO runs on a
         # laptop and the 40 Hz control loop crosses WiFi: a dropout must not leave the last
@@ -163,12 +168,16 @@ class PSDKBridgeNode(Node):
         self.watchdog_enabled = bool(self.get_parameter('setpoint_watchdog_enabled').value)
         self.require_auto_nav = bool(self.get_parameter('require_automatic_navigation').value)
 
-        # psdk_wrapper decides whether to register the PSDK network handler by reading
-        # PSDK_ENABLE_LIVEVIEW at connect time, so export it from the ROS parameter rather
-        # than making the operator set both. Registering that handler currently costs the
-        # core link entirely - DjiCore_Init returns 0xE1 - so liveview_enabled trades
-        # telemetry and control for video. Must be set before psdk_connect() runs.
-        os.environ['PSDK_ENABLE_LIVEVIEW'] = '1' if self.liveview_enabled else '0'
+        # Deliberately independent of liveview_enabled. Registering the PSDK network handler
+        # costs the core link entirely on this aircraft (DjiCore_Init returns 0xE1), and
+        # dji_liveview.h documents no dependency on it - only the outbound payload-camera
+        # and bandwidth-control interfaces do. Tying the two together would mean liveview
+        # could never be tried. psdk_wrapper reads this at connect time, so it must be set
+        # before psdk_connect() runs.
+        self.network_handler_enabled = bool(
+            self.get_parameter('network_handler_enabled').value)
+        os.environ['PSDK_REGISTER_NETWORK_HANDLER'] = \
+            '1' if self.network_handler_enabled else '0'
 
         def topic(key):
             self.declare_parameter(f'topic_{key}', '')
@@ -240,7 +249,8 @@ class PSDKBridgeNode(Node):
             f"telemetry {self.telemetry_rate} Hz; "
             f"watchdog {'on' if self.watchdog_enabled else 'off'} "
             f"@ {self.setpoint_timeout}s; "
-            f"liveview {'on' if self.liveview_enabled else 'off'}"
+            f"liveview {'on' if self.liveview_enabled else 'off'}; "
+            f"network handler {'on' if self.network_handler_enabled else 'off'}"
         )
 
     # -- helpers ----------------------------------------------------------------

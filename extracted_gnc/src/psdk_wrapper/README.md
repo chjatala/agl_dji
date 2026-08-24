@@ -82,11 +82,20 @@ Liveview video is implemented as a raw H.264 stream: enable `liveview_enabled` i
 (`format: "h264"`) from `topic_camera_h264`; use the `service_liveview_keyframe` Trigger
 service to request an IDR frame after joining or recovering from dropped bytes.
 
-**Liveview is off by default and currently cannot be used in flight.** It needs the PSDK
-high-speed data channel, which requires registering a network handler
-(`DjiPlatform_RegHalNetworkHandler`, see `third_party/platform/hal/hal_network.c`). On our
-Mavic 3E that registration makes `DjiCore_Init` fail with `0xE1` (TIMEOUT), costing
-telemetry and control outright. Measured 24 Aug 2026 with two builds differing only in that
-registration, cross-checked in both the Humble and Jazzy containers; the failure is in the
-core handshake, before `HalNetwork_Init` is ever called, and is unaffected by whether
-`iproute2` is present. Unresolved - open question for Flanders Make / DJI.
+Liveview is off by default and **not yet verified against the aircraft**, but nothing is
+known to prevent it: enabling it costs bandwidth, not the link.
+
+Keep `network_handler_enabled` false, though. Registering `T_DjiHalNetworkHandler`
+(`DjiPlatform_RegHalNetworkHandler`, see `third_party/platform/hal/hal_network.c`) makes
+`DjiCore_Init` fail with `0xE1` (TIMEOUT) on our Mavic 3E, costing telemetry and control
+outright. Measured 24 Aug 2026 with two builds differing only in that registration,
+cross-checked in both the Humble and Jazzy containers; the failure is in the core
+handshake, before `HalNetwork_Init` is ever called, and is unaffected by whether `iproute2`
+is present. Unresolved - open question for Flanders Make / DJI.
+
+The two are deliberately separate parameters. `dji_liveview.h` documents no
+network-handler dependency on `DjiLiveview_Init` or `DjiLiveview_StartH264Stream`; the only
+interfaces that do are `DjiHighSpeedDataChannel_SetBandwidthProportion` and
+`DjiPayloadCamera_GetVideoStreamRemoteAddress`, both concerned with the payload *sending* a
+video stream out rather than receiving the aircraft's camera. An earlier revision of this
+file asserted the dependency; that was our inference, not DJI's documentation.

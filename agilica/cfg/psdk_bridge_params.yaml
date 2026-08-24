@@ -58,16 +58,27 @@
     # selects the Mavic 3E visible-light camera; position 7 selects the FPV camera on
     # supported airframes.
     #
-    # MUST STAY false FOR FLIGHT. Enabling this makes psdk_wrapper register the PSDK
-    # network handler, and on this aircraft that makes DjiCore_Init fail with 0xE1
-    # (TIMEOUT) - no telemetry, no control, no link at all. Measured 24 Aug 2026 with two
-    # builds differing only in that registration; see the comment in psdk_wrapper.c.
-    # Enable only to work on the video path, knowing the aircraft link is forfeit.
+    # Safe to try: this no longer implies registering the network handler (see
+    # network_handler_enabled below). Left false only because it is unverified against the
+    # aircraft - turning it on costs bandwidth, not the link.
     liveview_enabled: false
     liveview_position: 1
     liveview_source: 1
     liveview_bitrate_kbps: 4000
     liveview_drain_rate: 100.0
+
+    # ---- PSDK network handler ---------------------------------------------------------
+    # MUST STAY false FOR FLIGHT. Registering T_DjiHalNetworkHandler makes DjiCore_Init
+    # fail with 0xE1 (TIMEOUT) on this aircraft - no telemetry, no control, no link at all.
+    # Measured 24 Aug 2026 with two builds differing only in that registration; see the
+    # comment in psdk_wrapper.c.
+    #
+    # It is NOT needed for liveview: dji_liveview.h documents no such dependency. Only
+    # DjiHighSpeedDataChannel_SetBandwidthProportion and
+    # DjiPayloadCamera_GetVideoStreamRemoteAddress require it, and both concern the payload
+    # *sending* video out rather than receiving the aircraft's camera. Enable only if you
+    # are working on those, knowing the aircraft link is forfeit while it is on.
+    network_handler_enabled: false
 
     # ---- safety -----------------------------------------------------------------------
     # If setpoints stop arriving while a command is still latched, command hover rather

@@ -3,13 +3,18 @@
  * @file    hal_network.c
  * @brief   T_DjiHalNetworkHandler implementation for Linux.
  *
- * PSDK carries liveview video on its high-speed data channel, which on the
- * Mavic 3E's E-Port is a USB RNDIS link - not the UART. DjiCore_Init will not
- * bring that channel up unless a network handler is registered, so without this
- * file DjiLiveview_StartH264Stream has no transport and no frames ever arrive.
+ * Backs PSDK's high-speed data channel, which on the Mavic 3E's E-Port is a USB
+ * RNDIS link - not the UART. PSDK chooses the address and hands it to NetworkInit;
+ * we apply it to the interface. Nothing here hard-codes an IP.
  *
- * PSDK chooses the address and hands it to NetworkInit; we apply it to the
- * interface. Nothing here hard-codes an IP.
+ * NOT registered by default, and NOT required for liveview. Registering this
+ * handler makes DjiCore_Init fail with 0xE1 on our aircraft (see the comment at
+ * the registration site in psdk_wrapper.c), and dji_liveview.h documents no
+ * dependency on it - only DjiHighSpeedDataChannel_SetBandwidthProportion and
+ * DjiPayloadCamera_GetVideoStreamRemoteAddress do, both of which are about the
+ * payload sending video out rather than receiving the aircraft's camera. An
+ * earlier version of this comment claimed liveview needed it; that was an
+ * inference, and it is unsupported by DJI's headers.
  *
  * Not DJI sample code - written for this project.
  *********************************************************************
