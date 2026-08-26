@@ -18,4 +18,10 @@ nmea_parser:
     # Publishing configuration
     pose_frame_id: "agilica_frame"
     pose_topic: "agilica_pose"
+    # Output rate for pose_topic. The UWB module streams AGLLP sentences at ~40 Hz
+    # and the reader polls the port every 10 ms, so publishing one pose per sentence
+    # gives ~40 Hz with ~6 ms of jitter. Throttling to 10 Hz holds the newest pose and
+    # emits it on a timer instead (measured: 100.0 ms +/- 0.65 ms). A tick with no new
+    # sentence publishes nothing, so a dead UWB link still trips the consumer's
+    # observation timeout. Set to 0.0 to publish every sentence unthrottled.
     publish_rate: 10.0  # Hz
