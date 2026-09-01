@@ -273,6 +273,83 @@ class PSDKAdapter:
             self.logger.error(f'psdk_liveview_stats error: {e}')
             return None
 
+    # PSDK authority owner codes (E_DJIFcSubscriptionControlAuthority).
+    AUTHORITY_RC = 0
+    AUTHORITY_MSDK = 1
+    AUTHORITY_PSDK = 4
+    AUTHORITY_DOCK = 5
+
+    AUTHORITY_NAMES = {0: 'RC', 1: 'MSDK', 4: 'PSDK', 5: 'Dock'}
+
+    def get_control_authority(self):
+        """(authority, change_reason, last_event) or None if unavailable.
+
+        `authority` is who the aircraft says is flying it. This matters because
+        psdk_setpoint() returns success whether or not PSDK holds authority - DJI's
+        ExecuteJoystickAction reports the API call succeeded, and the aircraft then
+        discards the command. This is the only way to tell the two apart.
+        """
+        if not (self.lib and hasattr(self.lib, 'psdk_get_control_authority')):
+            return None
+        try:
+            auth = ctypes.c_int(-1)
+            reason = ctypes.c_int(-1)
+            last = ctypes.c_int(-1)
+            self.lib.psdk_get_control_authority.argtypes = [
+                ctypes.POINTER(ctypes.c_int),
+                ctypes.POINTER(ctypes.c_int),
+                ctypes.POINTER(ctypes.c_int)]
+            self.lib.psdk_get_control_authority.restype = ctypes.c_int
+            rc = self.lib.psdk_get_control_authority(
+                ctypes.byref(auth), ctypes.byref(reason), ctypes.byref(last))
+            if rc != 0:
+                return None
+            return auth.value, reason.value, last.value
+        except Exception as e:  # noqa: BLE001
+            self.logger.error(f'psdk_get_control_authority error: {e}')
+            return None
+
+    def has_psdk_authority(self):
+        """True only if the aircraft confirms PSDK holds authority.
+
+        None (not False) when the aircraft has not reported yet, so callers can tell
+        "definitely not ours" from "don't know".
+        """
+        info = self.get_control_authority()
+        if info is None:
+            return None
+        return info[0] == self.AUTHORITY_PSDK
+
+    def get_rc(self):
+        """RC stick positions and link flags, or None if unavailable.
+
+        Returns (pitch, roll, yaw, throttle, flags) with sticks normalised
+        -0.999 .. 0.999, centre 0.0. `flags` is a bitfield:
+        bit0 logic, bit1 sky, bit2 ground, bit3 app connected.
+        """
+        if not (self.lib and hasattr(self.lib, 'psdk_get_rc')):
+            return None
+        try:
+            pitch = ctypes.c_float(0.0)
+            roll = ctypes.c_float(0.0)
+            yaw = ctypes.c_float(0.0)
+            throttle = ctypes.c_float(0.0)
+            flags = ctypes.c_int(0)
+            self.lib.psdk_get_rc.argtypes = [
+                ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float),
+                ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float),
+                ctypes.POINTER(ctypes.c_int)]
+            self.lib.psdk_get_rc.restype = ctypes.c_int
+            rc = self.lib.psdk_get_rc(
+                ctypes.byref(pitch), ctypes.byref(roll), ctypes.byref(yaw),
+                ctypes.byref(throttle), ctypes.byref(flags))
+            if rc != 0:
+                return None
+            return (pitch.value, roll.value, yaw.value, throttle.value, flags.value)
+        except Exception as e:  # noqa: BLE001
+            self.logger.error(f'psdk_get_rc error: {e}')
+            return None
+
     def disconnect(self):
         if self.lib and hasattr(self.lib, 'psdk_disconnect'):
             try:

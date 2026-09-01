@@ -92,3 +92,18 @@
     # disable_automatic_navigation. Off by default so behaviour is unchanged for callers
     # that drive cmd/drone/setpoint directly without using the services.
     require_automatic_navigation: false
+
+    # ---- flight control authority -----------------------------------------------------
+    # DJI requires ObtainJoystickCtrlAuthority before any setpoint is acted on
+    # (dji_flight_controller.h: "You have to obtain joystick control permission
+    # successfully before you using joystick to control aircraft. RC must be in p-mode").
+    #
+    # Only the 'arm' command called it, and VITRO's interface has no 'arm' - it defines
+    # takeoff/land only. So setpoints streamed to an aircraft that had never granted
+    # authority and were silently discarded: takeoff and land worked, motion did not, and
+    # nothing logged an error because ExecuteJoystickAction returns success regardless.
+    #
+    # true (default): acquire authority before takeoff and whenever a setpoint stream
+    # starts without it. false: require an explicit 'arm' on cmd/drone/action first.
+    auto_obtain_authority: true
+    authority_retry_interval: 1.0

@@ -22,9 +22,9 @@ import rclpy
 from rclpy.node import Node
 
 from geographic_msgs.msg import GeoPointStamped
-from geometry_msgs.msg import QuaternionStamped, Vector3Stamped
+from geometry_msgs.msg import QuaternionStamped, TwistStamped, Vector3Stamped
 from mavros_msgs.msg import GlobalPositionTarget
-from sensor_msgs.msg import BatteryState, CompressedImage, Range
+from sensor_msgs.msg import BatteryState, CompressedImage, Joy, Range
 from std_msgs.msg import String
 from std_srvs.srv import Trigger
 from vitro_ros_definitions.srv import SetGimballAngle, SetVideoSettings
@@ -42,6 +42,9 @@ LEGACY_TOPICS = {
     'log': 'drone/log',
     'setpoint': 'cmd/drone/setpoint',
     'action': 'cmd/drone/action',
+    'control_authority': 'control_authority',
+    'joystick_command': 'debug/joystick_command',
+    'rc': 'rc',
 }
 
 DOCUMENTED_TOPICS = {
@@ -55,6 +58,9 @@ DOCUMENTED_TOPICS = {
     'log': 'data/drone/log',
     'setpoint': 'cmd/drone/setpoint',
     'action': 'cmd/drone/action',
+    'control_authority': 'data/drone/control_authority',
+    'joystick_command': 'data/drone/debug/joystick_command',
+    'rc': 'data/drone/rc',
 }
 
 # "gimball" is spelled with two l's in the VITRO documentation and in the .srv file name.
@@ -147,6 +153,17 @@ class PSDKBridgeNode(Node):
         # high-speed bandwidth control - not for receiving liveview.
         self.declare_parameter('network_handler_enabled', False)
 
+        # VITRO's interface defines only takeoff/land - it has no concept of "arm", and
+        # arm is what calls DjiFlightController_ObtainJoystickCtrlAuthority. Without this,
+        # setpoints stream to an aircraft that never granted PSDK authority and are
+        # silently discarded (ExecuteJoystickAction still returns success). So acquire
+        # authority on demand: before takeoff, and when a setpoint stream starts while the
+        # aircraft says someone else is flying. Set false to require an explicit 'arm'.
+        self.declare_parameter('auto_obtain_authority', True)
+        # Don't re-request faster than this; the aircraft refuses while the RC is out of
+        # N/P mode, and hammering it would spam the link and the log.
+        self.declare_parameter('authority_retry_interval', 1.0)
+
         # Setpoint watchdog. Matters most in the split deployment, where VITRO runs on a
         # laptop and the 40 Hz control loop crosses WiFi: a dropout must not leave the last
         # velocity command latched on the aircraft.
@@ -176,6 +193,12 @@ class PSDKBridgeNode(Node):
         # before psdk_connect() runs.
         self.network_handler_enabled = bool(
             self.get_parameter('network_handler_enabled').value)
+        self.auto_obtain_authority = bool(
+            self.get_parameter('auto_obtain_authority').value)
+        self.authority_retry_interval = float(
+            self.get_parameter('authority_retry_interval').value)
+        self._last_authority_attempt = None
+        self._authority_warned = False
         os.environ['PSDK_REGISTER_NETWORK_HANDLER'] = \
             '1' if self.network_handler_enabled else '0'
 
@@ -194,6 +217,23 @@ class PSDKBridgeNode(Node):
         self.ultra_pub = self.create_publisher(Range, topic('height_above_ground'), 10)
         self.batt_pub = self.create_publisher(BatteryState, topic('battery_state'), 10)
         self.log_pub = self.create_publisher(String, topic('log'), 10)
+        self.authority_pub = self.create_publisher(String, topic('control_authority'), 10)
+        # What psdk_setpoint() actually hands to DjiFlightController_ExecuteJoystickAction,
+        # which is NOT the same as what arrives on the setpoint topic: the C layer reads
+        # only vx/vy/vz/yaw and ignores frame_id/latitude/longitude/altitude. TwistStamped
+        # rather than a JSON string so it plots natively in Foxglove.
+        #
+        # Field meanings follow the configured joystick mode (see
+        # PsdkWrapper_ConfigureJoystickMode): linear x/y are GROUND-frame velocity,
+        # linear z is vertical velocity, and angular z is a yaw RATE, not a yaw angle.
+        self.joystick_pub = self.create_publisher(
+            TwistStamped, topic('joystick_command'), 10)
+
+        # The pilot's own sticks, as sensor_msgs/Joy so Foxglove plots the axes directly.
+        # axes:    [roll, pitch, yaw, throttle], each -0.999 .. 0.999, centre 0.0
+        # buttons: [logic, sky, ground, app] link flags, 0/1
+        # Ordered roll-first to match the usual Joy convention, not DJI's struct order.
+        self.rc_pub = self.create_publisher(Joy, topic('rc'), 10)
         self.camera_h264_pub = self.create_publisher(
             CompressedImage, topic('camera_h264'), 10)
 
@@ -237,6 +277,8 @@ class PSDKBridgeNode(Node):
 
         self.create_timer(1.0 / self.telemetry_rate, self._publish_fast_telemetry)
         self.create_timer(1.0 / self.battery_rate, self._publish_battery)
+        self.create_timer(1.0 / self.battery_rate, self._publish_authority)
+        self.create_timer(1.0 / self.telemetry_rate, self._publish_rc)
         if self.liveview_enabled:
             self.create_timer(1.0 / self.liveview_drain_rate, self._drain_liveview)
         if self.watchdog_enabled:
@@ -276,6 +318,45 @@ class PSDKBridgeNode(Node):
 
     # -- commands ---------------------------------------------------------------
 
+    def _ensure_authority(self, why: str) -> bool:
+        """Make sure PSDK holds flight-control authority before commanding motion.
+
+        Returns True if we believe we hold it. The aircraft is the source of truth here -
+        psdk_setpoint() cannot tell us, because DJI's ExecuteJoystickAction returns success
+        even when authority sits with the RC and the command is discarded.
+        """
+        if not self.auto_obtain_authority or not self.psdk.connected:
+            return False
+
+        held = self.psdk.has_psdk_authority()
+        if held:
+            self._authority_warned = False
+            return True
+
+        # held is None when the aircraft has not reported CONTROL_DEVICE yet. Still worth
+        # requesting - a redundant grab is harmless, silently not flying is not.
+        now = time.monotonic()
+        if (self._last_authority_attempt is not None
+                and now - self._last_authority_attempt < self.authority_retry_interval):
+            return False
+        self._last_authority_attempt = now
+
+        rc = self.psdk.arm()
+        if rc == 0:
+            self.publish_log(f'obtained joystick control authority ({why})')
+            self._authority_warned = False
+            return True
+
+        if not self._authority_warned:
+            # Once per loss, not once per setpoint - this can be hit at the setpoint rate.
+            self._authority_warned = True
+            self.publish_log(
+                f'could not obtain joystick control authority ({why}, rc={rc}). '
+                f'The aircraft refuses unless the RC flight-mode switch is in N/P mode; '
+                f'setpoints will be accepted by the API but ignored by the aircraft.',
+                level='warning')
+        return False
+
     def cmd_callback(self, msg: String):
         cmd = msg.data.strip().lower()
         self.get_logger().info(f'Received command: {cmd}')
@@ -289,6 +370,12 @@ class PSDKBridgeNode(Node):
             'manual': 'manual',
             'hold': 'hold',
         }
+
+        # Takeoff itself does not need joystick authority (StartTakeoff is a separate
+        # API), but whatever flies the aircraft next does - and VITRO never sends 'arm'.
+        # Grabbing it here means the setpoint stream that follows is actually obeyed.
+        if cmd == 'takeoff':
+            self._ensure_authority('takeoff')
 
         if cmd in mapping:
             self.send_psdk_command(mapping[cmd])
@@ -318,6 +405,12 @@ class PSDKBridgeNode(Node):
             'vz': float(msg.velocity.z),
             'yaw': float(msg.yaw),
         }
+        # A setpoint arriving while nothing is latched means a fresh control stream: either
+        # the first one, or the first after the watchdog cut in. That is the moment to
+        # confirm authority, rather than on every setpoint at the full stream rate.
+        if not self._setpoint_latched:
+            self._ensure_authority('setpoint stream started')
+
         self._last_setpoint_monotonic = time.monotonic()
         self._setpoint_latched = True
         self.get_logger().debug(f'Received setpoint: {sp}')
@@ -370,6 +463,18 @@ class PSDKBridgeNode(Node):
 
     def send_psdk_setpoint(self, setpoint: dict):
         payload = json.dumps(setpoint)
+
+        # Echo the four values the aircraft will actually act on, before sending. Published
+        # unconditionally - including in stub mode - so the topic shows what *would* go out
+        # rather than going silent exactly when you are trying to work out why nothing moves.
+        cmd = TwistStamped()
+        cmd.header.stamp = self.get_clock().now().to_msg()
+        cmd.twist.linear.x = float(setpoint.get('vx', 0.0))
+        cmd.twist.linear.y = float(setpoint.get('vy', 0.0))
+        cmd.twist.linear.z = float(setpoint.get('vz', 0.0))
+        cmd.twist.angular.z = float(setpoint.get('yaw', 0.0))
+        self.joystick_pub.publish(cmd)
+
         if self.psdk.connected:
             rc = self.psdk.send_setpoint(payload)
             # Setpoints arrive at up to 40 Hz, so success stays at debug to avoid flooding
@@ -514,6 +619,49 @@ class PSDKBridgeNode(Node):
             height.radiation_type = Range.ULTRASOUND
             height.range = telemetry['height_rel']
             self.ultra_pub.publish(height)
+
+    def _publish_rc(self):
+        """Publish the RC's stick positions next to what PSDK is commanding.
+
+        Plotted against /dji/debug/joystick_command this answers "who is flying"
+        directly, instead of inferring it from whether the aircraft did what we asked.
+        """
+        rc = self.psdk.get_rc() if self.psdk.connected else None
+        if rc is None:
+            return
+        pitch, roll, yaw, throttle, flags = rc
+        msg = Joy()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.axes = [float(roll), float(pitch), float(yaw), float(throttle)]
+        msg.buttons = [
+            1 if flags & 1 else 0,
+            1 if flags & 2 else 0,
+            1 if flags & 4 else 0,
+            1 if flags & 8 else 0,
+        ]
+        self.rc_pub.publish(msg)
+
+    def _publish_authority(self):
+        """Publish who the aircraft says is flying it.
+
+        This is the signal that was missing while setpoints were being silently discarded:
+        the bridge reported every setpoint as accepted because the DJI API said so, while
+        authority actually sat with the RC the whole time.
+        """
+        info = self.psdk.get_control_authority() if self.psdk.connected else None
+        msg = String()
+        if info is None:
+            msg.data = json.dumps({'authority': 'unknown', 'psdk_has_control': False})
+        else:
+            auth, reason, last_event = info
+            msg.data = json.dumps({
+                'authority': self.psdk.AUTHORITY_NAMES.get(auth, f'code_{auth}'),
+                'authority_code': auth,
+                'psdk_has_control': auth == self.psdk.AUTHORITY_PSDK,
+                'change_reason': reason,
+                'last_event': last_event,
+            })
+        self.authority_pub.publish(msg)
 
     def _publish_battery(self):
         telemetry = self.psdk.get_telemetry() if self.psdk.connected else None

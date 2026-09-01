@@ -67,6 +67,15 @@ static T_DjiFcSubscriptionVelocity s_velocity = {0};
 static T_DjiFcSubscriptionPositionFused s_positionFused = {0};
 static T_DjiFcSubscriptionHeightFusion s_heightFusion = 0;
 static T_DjiFcSubscriptionSingleBatteryInfo s_batteryInfo = {0};
+static bool s_haveControlDevice = false;
+static T_DjiFcSubscriptionControlDevice s_controlDevice = {0};
+static bool s_haveRcWithFlag = false;
+static T_DjiFcSubscriptionRCWithFlagData s_rcWithFlag = {0};
+
+/* Set by the joystick-authority event callback below. Distinct from s_controlDevice,
+ * which is the aircraft's periodic report: this is the push notification of a change,
+ * and carries DJI's reason code for why authority moved. */
+static volatile int s_lastAuthorityEvent = -1;
 
 #define TELEMETRY_CALLBACK(NAME, VAR, HAVE_FLAG) \
     static T_DjiReturnCode NAME(const uint8_t *data, uint16_t dataSize, \
@@ -88,6 +97,8 @@ TELEMETRY_CALLBACK(VelocityCallback, s_velocity, s_haveVelocity)
 TELEMETRY_CALLBACK(PositionFusedCallback, s_positionFused, s_havePositionFused)
 TELEMETRY_CALLBACK(HeightFusionCallback, s_heightFusion, s_haveHeightFusion)
 TELEMETRY_CALLBACK(BatteryInfoCallback, s_batteryInfo, s_haveBatteryInfo)
+TELEMETRY_CALLBACK(ControlDeviceCallback, s_controlDevice, s_haveControlDevice)
+TELEMETRY_CALLBACK(RcWithFlagCallback, s_rcWithFlag, s_haveRcWithFlag)
 
 /* ------------------------------------------------------------------------ */
 /* Liveview H.264 ring buffer                                               */
@@ -346,6 +357,23 @@ static void PsdkWrapper_ConfigureJoystickMode(void)
     DjiFlightController_SetJoystickMode(mode);
 }
 
+/* Push notification from the flight controller whenever joystick authority moves.
+ * Registered in psdk_connect(). Two reasons to care:
+ *   1. Observability - previously nothing on our side noticed the aircraft taking
+ *      control back, so the bridge's idea of who was flying could be silently wrong.
+ *   2. The ROS layer re-acquires authority on the next setpoint, and it needs to know
+ *      the grant was lost to do that.
+ * Runs on a PSDK thread: record and return, no blocking work here. */
+static T_DjiReturnCode PsdkWrapper_AuthorityEventCallback(
+    T_DjiFlightControllerJoystickCtrlAuthorityEventInfo eventData)
+{
+    s_lastAuthorityEvent = (int) eventData.joystickCtrlAuthoritySwitchEvent;
+    fprintf(stderr, "[psdk_wrapper] joystick authority changed: owner=%d reason=%d\n",
+            (int) eventData.curJoystickCtrlAuthority,
+            (int) eventData.joystickCtrlAuthoritySwitchEvent);
+    return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
 static void PsdkWrapper_SubscribeTelemetry(void)
 {
     /* Real callbacks, not NULL - see the comment on the telemetry cache above.
@@ -388,6 +416,25 @@ static void PsdkWrapper_SubscribeTelemetry(void)
                                            DJI_DATA_SUBSCRIPTION_TOPIC_1_HZ, BatteryInfoCallback);
     if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         fprintf(stderr, "[psdk_wrapper] subscribe BATTERY_SINGLE_INFO_INDEX1 failed: 0x%08llX\n", (unsigned long long) rc);
+    }
+
+    /* Who currently holds flight-control authority. Not optional instrumentation: without
+     * it nothing could tell an ignored setpoint from an executed one, because
+     * DjiFlightController_ExecuteJoystickAction returns SUCCESS whether or not PSDK
+     * actually holds authority - the aircraft just discards the command. */
+    rc = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_CONTROL_DEVICE,
+                                           DJI_DATA_SUBSCRIPTION_TOPIC_5_HZ, ControlDeviceCallback);
+    if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        fprintf(stderr, "[psdk_wrapper] subscribe CONTROL_DEVICE failed: 0x%08llX\n", (unsigned long long) rc);
+    }
+
+    /* The pilot's own stick positions, plus RC link flags. Pairs with CONTROL_DEVICE and
+     * with the joystick-command echo: together they answer "who is actually flying this"
+     * during a handover, rather than leaving it to be inferred. */
+    rc = DjiFcSubscription_SubscribeTopic(DJI_FC_SUBSCRIPTION_TOPIC_RC_WITH_FLAG_DATA,
+                                           DJI_DATA_SUBSCRIPTION_TOPIC_5_HZ, RcWithFlagCallback);
+    if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        fprintf(stderr, "[psdk_wrapper] subscribe RC_WITH_FLAG_DATA failed: 0x%08llX\n", (unsigned long long) rc);
     }
 }
 
@@ -446,6 +493,16 @@ int psdk_connect(void)
         return -1;
     }
     PsdkWrapper_ConfigureJoystickMode();
+
+    /* Not fatal if it fails: losing the notification costs observability and makes
+     * re-acquisition purely reactive, but the link and control still work. */
+    rc = DjiFlightController_RegJoystickCtrlAuthorityEventCallback(
+        PsdkWrapper_AuthorityEventCallback);
+    if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        fprintf(stderr, "[psdk_wrapper] RegJoystickCtrlAuthorityEventCallback failed: "
+                        "0x%08llX (authority changes will go unreported)\n",
+                (unsigned long long) rc);
+    }
 
     rc = DjiFcSubscription_Init();
     if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -534,6 +591,86 @@ int psdk_setpoint(const char *setpointJson)
         .yaw = (dji_f32_t) yaw,
     };
     return (DjiFlightController_ExecuteJoystickAction(cmd) == DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) ? 0 : -1;
+}
+
+/* Reports who holds flight-control authority, so the ROS layer can tell an ignored
+ * setpoint from an executed one.
+ *
+ * On the Mavic 3E, T_DjiFcSubscriptionControlDevice's union resolves to the
+ * "other aircrafts" branch - controlAuthority + controlAuthorityChangeReason - NOT the
+ * M300/M350 controlMode/deviceStatus/flightStatus bitfield branch. Reading the wrong
+ * branch would silently misinterpret the same bytes, so this is deliberate.
+ *
+ * authority: 0=RC, 1=MSDK, 4=PSDK, 5=Dock (E_DJIFcSubscriptionControlAuthority)
+ * changeReason: E_DJIFcSubscriptionAuthorityChangeReason
+ * lastEvent: most recent push event, -1 if none seen yet
+ * Returns 0 on success, -1 if not connected or no report has arrived yet. */
+int psdk_get_control_authority(int *authority, int *changeReason, int *lastEvent)
+{
+    if (!s_connected) {
+        return -1;
+    }
+
+    pthread_mutex_lock(&s_telemetryLock);
+    bool have = s_haveControlDevice;
+    int auth = (int) s_controlDevice.controlAuthority;
+    int reason = (int) s_controlDevice.controlAuthorityChangeReason;
+    pthread_mutex_unlock(&s_telemetryLock);
+
+    if (lastEvent) {
+        *lastEvent = s_lastAuthorityEvent;
+    }
+    if (!have) {
+        return -1;
+    }
+    if (authority) {
+        *authority = auth;
+    }
+    if (changeReason) {
+        *changeReason = reason;
+    }
+    return 0;
+}
+
+/* The RC's own stick positions and link flags.
+ *
+ * Sticks are normalised -0.999 .. 0.999 with 0.0 centred (per T_DjiFcSubscriptionRCWithFlagData).
+ * Flags are packed into one int so the ABI stays a flat scalar list:
+ *   bit0 logicConnected, bit1 skyConnected, bit2 groundConnected, bit3 appConnected.
+ * Returns 0 on success, -1 if not connected or nothing has arrived yet. */
+int psdk_get_rc(float *pitch, float *roll, float *yaw, float *throttle, int *flags)
+{
+    if (!s_connected) {
+        return -1;
+    }
+
+    pthread_mutex_lock(&s_telemetryLock);
+    bool have = s_haveRcWithFlag;
+    T_DjiFcSubscriptionRCWithFlagData rcData = s_rcWithFlag;
+    pthread_mutex_unlock(&s_telemetryLock);
+
+    if (!have) {
+        return -1;
+    }
+    if (pitch) {
+        *pitch = (float) rcData.pitch;
+    }
+    if (roll) {
+        *roll = (float) rcData.roll;
+    }
+    if (yaw) {
+        *yaw = (float) rcData.yaw;
+    }
+    if (throttle) {
+        *throttle = (float) rcData.throttle;
+    }
+    if (flags) {
+        *flags = (rcData.flag.logicConnected ? 1 : 0)
+               | (rcData.flag.skyConnected ? 2 : 0)
+               | (rcData.flag.groundConnected ? 4 : 0)
+               | (rcData.flag.appConnected ? 8 : 0);
+    }
+    return 0;
 }
 
 int psdk_command(const char *name, const char *payloadJson)
