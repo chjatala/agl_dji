@@ -107,3 +107,20 @@
     # starts without it. false: require an explicit 'arm' on cmd/drone/action first.
     auto_obtain_authority: true
     authority_retry_interval: 1.0
+
+    # ---- setpoint yaw units ------------------------------------------------------------
+    # GlobalPositionTarget carries BOTH `yaw` (absolute angle) and `yaw_rate`. The joystick
+    # runs in YAW_ANGLE_RATE_CONTROL_MODE, so the rate is the meaningful one - and it is the
+    # one VITRO populates. Measured over 38601 recorded setpoints: `yaw` was 0.0 in every
+    # single message, `yaw_rate` was non-zero in 38423. The bridge previously read `yaw`,
+    # so it commanded a constant zero yaw rate and the aircraft never turned.
+    #
+    # false (default): treat incoming yaw_rate as rad/s and convert to the deg/s DJI wants
+    # (dji_flight_controller.h: "Limit: -150 deg/s to 150 deg/s"). Replaying the recorded
+    # setpoints through this gives a peak of exactly 30.00 deg/s - a clean clamp on VITRO's
+    # side, which corroborates rad/s input. Without the conversion, commands go out ~57x
+    # too slow.
+    #
+    # true: the sender already uses deg/s. Confirm empirically before setting this -
+    # command a known rate and time a 90 degree turn.
+    setpoint_yaw_rate_is_degrees: false

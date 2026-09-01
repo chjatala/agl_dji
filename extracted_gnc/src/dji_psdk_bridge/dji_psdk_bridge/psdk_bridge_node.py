@@ -15,6 +15,7 @@ own config mixes relative and absolute, so this is left to configuration rather 
 """
 
 import json
+import math
 import os
 import time
 
@@ -164,6 +165,13 @@ class PSDKBridgeNode(Node):
         # N/P mode, and hammering it would spam the link and the log.
         self.declare_parameter('authority_retry_interval', 1.0)
 
+        # VITRO populates GlobalPositionTarget.yaw_rate in rad/s (ROS REP-103, and MAVLink's
+        # SET_POSITION_TARGET_GLOBAL_INT which this message mirrors), while DJI's joystick
+        # expects deg/s in YAW_ANGLE_RATE_CONTROL_MODE ("Limit: -150 deg/s to 150 deg/s").
+        # So the rate is converted on the way out. Set true if a sender is already using
+        # deg/s - verify by commanding a known rate and timing a 90 degree turn.
+        self.declare_parameter('setpoint_yaw_rate_is_degrees', False)
+
         # Setpoint watchdog. Matters most in the split deployment, where VITRO runs on a
         # laptop and the 40 Hz control loop crosses WiFi: a dropout must not leave the last
         # velocity command latched on the aircraft.
@@ -197,6 +205,9 @@ class PSDKBridgeNode(Node):
             self.get_parameter('auto_obtain_authority').value)
         self.authority_retry_interval = float(
             self.get_parameter('authority_retry_interval').value)
+        self.yaw_rate_is_degrees = bool(
+            self.get_parameter('setpoint_yaw_rate_is_degrees').value)
+        self._yaw_mask_warned = False
         self._last_authority_attempt = None
         self._authority_warned = False
         os.environ['PSDK_REGISTER_NETWORK_HANDLER'] = \
@@ -395,15 +406,50 @@ class PSDKBridgeNode(Node):
                 throttle_duration_sec=5.0)
             return
 
+        # Yaw comes from msg.yaw_rate, NOT msg.yaw.
+        #
+        # GlobalPositionTarget carries both: `yaw` is an absolute angle, `yaw_rate` is a
+        # rate. The joystick is configured for YAW_ANGLE_RATE_CONTROL_MODE, so a rate is
+        # what the aircraft wants - and a rate is what VITRO sends. Measured over 38601
+        # recorded setpoints (rosbag2_2026_08_26-15_25_41): yaw was 0.0 in every single
+        # one, yaw_rate was non-zero in 38423. Reading `yaw` therefore commanded a
+        # constant zero yaw rate and the aircraft never turned, which is exactly the
+        # symptom that was observed.
+        #
+        # Units: VITRO sends rad/s, DJI wants deg/s (dji_flight_controller.h,
+        # YAW_ANGLE_RATE_CONTROL_MODE: "Limit: -150 deg/s to 150 deg/s"). Without the
+        # conversion a command would go out ~57x too slow.
+        yaw_rate = float(msg.yaw_rate)
+        if msg.type_mask & GlobalPositionTarget.IGNORE_YAW_RATE:
+            # The sender is explicitly declaring this field meaningless, so don't fly on it.
+            yaw_rate = 0.0
+            if not self._yaw_mask_warned:
+                self._yaw_mask_warned = True
+                self.publish_log(
+                    'setpoint type_mask has IGNORE_YAW_RATE set - commanding zero yaw rate. '
+                    'This bridge only implements yaw RATE control '
+                    '(YAW_ANGLE_RATE_CONTROL_MODE), so msg.yaw is not a usable fallback.',
+                    level='warning')
+        elif not self.yaw_rate_is_degrees:
+            yaw_rate = math.degrees(yaw_rate)
+
         sp = {
             'frame_id': msg.header.frame_id,
             'latitude': float(msg.latitude),
             'longitude': float(msg.longitude),
             'altitude': float(msg.altitude),
-            'vx': float(msg.velocity.x),
-            'vy': float(msg.velocity.y),
-            'vz': float(msg.velocity.z),
-            'yaw': float(msg.yaw),
+            # Velocity fields honour their ignore flags too. VITRO currently sends
+            # type_mask=0 (nothing ignored) so this is a no-op today, but forwarding a
+            # field the sender has explicitly marked invalid would mean flying on a stale
+            # or uninitialised value - the failure would look like a random lurch on one
+            # axis, which is a miserable thing to debug after the fact.
+            'vx': 0.0 if msg.type_mask & GlobalPositionTarget.IGNORE_VX else float(msg.velocity.x),
+            'vy': 0.0 if msg.type_mask & GlobalPositionTarget.IGNORE_VY else float(msg.velocity.y),
+            'vz': 0.0 if msg.type_mask & GlobalPositionTarget.IGNORE_VZ else float(msg.velocity.z),
+            # Key stays "yaw" because that is the name of DJI's own struct field
+            # (T_DjiFlightControllerJoystickCommand.yaw), which holds a RATE in this mode.
+            # The value is deg/s, sourced from msg.yaw_rate above.
+            'yaw': yaw_rate,
         }
         # A setpoint arriving while nothing is latched means a fresh control stream: either
         # the first one, or the first after the watchdog cut in. That is the moment to
