@@ -57,6 +57,11 @@ class NMEAParser(Node):
         self.declare_parameter("timeout", 1.0)
         self.declare_parameter("pose_topic", "agilica_pose")
         self.declare_parameter("frame_id", "agilica_frame")
+        # Output rate for pose_topic (Hz). The UWB module streams AGLLP sentences at
+        # ~40 Hz with the serial poll interval as jitter, so publishing one pose per
+        # sentence puts that jitter straight into the EKF. Set to 0.0 to do exactly
+        # that anyway (publish every sentence, unthrottled).
+        self.declare_parameter("publish_rate", 10.0)
 
         # Get parameter values
         self.port = self.get_parameter("port").get_parameter_value().string_value
@@ -70,6 +75,9 @@ class NMEAParser(Node):
         self.frame_id = (
             self.get_parameter("frame_id").get_parameter_value().string_value
         )
+        self.publish_rate = (
+            self.get_parameter("publish_rate").get_parameter_value().double_value
+        )
 
         self.serial_conn = None
         self.running = False
@@ -82,12 +90,31 @@ class NMEAParser(Node):
         # Create ROS2 publisher for pose data
         self.pose_publisher = self.create_publisher(PoseStamped, self.pose_topic, 10)
 
+        # Rate limiting. The serial reader runs in its own thread (start_reading), so
+        # the newest parsed pose is handed to the timer callback - which runs on the
+        # executor thread - under a lock. Only a pose that actually arrived since the
+        # last tick is published: a stalled UWB link must go quiet rather than repeat
+        # its last position, or the consumer's observation timeout never fires.
+        self._pose_lock = threading.Lock()
+        self._pending_pose = None
+        self._publish_timer = None
+        if self.publish_rate > 0.0:
+            self._publish_timer = self.create_timer(
+                1.0 / self.publish_rate, self._publish_pending_pose
+            )
+
         # Log ROS2 node initialization
         self.get_logger().info(f"NMEA Parser node initialized")
         self.get_logger().info(
             f"Port: {self.port}, Baudrate: {self.baudrate}, Timeout: {self.timeout}"
         )
         self.get_logger().info(f"Publishing pose data on topic: {self.pose_topic}")
+        if self._publish_timer is not None:
+            self.get_logger().info(f"Pose publish rate: {self.publish_rate} Hz")
+        else:
+            self.get_logger().info(
+                "Pose publish rate: unthrottled (one pose per AGLLP sentence)"
+            )
         self.get_logger().info(f"Frame ID: {self.frame_id}")
 
         # Standard NMEA sentence types
@@ -100,6 +127,30 @@ class NMEAParser(Node):
             "GPGLL": self._parse_gll,
             "AGLLP": self._parse_agilica,  # custom agilica message
         }
+
+    def _emit_pose(self, pose_msg: PoseStamped):
+        """Publish a pose, or hold it for the next timer tick when rate limiting is on
+
+        Called from the serial reader thread.
+        """
+        if self._publish_timer is None:
+            self.pose_publisher.publish(pose_msg)
+            return
+
+        with self._pose_lock:
+            self._pending_pose = pose_msg
+
+    def _publish_pending_pose(self):
+        """Timer callback: publish the newest pose parsed since the last tick
+
+        Ticks with no new pose publish nothing, so the topic reflects the UWB link
+        going silent instead of repeating a stale position.
+        """
+        with self._pose_lock:
+            pose_msg, self._pending_pose = self._pending_pose, None
+
+        if pose_msg is not None:
+            self.pose_publisher.publish(pose_msg)
 
     def _nmea_time_to_ros_stamp(self, nmea_time: str, nmea_date: str | None = None):
         """
@@ -353,8 +404,8 @@ class NMEAParser(Node):
             pose_msg.pose.orientation.z = 0.0
             pose_msg.pose.orientation.w = 1.0
 
-            # Publish the pose message
-            self.pose_publisher.publish(pose_msg)
+            # Hand the pose to the rate limiter (publishes directly when unthrottled)
+            self._emit_pose(pose_msg)
 
             if self.latest_gprmc_timestamp:
                 self.get_logger().info(
