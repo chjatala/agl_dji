@@ -33,17 +33,14 @@ def generate_launch_description():
                     "auto_land": "true",
                     "aruco_dict": "DICT_7X7_1000",
                     "aruco_border_bits": "2",
-                    # Default deliberately points at the SMALL indoor box
-                    # (+/-2.7 m, 2 m altitude, 0.40 m/s), not the outdoor set.
+                    # Default is the cage set (+/-1 m, 1 m altitude, 0.50 m/s) - the
+                    # one actually flown indoors.
                     # waypoint_outdoor.csv flies to (-15,-15) at 10 m at 1.0 m/s, which is
                     # not survivable in a netted cage - and it is what loads if a waypoint
                     # file selected in the GUI fails to resolve on this machine, because
                     # mission_ctrl keeps the previously loaded mission on a failed load.
                     #
-                    # waypoint_cage.csv (the file actually used for cage flights) still
-                    # lives only on the laptop and is in no version control - copy it into
-                    # this directory and switch this default to it.
-                    "waypoint_file": "demo_agilica/waypoint_indoor.csv",
+                    "waypoint_file": "demo_agilica/waypoint_cage.csv",
                 }.items(),
             )
         ]

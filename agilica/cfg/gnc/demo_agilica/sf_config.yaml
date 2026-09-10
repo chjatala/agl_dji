@@ -1,6 +1,52 @@
 # This is the configuration file for drone sensor fusion
 FormatVersion: "3.3.2"
 
+# The base sf_config_v3.yaml (baked into the image) defaults PosObsKeys /
+# CriticalObsTimeout.Main to "pos"/"line"/"marker_MAIN" - the ArUco-marker +
+# line-follower demo's localization keys. This demo's position source is the
+# UWB agilica module, fed in via SensorSetting.GenericPose below, which
+# produces an observation keyed "posxy" (see sundae.lib "Added observation
+# 'posxy'" in the logs). Without this override, "posxy" was never in
+# PosObsKeys, so the SF diagnosis stayed stuck in dead-reckoning/Fatal even
+# though the UWB pose was being received and fused into the EKF - and
+# anything gating on that diagnosis ignored the UWB-corrected X/Y.
+#
+# CORRECTED 2026-08-31. An earlier note here claimed a 2026-08-28 test had
+# shown this block makes no difference to the Fatal/posxy=0 diagnostic. That
+# test was invalid: every run that day had 1.7-6.2 s of clock skew between the
+# Pi and the laptop, and SUNDAE stamps the /agilica_pose observation with the
+# publisher's header.stamp (only spd and pose do this; attitude, height and
+# the speed command all use the local clock). With that much skew "posxy" is
+# older than PosObsTimeout: 1.4 the moment it arrives, so it timed out with or
+# without this override - the skew masked the result.
+#
+# This block IS required. With the clocks in sync, the two 2026-08-26 runs
+# isolate it cleanly:
+#   sundae_2026-08-26-11-55.log  baked-in keys, 0.08 s skew -> 100% dead-reckoning
+#   sundae_2026-08-26-15-21.log  posxy key,     0.22 s skew ->   0% dead-reckoning
+# Across all 45 logs the split is absolute: every run at >= 1.67 s skew is 100%
+# dead-reckoning/Fatal, every run at <= 0.31 s skew with posxy in PosObsKeys is
+# 0%/Normal. Both fixes are needed - this override, and a disciplined clock on
+# the Pi. See email to Jia.
+DiagnosticSetting:
+  PosObsKeys:
+    - posxy
+  CriticalObsTimeout:
+    - GroupName: Main
+      Logic: AND
+      ObsCfg:
+        - Key: posxy
+          Timeout: 1.4
+      Weight: 5.0
+    - GroupName: Tele
+      Logic: AND
+      ObsCfg:
+        - Key: spd
+          Timeout: 1.0
+        - Key: alt_0
+          Timeout: 1.0
+      Weight: 5.0
+
 FilterSetting:
   # Folder name to save the EKF (oase.save). If the folder exsits, the
   # program will load the EKF from the folder (to save time) unless the
@@ -20,7 +66,7 @@ FilterSetting:
   # IMU: full kinematic model using IMU as input
   # SPD: 3D constant speed model with yaw angle
   # SPDCMD: using speed control command as input for SPD model
-  BaseModelType: "SPDCMD"
+  BaseModelType: "SPD"
   # Detailed model parameters (design not fixed yet)
   ModelParam:
     AddImuBias: False
@@ -98,10 +144,10 @@ FilterSetting:
     # z shift of GPS pos
     dz_gps: 0.1
     # for SPDCMD model
-    vx_noise: 0.2
-    vy_noise: 0.2
-    vz_noise: 0.2
-    r_noise: 0.2
+    vx_noise: 2
+    vy_noise: 2
+    vz_noise: 2
+    r_noise: 2
 
 SensorSetting:
   # In dev, testing ctrl input
@@ -118,7 +164,7 @@ SensorSetting:
     # to convert the AP yaw data to local frame
     ApYawShift: 0.0
     # Add autopilot yaw angle bias state
-    AddApYawBias: True
+    AddApYawBias: False
     Sigma: 0.05
 
   ApAlt:
@@ -133,7 +179,7 @@ SensorSetting:
   BodySpd:
     Enable: True
     Topic: "drone/spd"
-    Sigma: 0.3
+    Sigma: 0.05
     Type: "DJI"
 
   HeightAboveGround:
@@ -154,6 +200,6 @@ SensorSetting:
       Yaw: 0.1
       Pitch: 0.1
       Roll: 0.1
-    DelayMs: 500
+    DelayMs: 150
     PosOnly: True
     Pos2D: True
