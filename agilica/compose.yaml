@@ -3,6 +3,7 @@
 #   COMPOSE_PROFILES=msdk      -> vitro_interface, Flanders Make's MSDK bridge
 #   add ",uwb"                 -> also start agilica_uwb (needs the UWB module plugged in)
 #   add ",gnc"                 -> also run VITRO (drone_gnc) here rather than on a laptop
+#   add ",liveview"            -> also decode the camera stream to JPEG for the GUI/Foxglove
 #
 # Prefer driving these through start_demo.sh (use_psdk_msdk / use_uwb / vitro_location)
 # rather than setting COMPOSE_PROFILES by hand - it also resolves the serial ports.
@@ -174,13 +175,17 @@ services:
     # the -x default keeps the Humble rollback path working from this same file. Hardcoding
     # either spelling means recording silently stops on the other distro.
     #
+    # The exclude pattern covers both video topics: `image` catches the decoded JPEG frames
+    # and `h264` catches the raw liveview stream feeding them. h264 does not contain the
+    # word "image", so without it a liveview run writes ~4 Mbps straight into the bag.
+    #
     # --max-bag-size caps a single bag at 512 MB. Once drone_gnc runs on the Pi the recorder
     # also captures the 40 Hz /dji/gnc/... fusion topics and growth roughly triples; this
     # card has already been filled to 100% once.
     command: >-
       ros2 bag record -s mcap
       --regex '^/(agilica_pose|dji/.*)$'
-      ${ROSBAG_EXCLUDE_FLAG:--x} '(.*)image(.*)'
+      ${ROSBAG_EXCLUDE_FLAG:--x} '(.*)(image|h264)(.*)'
       --max-bag-size ${ROSBAG_MAX_BAG_SIZE:-536870912}
 
   psdk_bridge:
@@ -225,13 +230,48 @@ services:
       ros2 run dji_psdk_bridge psdk_bridge --ros-args -r __ns:=/dji
                                            --params-file /psdk_bridge_params.yaml
 
+  # Decodes liveview into pictures. psdk_bridge republishes the aircraft's H.264
+  # elementary stream verbatim on /dji/camera_h264, and nothing that draws an image can
+  # read that: drone_gui goes through cv_bridge -> cv2.imdecode (JPEG/PNG only) and
+  # Foxglove's Image panel expects JPEG/PNG too. This node transcodes to JPEG on
+  # /dji/camera/image/compressed, which both then display with no changes on their side.
+  #
+  # Separate service, separate process, behind its own profile - three deliberate choices:
+  # it must be able to crash or be OOM-killed without touching the container that holds
+  # joystick control authority; it is the only CPU-hungry thing in the stack, so it must be
+  # trivially removable; and it can be moved to the laptop unchanged, since the h264 topic
+  # is much cheaper to send across than the frames decoded from it.
+  #
+  # Needs psdk_bridge's liveview_enabled to be true, otherwise nothing is published to
+  # decode and this just idles.
+  #
+  # To use the Pi's hardware H.264 decoder, add
+  #     devices: ["/dev/video10:/dev/video10"]
+  # here and set hwaccel: "v4l2m2m" in cfg/liveview_decoder_params.yaml. Not the default:
+  # /dev/video10 is Pi-specific (so it would break this service on a laptop) and the
+  # VideoCore driver copes less gracefully with a stream that has lost bytes.
+  liveview_decode:
+    container_name: liveview_decode
+    restart: unless-stopped
+    profiles: ["liveview"]
+    image: ${VITRO_IMAGE:-vitro_arm64:jazzy}
+    environment:
+      <<: *ros_env
+    network_mode: "host"
+    volumes:
+      - /dev/shm:/dev/shm
+      - ./cfg/liveview_decoder_params.yaml:/liveview_decoder_params.yaml
+    command: >-
+      ros2 run dji_psdk_bridge liveview_decoder --ros-args -r __ns:=/dji
+                                                --params-file /liveview_decoder_params.yaml
+
   # No `profiles:` key on purpose - unlike psdk/msdk/gui, this should start
   # alongside whichever drone link is active. Exposes the live ROS graph
   # (position, battery, attitude, ...) to Foxglove Studio (app.foxglove.dev, or
   # the desktop app) from any laptop on the same network: connect to
-  # ws://<pi-ip>:8765. Telemetry/plots only in practice: the PSDK bridge can publish
-  # H.264 chunks, but liveview is off by default because enabling it currently breaks
-  # the aircraft link entirely (see cfg/psdk_bridge_params.yaml).
+  # ws://<pi-ip>:8765. With the "liveview" profile also running, Foxglove's Image panel
+  # renders /dji/camera/image/compressed directly - the raw /dji/camera_h264 topic it
+  # is decoded from is not displayable by anything.
   foxglove_bridge:
     container_name: foxglove_bridge
     restart: unless-stopped

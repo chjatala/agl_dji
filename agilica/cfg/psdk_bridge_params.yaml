@@ -53,15 +53,21 @@
     battery_rate: 1.0
 
     # ---- liveview --------------------------------------------------------------------
-    # When enabled, publishes raw H.264 elementary-stream chunks as
-    # sensor_msgs/CompressedImage (format "h264") on topic_camera_h264. Position/source 1
-    # selects the Mavic 3E visible-light camera; position 7 selects the FPV camera on
-    # supported airframes.
+    # Publishes raw H.264 elementary-stream chunks as sensor_msgs/CompressedImage
+    # (format "h264") on topic_camera_h264. Position/source 1 selects the Mavic 3E
+    # visible-light camera; position 7 selects the FPV camera on supported airframes.
     #
-    # Safe to try: this no longer implies registering the network handler (see
-    # network_handler_enabled below). Left false only because it is unverified against the
-    # aircraft - turning it on costs bandwidth, not the link.
-    liveview_enabled: false
+    # Nothing can display h264. To see the picture, also start the "liveview" compose
+    # profile: liveview_decode transcodes this stream to JPEG on
+    # /dji/camera/image/compressed, which drone_gui and Foxglove both render.
+    #
+    # This does NOT imply registering the network handler - see network_handler_enabled
+    # below, and the comment in psdk_wrapper.c. It is, however, UNVERIFIED against the
+    # aircraft: DjiLiveview_Init may still fail on the E-Port link. Failure is contained -
+    # psdk_liveview_start returns -1, the bridge logs a warning and carries on with full
+    # telemetry and control - but it is the only setting here that turns on an untried PSDK
+    # subsystem inside the process holding joystick authority. Set false to rule it out.
+    liveview_enabled: true
     liveview_position: 1
     liveview_source: 1
     liveview_bitrate_kbps: 4000

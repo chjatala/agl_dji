@@ -118,6 +118,35 @@ else
     echo "Skipping UWB (use_uwb=0) - agilica_uwb will not start."
 fi
 
+# use_liveview=0 (default) -> no camera decoding.
+# use_liveview=1           -> also start liveview_decode, which transcodes the aircraft's
+#                             H.264 stream into JPEG frames drone_gui and Foxglove can show.
+#
+# Off by default for two reasons, neither of them cosmetic. It is the only CPU-hungry
+# service in the stack - software H.264 decode competes with the control loop on four cores
+# with no swap - and it needs psdk_bridge's liveview_enabled, which switches on a PSDK
+# subsystem still unverified against this aircraft. Start it once the flight itself is happy.
+use_liveview="${use_liveview:-0}"
+if [[ "$use_liveview" == "1" ]]; then
+    if [[ "$link_profile" != "psdk" ]]; then
+        echo "ERROR: use_liveview=1 needs the PSDK link (use_psdk_msdk=0) - the h264 stream" >&2
+        echo "       it decodes comes from psdk_bridge, which the MSDK path does not run." >&2
+        exit 1
+    fi
+    # Warn rather than abort: the decoder idles harmlessly with no input, and the
+    # parameter can legitimately be overridden from elsewhere. But a silent black panel
+    # in the GUI is exactly the kind of thing that eats an afternoon.
+    _lv_param="${_this_dir}/../cfg/psdk_bridge_params.yaml"
+    if [[ -r "$_lv_param" ]] && grep -qE '^[[:space:]]*liveview_enabled:[[:space:]]*false' "$_lv_param"; then
+        echo "WARNING: liveview_enabled is false in cfg/psdk_bridge_params.yaml, so psdk_bridge"
+        echo "         publishes no video and liveview_decode will have nothing to decode."
+    fi
+    echo "Liveview decoding enabled - /dji/camera/image/compressed will carry JPEG frames."
+    profiles+=("liveview")
+else
+    echo "Skipping liveview decoding (use_liveview=0) - /dji/camera_h264 is not displayable."
+fi
+
 # Where the VITRO framework (sensor_fusion + drone_control + mission) runs.
 #
 # vitro_location=laptop (default) -> VITRO runs on a laptop over the network; this Pi serves

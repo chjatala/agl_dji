@@ -1,9 +1,14 @@
 GuiCfg:
   GuiMode: "dev"
+  # The camera feed. liveview_decode publishes JPEG here (see the "liveview" compose
+  # profile); dev_gui decodes it with cv_bridge.compressed_imgmsg_to_cv2, so it must be a
+  # CompressedImage carrying JPEG - InitTopicCompressed selects that path. The topic this
+  # used to name, /dji/camera/image, has never existed: psdk_bridge publishes only
+  # /dji/camera_h264, which cv2.imdecode cannot read.
   RosImg1Cfg:
     InitSelect: True
-    InitTopic: "/dji/camera/image"
-    InitTopicCompressed: False
+    InitTopic: "/dji/camera/image/compressed"
+    InitTopicCompressed: True
     EnableDoubleClick: False
   RosImg2Cfg:
     InitSelect: False
