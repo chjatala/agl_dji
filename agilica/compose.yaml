@@ -78,14 +78,31 @@ services:
   drone_gui:
     container_name: drone_gui
     profiles: ["gui"]
-    image: ghcr.io/flanders-make-vzw/vitro/drone_gnc_prod:v1.4.0
+    # Defaults to tracking the GNC image so the two can never silently drift onto different
+    # ROS distros - a Humble GUI and a Jazzy drone_gnc simply do not see each other.
+    image: ${VITRO_GUI_IMAGE:-${VITRO_GNC_IMAGE:-ghcr.io/flanders-make-vzw/vitro/drone_gnc_prod:v1.4.0}}
     network_mode: "host"
+    # Was list-form with only DISPLAY, so it inherited none of the shared ROS settings. That
+    # happens to work on domain 0 with multicast, which is exactly why it went unnoticed:
+    # set a non-zero ROS_DOMAIN_ID, or block multicast, and the GUI silently shows nothing.
     environment:
-      - DISPLAY=${DISPLAY}
+      <<: *ros_env
+      DISPLAY: ${DISPLAY}
+      # Root of the "Load WP file" dialog. Set explicitly rather than relying on ~ expansion,
+      # because the GUI publishes the *absolute path* it picks and drone_gnc then opens that
+      # same string - so both ends must agree on this prefix or the load silently fails.
+      DRONE_CFG_HOME: /root/drone_cfg_home
+      QT_X11_NO_MITSHM: 1
     volumes:
       - /dev/shm:/dev/shm
       - ./log/sundae:/root/log
-      # - ./cfg/gui_cfg.yaml:/root/drone_cfg_home/gui_cfg.yaml
+      # DISPLAY alone is not enough - without the socket the GUI cannot reach any X server.
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      # cfg_file:=gui_cfg.yaml is passed below, but this mount used to be commented out, so
+      # dev_gui fell back to its packaged gui_cfg_example.yaml without saying so.
+      - ./cfg/gui_cfg.yaml:/root/drone_cfg_home/gui_cfg.yaml:ro
+      # Same waypoint tree the Pi's drone_gnc mounts, at the same container path.
+      - ./cfg/gnc/demo_agilica:/root/drone_cfg_home/demo_agilica:ro
     command: ros2 run drone_gui dev_gui --ros-args -r __ns:=/dji -p cfg_file:=gui_cfg.yaml
 
   # VITRO's fusion + control + mission layer. Behind the "gnc" profile because it runs on a
@@ -103,6 +120,8 @@ services:
     environment:
       <<: *ros_env
       DISPLAY: ${DISPLAY}
+      # Must match drone_gui's value - see the note there on waypoint path resolution.
+      DRONE_CFG_HOME: /root/drone_cfg_home
     volumes:
       - /dev/shm:/dev/shm
       - ./log/sundae:/root/log
@@ -150,13 +169,19 @@ services:
     working_dir: /root/bag_record
     # --regex (not a fixed topic list) so topics that appear after the recorder starts - which
     # is normal here, since the bridge takes a moment to connect - are still picked up.
-    # -x, not --exclude-regex: Humble spells the exclude flag -x/--exclude and rejects
-    # --exclude-regex, which is Jazzy's name for it. The stack runs on Humble because the
-    # VITRO packages ship as Python 3.10 .pyc, so Humble's spelling is the one that counts.
+    # The exclude flag is spelled -x on Humble and --exclude-regex on Jazzy, and each distro
+    # rejects the other's spelling. start_demo.sh sets ROSBAG_EXCLUDE_FLAG from ros_distro;
+    # the -x default keeps the Humble rollback path working from this same file. Hardcoding
+    # either spelling means recording silently stops on the other distro.
+    #
+    # --max-bag-size caps a single bag at 512 MB. Once drone_gnc runs on the Pi the recorder
+    # also captures the 40 Hz /dji/gnc/... fusion topics and growth roughly triples; this
+    # card has already been filled to 100% once.
     command: >-
       ros2 bag record -s mcap
       --regex '^/(agilica_pose|dji/.*)$'
-      -x '(.*)image(.*)'
+      ${ROSBAG_EXCLUDE_FLAG:--x} '(.*)image(.*)'
+      --max-bag-size ${ROSBAG_MAX_BAG_SIZE:-536870912}
 
   psdk_bridge:
     container_name: psdk_bridge

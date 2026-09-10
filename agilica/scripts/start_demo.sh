@@ -41,6 +41,45 @@ export ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-0}"
 export ROS_AUTOMATIC_DISCOVERY_RANGE="${ROS_AUTOMATIC_DISCOVERY_RANGE:-SUBNET}"
 export ROS_STATIC_PEERS="${VITRO_HOST:-}"
 
+# ROS distro selection. Defaults to humble - today's known-good - so an unqualified run
+# behaves exactly as before. Set ros_distro=jazzy once Flanders Make's arm64 Jazzy image
+# (the one carrying `sundae`) is in place on both ends.
+#
+# This also closes a live footgun: neither this script nor compose exports VITRO_IMAGE, and
+# compose's own default is `vitro_arm64:jazzy`. So a bare ./scripts/start_demo.sh silently
+# started whatever stale Jazzy image happened to be on disk. Now the distro picks the image.
+#
+# ROSBAG_EXCLUDE_FLAG exists because Humble spells the exclude flag -x while Jazzy spells it
+# --exclude-regex. Hardcoding either one silently breaks recording on the other distro, and
+# you would only find out when you went looking for a bag that was never written.
+ros_distro="${ros_distro:-humble}"
+case "$ros_distro" in
+    humble)
+        : "${VITRO_IMAGE:=vitro_arm64:humble}"
+        ROSBAG_EXCLUDE_FLAG="-x"
+        ;;
+    jazzy)
+        : "${VITRO_IMAGE:=vitro_arm64:jazzy}"
+        ROSBAG_EXCLUDE_FLAG="--exclude-regex"
+        ;;
+    *)
+        echo "ERROR: ros_distro must be 'humble' or 'jazzy' (got '${ros_distro}')" >&2
+        exit 1
+        ;;
+esac
+export VITRO_IMAGE ROSBAG_EXCLUDE_FLAG
+export VITRO_GNC_IMAGE="${VITRO_GNC_IMAGE:-}"
+export VITRO_GUI_IMAGE="${VITRO_GUI_IMAGE:-}"
+echo "ROS distro: ${ros_distro} (VITRO_IMAGE=${VITRO_IMAGE})"
+
+# Refuse to start with too little disk. Filling the SD card mid-flight takes the recorder
+# down and can take the whole system with it; this has already happened once.
+_free_gb=$(df -BG --output=avail / | tail -1 | tr -dc '0-9')
+if (( _free_gb < ${MIN_FREE_GB:-5} )); then
+    echo "ERROR: only ${_free_gb}GB free on / - need ${MIN_FREE_GB:-5}GB. Free space first." >&2
+    exit 1
+fi
+
 # use_psdk_msdk=1 (default) -> use DJI MSDK (vitro_interface)
 # use_psdk_msdk=0           -> use DJI PSDK (psdk_bridge)
 use_psdk_msdk="0"
@@ -97,6 +136,25 @@ case "$vitro_location" in
         fi
         ;;
     pi)
+        # Guard 1: drone_gnc falls back to ${VITRO_IMAGE} when VITRO_GNC_IMAGE is unset, and
+        # our image has no `sundae` - so it would start, fail on ModuleNotFoundError, and
+        # leave you debugging a container that looks like it launched fine. Compose cannot
+        # express this itself: a required-variable (:?) form is evaluated for every service
+        # regardless of the active profile, which would break the laptop path too.
+        if [[ -z "${VITRO_GNC_IMAGE}" ]]; then
+            echo "ERROR: vitro_location=pi needs VITRO_GNC_IMAGE set to Flanders Make's" >&2
+            echo "       arm64 image containing sundae. Without it drone_gnc starts and" >&2
+            echo "       dies on ModuleNotFoundError: No module named 'sundae'." >&2
+            exit 1
+        fi
+        # Guard 2: their bundle is Jazzy. A Jazzy drone_gnc cannot talk to a Humble
+        # psdk_bridge even on this same machine - ROS 2 has no cross-distro communication.
+        if [[ "$ros_distro" != "jazzy" ]]; then
+            echo "ERROR: vitro_location=pi requires ros_distro=jazzy (got '${ros_distro}')." >&2
+            echo "       ROS 2 cannot bridge distros, so a Jazzy drone_gnc and a Humble" >&2
+            echo "       psdk_bridge would not see each other." >&2
+            exit 1
+        fi
         echo "VITRO running on the Pi - starting drone_gnc locally."
         profiles+=("gnc")
         ;;
