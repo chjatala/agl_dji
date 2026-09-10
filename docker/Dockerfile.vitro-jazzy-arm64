@@ -42,9 +42,25 @@ SHELL ["/bin/bash", "-l", "-c"]
 # Deliberately NOT installed: ros-jazzy-vision-msgs. VITRO ships its own package also
 # called vision_msgs (VisionResult/VisionResultArray), unrelated to the upstream perception
 # one. Installing both would shadow ours in the overlay.
+#
+# ffmpeg: the H.264 decoder behind `ros2 run dji_psdk_bridge liveview_decoder`.
+# PSDK hands liveview over as an H.264 elementary stream, and nothing that can display an
+# image speaks that - drone_gui decodes through cv_bridge/cv2.imdecode (JPEG and PNG only)
+# and Foxglove's Image panel wants JPEG too. The decoder node shells out to ffmpeg to
+# transcode; chosen over PyAV or OpenCV because it needs no Python bindings, no numpy and
+# no compilation, and it rescales and rate-limits in the same process.
+# Without it, only the raw h264 topic exists and the decoder node exits with a clear error.
+#
+# It is not cheap: +400 MB, measured, which is most of why this image goes from 1.26 to
+# 1.66 GB. Ubuntu ships no headless ffmpeg - the package carries ffplay too, so it
+# depends on SDL2 and drags in mesa and libllvm15 that nothing here will ever call. If
+# the SD card ever gets tight again, that is the 300 MB to go after, either with a
+# static ffmpeg build or by moving the decoder off the Pi entirely (it is a separate
+# service precisely so it can move).
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
         cmake \
+        ffmpeg \
         git \
         python3-colcon-common-extensions \
         python3-numpy \
