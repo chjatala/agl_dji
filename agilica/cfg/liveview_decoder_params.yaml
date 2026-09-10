@@ -1,0 +1,90 @@
+# liveview_decoder - turns the PSDK H.264 liveview stream into JPEG frames the GUI can show.
+#
+# Compose runs the node under /dji, hence the /**/ wildcard, matching the style of
+# cfg/psdk_bridge_params.yaml and cfg/dji_interface.yaml.
+#
+# Nothing here has any effect unless psdk_bridge is publishing: set liveview_enabled: true
+# in cfg/psdk_bridge_params.yaml as well, and start the "liveview" compose profile.
+/**/liveview_decoder:
+  ros__parameters:
+
+    # ---- topics -----------------------------------------------------------------------
+    # Input must match psdk_bridge's topic_camera_h264 (default LEGACY_TOPICS['camera_h264']
+    # = "camera_h264"). If you flip use_documented_topic_names there, set this to
+    # "data/camera/h264" here too - the decoder has no way to discover the change and will
+    # simply sit with an empty subscription.
+    input_topic: "camera_h264"
+
+    # "<base>/compressed" is the image_transport convention. Foxglove's Image panel keys off
+    # that suffix; drone_gui lists it by message type either way, and its selector shows the
+    # full name. Also matches the rosbag exclude pattern in compose.yaml, so the frames are
+    # deliberately NOT recorded - record camera_h264 instead if you ever want the video.
+    output_topic: "camera/image/compressed"
+    frame_id: "camera"
+
+    # ---- output shaping ---------------------------------------------------------------
+    # This is a situational-awareness view, not a video feed. It shares WiFi with the
+    # control loop, and at flight time the GUI is on the laptop while this runs on the Pi.
+    # 5 fps at 960 px wide, q6, is roughly 60-100 KB/frame.
+    #
+    # Neither of these reduces decode cost: ffmpeg's fps filter drops frames only after the
+    # decoder has produced them. They bound the network and the GUI, not the CPU - for that
+    # see decode_keyframes_only below.
+    #
+    # output_fps is ignored when decode_keyframes_only is on: ffmpeg's fps filter pads a
+    # slow input up to the target by repeating frames, so it would send each keyframe five
+    # times over. In that mode frames go out at whatever rate the aircraft emits IDRs.
+    output_fps: 5.0
+    output_width: 960      # 0 = keep the source width (1920 on the M3E)
+
+    # ffmpeg's mjpeg quality scale: 2 is best, 31 is worst. NOT a 0-100 percentage.
+    jpeg_quality: 6
+
+    # ---- CPU ---------------------------------------------------------------------------
+    # The Pi 4 has four cores and no swap, and once drone_gnc moves here it also runs a
+    # 40 Hz EKF. Software-decoding 1080p30 is the most expensive thing in the stack.
+    #
+    # Measured on this Pi 4, decoding a synthetic 1080p30 4 Mbps stream (tools/fake_liveview.py)
+    # out to 960x540 JPEG:
+    #
+    #   decode_keyframes_only: false   61% of one core (15% of the Pi), 5 fps out
+    #   decode_keyframes_only: true     6% of one core ( 2% of the Pi), 1 fps out
+    #
+    # So the full-rate mode is affordable but not free, and the cheap mode is an order of
+    # magnitude cheaper for one picture per keyframe (-skip_frame nokey: decode IDR frames,
+    # skip everything between). Turn it on if the decoder logs "decoder behind" or the
+    # fusion loop starts missing its deadline. Note the CPU figure is for decode alone -
+    # the numbers above were taken with the synthetic encoder running on the same Pi, which
+    # cost far more than the decode did.
+    decode_keyframes_only: false
+
+    # "v4l2m2m" uses the Pi's VideoCore hardware decoder. Requires /dev/video10 to be passed
+    # into the container - see the commented `devices:` block on the liveview_decode service
+    # in compose.yaml. Left empty because that device is Pi-specific and the driver handles
+    # a stream with missing bytes less gracefully than the software decoder.
+    hwaccel: ""
+
+    # Ceiling on undecoded stream held in RAM. The aircraft keeps sending whether or not the
+    # decoder keeps up, and with no swap an unbounded buffer is an OOM kill rather than a
+    # slowdown. On overflow the OLDEST bytes are dropped - the newest are the ones worth
+    # keeping, and the tearing that causes is repaired at the next keyframe.
+    max_buffered_bytes: 4194304
+
+    ffmpeg_path: "ffmpeg"
+
+    # ---- keyframes ---------------------------------------------------------------------
+    # A decoder joining mid-GOP has nothing to draw until the next IDR frame, so a restart
+    # can look like a dead stream for as long as the aircraft's keyframe interval. psdk_bridge
+    # exposes DjiLiveview_RequestIntraframeFrameData as a Trigger service; while bytes are
+    # arriving but no frames are coming out, ask for one this often (0 disables).
+    keyframe_service: "liveview_keyframe"
+    keyframe_request_interval: 3.0
+
+    # ---- process supervision -----------------------------------------------------------
+    restart_delay: 2.0
+    stats_interval: 10.0
+
+    # psdk_bridge publishes reliably; a best-effort subscriber is still compatible and skips
+    # retransmission, trading a torn frame for lower latency on a lossy link. Off by default:
+    # losing a chunk of an H.264 stream costs a whole GOP, not one frame.
+    input_best_effort: false
