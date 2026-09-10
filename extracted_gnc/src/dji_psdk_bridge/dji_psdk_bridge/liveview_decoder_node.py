@@ -17,8 +17,14 @@ Why a separate node rather than a few more lines in psdk_bridge:
 * psdk_bridge holds joystick control authority. A decoder that wedges, leaks or gets
   OOM-killed must not take the flight link with it.
 * Decoding is the expensive part and the aircraft link is not. Keeping them apart means
-  this can run on the laptop instead of the Pi later, with no code change - the h264
-  topic crosses the network either way and is far smaller than the JPEGs.
+  this can run on the laptop instead of the Pi later, with no code change.
+
+  That move is a CPU trade, not a bandwidth one - and not in the direction you would
+  guess. At the shipped settings the JPEG output is *smaller* than the H.264 it came
+  from: 5 fps at 960 px measures ~1.1 Mbps against the stream's ~4 Mbps, because the
+  frame rate is cut 6x. Decoding on the Pi therefore reduces what crosses the WiFi.
+  Push output_fps and output_width back up toward the source and that inverts, since
+  JPEG codes each frame on its own with no motion compensation.
 * It stays off unless you ask for it (the "liveview" compose profile).
 
 Decoding is done by an ``ffmpeg`` subprocess rather than PyAV or OpenCV: the runtime

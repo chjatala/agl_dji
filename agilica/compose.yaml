@@ -239,8 +239,10 @@ services:
   # Separate service, separate process, behind its own profile - three deliberate choices:
   # it must be able to crash or be OOM-killed without touching the container that holds
   # joystick control authority; it is the only CPU-hungry thing in the stack, so it must be
-  # trivially removable; and it can be moved to the laptop unchanged, since the h264 topic
-  # is much cheaper to send across than the frames decoded from it.
+  # trivially removable; and it can be moved to the laptop unchanged if the Pi ever needs
+  # the cores back. Note that moving it there costs bandwidth rather than saving it: at the
+  # shipped 5 fps / 960 px the JPEG output measures ~1.1 Mbps against the ~4 Mbps h264 it is
+  # decoded from, so doing this on the Pi is currently the cheaper option on the wire too.
   #
   # Needs psdk_bridge's liveview_enabled to be true, otherwise nothing is published to
   # decode and this just idles.
