@@ -7,14 +7,20 @@
  * RNDIS link - not the UART. PSDK chooses the address and hands it to NetworkInit;
  * we apply it to the interface. Nothing here hard-codes an IP.
  *
- * NOT registered by default, and NOT required for liveview. Registering this
- * handler makes DjiCore_Init fail with 0xE1 on our aircraft (see the comment at
- * the registration site in psdk_wrapper.c), and dji_liveview.h documents no
- * dependency on it - only DjiHighSpeedDataChannel_SetBandwidthProportion and
- * DjiPayloadCamera_GetVideoStreamRemoteAddress do, both of which are about the
- * payload sending video out rather than receiving the aircraft's camera. An
- * earlier version of this comment claimed liveview needed it; that was an
- * inference, and it is unsupported by DJI's headers.
+ * NOT registered by default, despite liveview actually needing it: measured 14 Sep
+ * 2026 against the live aircraft, DjiLiveview_Init fails with 0xE0 (NONSUPPORT)
+ * without this registered, because the RNDIS interface (liveview's only transport)
+ * is never brought up - nothing here ever runs to do it. An earlier version of this
+ * comment claimed the opposite, reasoning from dji_liveview.h alone (which indeed
+ * documents no such dependency); that reasoning did not survive contact with the
+ * aircraft. The header's silence describes the interface, not DJI's internal
+ * implementation, which evidently checks for the high-speed channel regardless.
+ *
+ * Registering it does not help in practice: it makes DjiCore_Init itself fail with
+ * 0xE1 (TIMEOUT) before this file's HalNetwork_Init is ever called - see the
+ * comment at the registration site in psdk_wrapper.c. So on this aircraft, as
+ * currently configured, there is no known way to get both a working core link and
+ * a working liveview stream.
  *
  * Not DJI sample code - written for this project.
  *********************************************************************

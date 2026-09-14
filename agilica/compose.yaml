@@ -245,7 +245,12 @@ services:
   # decoded from, so doing this on the Pi is currently the cheaper option on the wire too.
   #
   # Needs psdk_bridge's liveview_enabled to be true, otherwise nothing is published to
-  # decode and this just idles.
+  # decode and this just idles. Currently that is also not sufficient: tested against
+  # the live aircraft 14 Sep 2026, PSDK's own DjiLiveview_Init fails with 0xE0
+  # (NONSUPPORT) unless the network handler is registered, and registering it breaks
+  # the core flight link (0xE1) instead - see the comments in psdk_wrapper.c and
+  # cfg/psdk_bridge_params.yaml. So this service is currently correct but has nothing
+  # to decode on this aircraft; nothing further to fix here until that is resolved.
   #
   # To use the Pi's hardware H.264 decoder, add
   #     devices: ["/dev/video10:/dev/video10"]

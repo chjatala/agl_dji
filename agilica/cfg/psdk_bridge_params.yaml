@@ -61,12 +61,17 @@
     # profile: liveview_decode transcodes this stream to JPEG on
     # /dji/camera/image/compressed, which drone_gui and Foxglove both render.
     #
-    # This does NOT imply registering the network handler - see network_handler_enabled
-    # below, and the comment in psdk_wrapper.c. It is, however, UNVERIFIED against the
-    # aircraft: DjiLiveview_Init may still fail on the E-Port link. Failure is contained -
-    # psdk_liveview_start returns -1, the bridge logs a warning and carries on with full
-    # telemetry and control - but it is the only setting here that turns on an untried PSDK
-    # subsystem inside the process holding joystick authority. Set false to rule it out.
+    # Tested 14 Sep 2026 against the live aircraft: with network_handler_enabled false
+    # (below), DjiLiveview_Init fails with 0xE0 (NONSUPPORT), every time, reliably.
+    # Root cause: liveview's H.264 rides the E-Port's high-speed RNDIS channel, not the
+    # UART, and nothing brings that interface up unless the network handler is
+    # registered - see hal_network.c. So as shipped, this setting turns liveview ON in
+    # the sense of "try to start it", not in the sense of "it will work" - it currently
+    # cannot, on this aircraft, without network_handler_enabled, which cannot be turned
+    # on without losing the flight link (see below). Left true anyway: failure here is
+    # silent and cheap (psdk_liveview_start returns -1, a warning is logged, telemetry
+    # and control are unaffected), and it means a future PSDK/firmware update that lifts
+    # this restriction starts working with no config change.
     liveview_enabled: true
     liveview_position: 1
     liveview_source: 1
@@ -76,14 +81,17 @@
     # ---- PSDK network handler ---------------------------------------------------------
     # MUST STAY false FOR FLIGHT. Registering T_DjiHalNetworkHandler makes DjiCore_Init
     # fail with 0xE1 (TIMEOUT) on this aircraft - no telemetry, no control, no link at all.
-    # Measured 24 Aug 2026 with two builds differing only in that registration; see the
-    # comment in psdk_wrapper.c.
+    # First measured 24 Aug 2026; retested 14 Sep 2026 against the live aircraft with a
+    # complete hal_network.c in place (rather than the 24 Aug stub), specifically to check
+    # whether that earlier result would still hold - it did, identically. See the comment
+    # in psdk_wrapper.c.
     #
-    # It is NOT needed for liveview: dji_liveview.h documents no such dependency. Only
-    # DjiHighSpeedDataChannel_SetBandwidthProportion and
-    # DjiPayloadCamera_GetVideoStreamRemoteAddress require it, and both concern the payload
-    # *sending* video out rather than receiving the aircraft's camera. Enable only if you
-    # are working on those, knowing the aircraft link is forfeit while it is on.
+    # This IS needed for liveview (see liveview_enabled above) - the opposite of what an
+    # earlier version of this comment claimed from reading dji_liveview.h alone. But
+    # turning it on breaks the core link before liveview ever gets a chance to use it, so
+    # in practice liveview and a working flight link are mutually exclusive on this
+    # aircraft as currently configured. Enable only off-aircraft, to work on outbound
+    # payload-camera video or high-speed bandwidth control - never for a flight.
     network_handler_enabled: false
 
     # ---- safety -----------------------------------------------------------------------

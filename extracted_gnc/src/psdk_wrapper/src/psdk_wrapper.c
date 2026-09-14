@@ -265,27 +265,34 @@ static T_DjiReturnCode PsdkWrapper_RegisterPlatform(void)
         return rc;
     }
 
-    /* OFF by default: registering this breaks the core link on this aircraft.
+    /* OFF by default: registering this breaks the core link on this aircraft, and
+     * leaving it off breaks liveview. Both halves are now measured, not inferred -
+     * there is currently no known configuration that gets both at once.
      *
-     * Measured 24 Aug against the live Mavic 3E, two builds differing only in whether
-     * this block runs: without it DjiCore_Init returns SUCCESS every time, with it
-     * DjiCore_Init returns 0xE1 (TIMEOUT) every time. Cross-tested both .so files in
-     * the humble and jazzy containers - the result follows the library, not the ROS
-     * distro or the runtime. The failure is in the core handshake: HalNetwork_Init is
-     * never reached (none of its messages are printed), and installing iproute2 - the
-     * `ip` binary it shells out to - does not change the outcome.
+     * With it OFF (default): DjiCore_Init succeeds - telemetry and control work - but
+     * DjiLiveview_Init fails with 0xE0 (NONSUPPORT). Root cause found 14 Sep 2026: the
+     * E-Port's RNDIS interface (rndis_host, USB 2ca3:001f) enumerates on the Pi but is
+     * never brought up, because nothing calls HalNetwork_Init to do it. Liveview's
+     * H.264 data rides that high-speed channel, not the UART, so with no interface up
+     * there is no path for it - hence NONSUPPORT, not a permissions or wiring issue.
      *
-     * This is NOT required for liveview, despite what an earlier version of this comment
-     * and of hal_network.c claimed. dji_liveview.h documents no network-handler
-     * dependency on DjiLiveview_Init or DjiLiveview_StartH264Stream; the only interfaces
-     * that document one are DjiHighSpeedDataChannel_SetBandwidthProportion and
-     * DjiPayloadCamera_GetVideoStreamRemoteAddress, both concerned with the payload
-     * *sending* a video stream out, which is the opposite direction from receiving the
-     * aircraft's camera. So liveview is worth trying with this left off - untested
-     * against the aircraft as of 24 Aug, since it was charging.
+     * With it ON: DjiCore_Init fails with 0xE1 (TIMEOUT) instead - no telemetry, no
+     * control, no link at all. First measured 24 Aug (two builds differing only in
+     * whether this block runs, cross-tested across the humble and jazzy containers -
+     * follows the library, not the ROS distro). Retested 14 Sep against the live
+     * aircraft with hal_network.c fully implemented (see its header comment) rather
+     * than the earlier stub, on the theory that the 24 Aug run might have failed for
+     * a reason this file has since fixed. It had not: identical 0xE1, and
+     * HalNetwork_Init is still never reached (none of its messages print, and the
+     * RNDIS interface stays down) - so the failure is in DjiCore_Init's own handshake,
+     * before our handler code runs at all, and is outside what this file controls.
      *
-     * Enable only to work on outbound payload-camera video or high-speed bandwidth
-     * control, knowing the aircraft link is forfeit while it is on. */
+     * So: liveview is a real hardware/PSDK limitation on this aircraft as configured,
+     * not a bug in psdk_wrapper or hal_network.c. If DJI ever explains why registering
+     * a network handler blocks core init, or ships a build where it does not, revisit
+     * this. Until then, enable this only to work on outbound payload-camera video or
+     * high-speed bandwidth control, knowing the aircraft link is forfeit while it is
+     * on - and never for a flight. */
     const char *regNetHandler = getenv("PSDK_REGISTER_NETWORK_HANDLER");
     if (regNetHandler && (regNetHandler[0] == '1' || regNetHandler[0] == 't' ||
                           regNetHandler[0] == 'T' || regNetHandler[0] == 'y' ||
@@ -296,9 +303,9 @@ static T_DjiReturnCode PsdkWrapper_RegisterPlatform(void)
             .NetworkGetDeviceInfo = HalNetwork_GetDeviceInfo,
         };
         fprintf(stderr, "[psdk_wrapper] PSDK_REGISTER_NETWORK_HANDLER set: registering the "
-                        "network handler. If DjiCore_Init now fails with 0xE1, this is why - "
-                        "unset it to restore telemetry and control. Liveview does not need "
-                        "this.\n");
+                        "network handler. DjiCore_Init is expected to fail with 0xE1 because of "
+                        "this (measured 24 Aug and 14 Sep) - unset it to restore telemetry and "
+                        "control.\n");
         rc = DjiPlatform_RegHalNetworkHandler(&networkHandler);
         if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             fprintf(stderr, "[psdk_wrapper] network handler registration failed: 0x%08llX "
