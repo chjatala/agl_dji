@@ -255,44 +255,36 @@ static T_DjiReturnCode PsdkWrapper_RegisterPlatform(void)
      * matches the reference exactly - one fewer difference to explain when the link
      * misbehaves.
      */
-    /* OFF by default: with this rig's current cabling, registering this costs the flight
-     * link and buys nothing. That is a wiring problem, not a PSDK one - see below.
+    /* Required for liveview, and safe to leave on once the USB wiring is right.
+     * Verified working against the aircraft on 14 Sep 2026: DjiCore_Init succeeds,
+     * liveview starts, and telemetry and control are unaffected.
      *
-     * What liveview needs. Its H.264 does not travel over this UART; it rides a
-     * high-speed USB channel. DJI's PSDK HAL documentation, "USB Device" section, gives
-     * the M3E/M3T mapping as "RNDIS virtual network card/USB to Ethernet card -> Push
-     * Liveview, Subscribe FPV/main camera stream", and states the roles plainly:
-     * "M3E/M3T: SDK device side is USB Device, the drone side is USB Host". So the Pi
-     * must present itself to the aircraft as a USB *device* (an RNDIS gadget). DJI pins
-     * the identity for E-Port V2: RNDIS is 2CA3:F003 (BULK 2CA3:F001, VCOM 2CA3:F002).
+     * Why liveview needs it. The H.264 does not travel over this UART; it rides a
+     * high-speed USB channel. DJI's PSDK HAL documentation gives the M3E/M3T mapping as
+     * "RNDIS virtual network card/USB to Ethernet card -> Push Liveview, Subscribe
+     * FPV/main camera stream", and states the roles: "M3E/M3T: SDK device side is USB
+     * Device, the drone side is USB Host". So the Pi presents an RNDIS gadget and PSDK
+     * calls NetworkInit to address it - observed picking 192.168.90.2/255.255.0.0.
      *
-     * How this rig is actually wired (14 Sep 2026): every USB peripheral, including the
-     * aircraft's 2ca3:001f, sits on the Pi's USB-A ports with the Pi as HOST. The USB-C
-     * port - the only one with a device controller - is empty and pinned to
-     * dtoverlay=dwc2,dr_mode=host. So the channel PSDK wants has no physical path.
+     * The history matters, because this block carried the opposite advice for three
+     * weeks. Registering the handler used to make DjiCore_Init fail with 0xE1 (TIMEOUT),
+     * measured 24 Aug and repeatedly on 14 Sep, and that was written up as a hard PSDK
+     * limitation. It was not. The rig was cabled with the aircraft on a USB-A port,
+     * making the Pi the USB *host* - the wrong role - so PSDK asked the aircraft to open
+     * a high-speed channel to a payload adapter that could not exist, and waited until
+     * it timed out. Rewire it the way DJI documents and the same code connects first
+     * time. Two software theories were tested and disproved along the way (the VID/PID
+     * from NetworkGetDeviceInfo, swept over four values, and handler registration
+     * order); neither was the cause, and neither is worth revisiting.
      *
-     * That single fact explains both failures measured against the live aircraft:
-     *   - handler OFF: DjiCore_Init succeeds, but DjiLiveview_Init returns 0xE0
-     *     (NONSUPPORT) - there is no high-speed channel to carry video.
-     *   - handler ON:  DjiCore_Init returns 0xE1 (TIMEOUT). PSDK calls our
-     *     NetworkGetDeviceInfo (confirmed by its log line), tells the aircraft to bring
-     *     up the high-speed channel, and waits for a peer that cannot appear.
-     *     NetworkInit is never reached, which is why the interface stays down.
-     *
-     * Two plausible software causes were tested against the live aircraft and DISPROVED.
-     * Do not spend time on them again:
-     *   - the VID/PID from NetworkGetDeviceInfo. Swept 2CA3:F003, 0955:7020 (DJI's own
-     *     Pi sample), 0B95:1790 (their x86 sample, an AX88179) and 1D6B:0104. All four
-     *     produced an identical 0xE1.
-     *   - handler registration order. DJI's reference sample registers UART, then
-     *     network, then socket; this file had socket before network. Reordered to match
-     *     exactly (the order you see now) - no change.
-     *
-     * The remaining step is physical: put the Pi in peripheral mode and connect its
-     * USB-C to the aircraft's E-Port USB, then bring up an RNDIS gadget at 2CA3:F003.
-     * agilica/scripts/setup_usb_gadget.sh does the software half and --check reports
-     * what is still missing. Until that is done, leave this OFF: switching it on for a
-     * flight forfeits telemetry and control for no benefit.
+     * Prerequisites, all of which agilica/scripts/setup_usb_gadget.sh handles or checks:
+     *   - E-Port dev kit host/device switch to Host
+     *   - dev kit USB to the Pi's USB-C (USB-A cannot work; it is host-only silicon)
+     *   - dwc2 in peripheral/OTG mode, libcomposite loaded
+     *   - an RNDIS gadget bound as 2CA3:F003 BEFORE this process starts. The gadget
+     *     lives in configfs and does not survive a reboot, so the script installs a
+     *     systemd unit to recreate it; without that, liveview fails with 0xE0 after
+     *     every reboot while telemetry looks perfectly healthy.
      */
     const char *regNetHandler = getenv("PSDK_REGISTER_NETWORK_HANDLER");
     if (regNetHandler && (regNetHandler[0] == '1' || regNetHandler[0] == 't' ||
@@ -303,10 +295,10 @@ static T_DjiReturnCode PsdkWrapper_RegisterPlatform(void)
             .NetworkDeInit = HalNetwork_DeInit,
             .NetworkGetDeviceInfo = HalNetwork_GetDeviceInfo,
         };
-        fprintf(stderr, "[psdk_wrapper] PSDK_REGISTER_NETWORK_HANDLER set: registering the "
-                        "network handler. DjiCore_Init is expected to fail with 0xE1 because of "
-                        "this (measured 24 Aug and 14 Sep) - unset it to restore telemetry and "
-                        "control.\n");
+        fprintf(stderr, "[psdk_wrapper] registering the network handler for the PSDK "
+                        "high-speed channel (liveview). If DjiCore_Init now fails with 0xE1, the "
+                        "USB gadget is missing or miswired - run "
+                        "agilica/scripts/setup_usb_gadget.sh --check.\n");
         rc = DjiPlatform_RegHalNetworkHandler(&networkHandler);
         if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             fprintf(stderr, "[psdk_wrapper] network handler registration failed: 0x%08llX "

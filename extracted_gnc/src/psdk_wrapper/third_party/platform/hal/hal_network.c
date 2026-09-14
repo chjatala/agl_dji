@@ -5,14 +5,14 @@
  *
  * Backs PSDK's high-speed data channel, which on the Mavic 3E is an RNDIS USB link -
  * not the UART. PSDK chooses the address and hands it to NetworkInit; we apply it to the
- * interface. Nothing here hard-codes an IP.
+ * interface. Nothing here hard-codes an IP. Observed in practice: PSDK asks for
+ * 192.168.90.2/255.255.0.0 on the gadget's usb0.
  *
- * NOT registered by default, and on this rig registering it currently breaks the flight
- * link (DjiCore_Init returns 0xE1) without enabling liveview. The cause is cabling, not
- * this file: DJI requires the SDK device to be a USB *device* on the aircraft's E-Port
- * for M3E, and this Pi is presently a USB host on its USB-A ports with the USB-C port
- * empty. See the long comment at the registration site in psdk_wrapper.c for the full
- * measurement, and agilica/scripts/setup_usb_gadget.sh for the fix.
+ * This is what liveview rides on, and it works - verified against the aircraft on
+ * 14 Sep 2026. It requires the Pi to be a USB *device* on the aircraft's E-Port, per
+ * DJI's role table for M3E/M3T; see agilica/scripts/setup_usb_gadget.sh, and the long
+ * comment at the registration site in psdk_wrapper.c for how a miswired rig made this
+ * look like an unfixable PSDK limitation for three weeks.
  *
  * An earlier version of this comment claimed liveview did not need the network handler
  * at all, reasoning from dji_liveview.h alone (which documents no such dependency). That

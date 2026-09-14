@@ -61,18 +61,20 @@
     # profile: liveview_decode transcodes this stream to JPEG on
     # /dji/camera/image/compressed, which drone_gui and Foxglove both render.
     #
-    # Tested 14 Sep 2026 against the live aircraft: DjiLiveview_Init fails with 0xE0
-    # (NONSUPPORT), reliably. Cause is cabling, not configuration. Liveview's H.264 rides
-    # a high-speed USB channel, and DJI requires the SDK device to be a USB *device* (an
-    # RNDIS gadget) on the aircraft's E-Port for M3E. This Pi is currently a USB host on
-    # its USB-A ports, with the only device-capable port (USB-C) empty - so that channel
-    # has no physical path. Run agilica/scripts/setup_usb_gadget.sh --check for the
-    # current state and what is missing.
+    # WORKING as of 14 Sep 2026, verified against the aircraft: H.264 arrives at ~29 fps
+    # and ~800 KiB/s, and liveview_decode turns it into 960x720 JPEG at 5 fps while
+    # telemetry and control carry on untouched.
     #
-    # Left true deliberately. Failure is silent and cheap - psdk_liveview_start returns
-    # -1, one warning is logged, telemetry and control are untouched - so this costs
-    # nothing today and starts working the moment the wiring is fixed, with no config
-    # change needed.
+    # It needs network_handler_enabled: true (below) AND the USB gadget wiring - the Pi
+    # has to be a USB device on the aircraft's E-Port. Run
+    # agilica/scripts/setup_usb_gadget.sh --check if the picture ever stops arriving; a
+    # 0xE0 NONSUPPORT in psdk_bridge's log with healthy telemetry means the gadget is
+    # missing, which is what a reboot without the systemd unit looks like.
+    #
+    # One harmless error to expect: SetEncodingStrategy(4000 kbps) returns 0xE0 on this
+    # airframe, so liveview_bitrate_kbps below is ignored and the aircraft streams at its
+    # own default (~6.5 Mbps measured). Everything still works; only the bitrate request
+    # is refused.
     liveview_enabled: true
     liveview_position: 1
     liveview_source: 1
@@ -80,23 +82,21 @@
     liveview_drain_rate: 100.0
 
     # ---- PSDK network handler ---------------------------------------------------------
-    # MUST STAY false FOR FLIGHT, as this rig is currently wired. Registering
-    # T_DjiHalNetworkHandler makes DjiCore_Init fail with 0xE1 (TIMEOUT) - no telemetry,
-    # no control, no link at all. Measured 24 Aug 2026 and again 14 Sep 2026.
+    # Required for liveview, and safe to leave on: it registers the HAL that brings up the
+    # E-Port's RNDIS high-speed channel, which is the only path the camera's H.264 can
+    # take. PSDK addresses it itself (observed: 192.168.90.2/255.255.0.0 on usb0).
     #
-    # This IS required for liveview - the opposite of what an earlier version of this
-    # comment claimed from reading dji_liveview.h alone. But it only helps once the Pi is
-    # a USB device on the E-Port. Today PSDK asks the aircraft to open a high-speed
-    # channel to a payload network adapter that is not physically there, and waits until
-    # it times out, taking the flight link with it.
+    # This was false for three weeks and is worth stating plainly, because the old advice
+    # was the exact opposite. Registering the handler used to make DjiCore_Init fail with
+    # 0xE1 and take the flight link with it - measured repeatedly - and that was written
+    # up as an unfixable PSDK limitation. The real cause was cabling: the aircraft was on
+    # a Pi USB-A port, so the Pi was the USB host, which is the wrong role for M3E. With
+    # the wiring DJI documents, the same code connects first time and telemetry, control
+    # and video all coexist.
     #
-    # Two software explanations were tested against the live aircraft and disproved: the
-    # VID/PID reported by NetworkGetDeviceInfo (four values swept, all identical 0xE1)
-    # and handler registration order. See psdk_wrapper.c for the detail.
-    #
-    # Flip this to true only together with the gadget setup - never on its own, and never
-    # for a flight.
-    network_handler_enabled: false
+    # If this ever starts failing with 0xE1 again, suspect the USB gadget before the code:
+    # agilica/scripts/setup_usb_gadget.sh --check.
+    network_handler_enabled: true
 
     # ---- safety -----------------------------------------------------------------------
     # If setpoints stop arriving while a command is still latched, command hover rather

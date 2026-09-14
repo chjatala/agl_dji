@@ -252,12 +252,10 @@ services:
   # decoded from, so doing this on the Pi is currently the cheaper option on the wire too.
   #
   # Needs psdk_bridge's liveview_enabled to be true, otherwise nothing is published to
-  # decode and this just idles, which is the case today: liveview needs a high-speed USB
-  # channel that this rig is not cabled for (the Pi must be a USB *device* on the E-Port;
-  # it is currently a USB host). See cfg/psdk_bridge_params.yaml and
-  # scripts/setup_usb_gadget.sh. This service itself is verified working - it was tested
-  # end to end against a synthetic H.264 source, tools/fake_liveview.py - so nothing here
-  # needs changing when the wiring is fixed.
+  # decode and this just idles. It also needs network_handler_enabled: true and the USB
+  # gadget in place (scripts/setup_usb_gadget.sh) - without those, psdk_bridge logs 0xE0
+  # and publishes nothing. Verified against the aircraft 14 Sep 2026: ~29 fps of H.264 in,
+  # 960x720 JPEG at 5 fps out, ~15% of one Pi core.
   #
   # To use the Pi's hardware H.264 decoder, add
   #     devices: ["/dev/video10:/dev/video10"]

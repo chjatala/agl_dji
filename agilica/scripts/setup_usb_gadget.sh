@@ -80,6 +80,10 @@ Usage: $0 [--check | --fix-boot | --up | --down]
               REQUIRES A REBOOT afterwards, which this script will not do for you.
   --up        Create and bind the RNDIS gadget (needs peripheral mode already active).
   --down      Tear the gadget down.
+  --install-service
+              Install a systemd unit so the gadget is created automatically at boot,
+              plus a sysctl drop-in for the socket buffers PSDK asks for. Without this,
+              liveview silently stops working after every reboot until --up is run.
 USAGE
 }
 
@@ -233,10 +237,56 @@ down() {
     echo "Gadget removed."
 }
 
+install_service() {
+    [[ $EUID -eq 0 ]] || { echo "--install-service needs root." >&2; exit 1; }
+    local self; self=$(readlink -f "$0")
+
+    # The gadget lives in configfs, which does not survive a reboot. Nothing else
+    # recreates it, so without this unit the first symptom after any reboot is liveview
+    # failing with 0xE0 while telemetry looks perfectly healthy - a confusing pairing to
+    # debug in the field.
+    cat > /etc/systemd/system/psdk-usb-gadget.service <<UNIT
+[Unit]
+Description=PSDK RNDIS USB gadget (E-Port high-speed channel for liveview)
+Documentation=file://${self}
+# configfs must be mounted and the UDC must exist before this can bind.
+After=sys-kernel-config.mount systemd-modules-load.service
+Wants=sys-kernel-config.mount
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=${self} --up
+ExecStop=${self} --down
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+    # PSDK raises these itself at startup, but it does so by writing /proc/sys from
+    # inside the container, where that tree is read-only - hence the "cannot create
+    # /proc/sys/net/core/rmem_default" lines in psdk_bridge's log. The bridge runs with
+    # network_mode: host, so it shares the host's network namespace and setting them
+    # here is equivalent. 2 MB is ~2.5 s of headroom at the ~800 KB/s this stream runs at.
+    cat > /etc/sysctl.d/90-psdk-liveview.conf <<SYSCTL
+# Receive buffers for the PSDK high-speed video channel. See setup_usb_gadget.sh.
+net.core.rmem_default = 2097152
+net.core.rmem_max = 2097152
+SYSCTL
+    sysctl -q -p /etc/sysctl.d/90-psdk-liveview.conf
+
+    systemctl daemon-reload
+    systemctl enable psdk-usb-gadget.service >/dev/null 2>&1
+    echo "Installed psdk-usb-gadget.service (enabled at boot) and"
+    echo "/etc/sysctl.d/90-psdk-liveview.conf (applied now)."
+    echo "The gadget will be recreated automatically on every boot."
+}
+
 case "${1:---check}" in
     --check)    check ;;
     --fix-boot) fix_boot ;;
     --up)       up ;;
     --down)     down ;;
+    --install-service) install_service ;;
     *)          usage; exit 1 ;;
 esac
