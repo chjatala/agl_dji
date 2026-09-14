@@ -1,0 +1,50 @@
+# Standalone liveview decoder - H.264 from the aircraft to JPEG for drone_gui/Foxglove.
+#
+# WHY A SEPARATE, ARCH-INDEPENDENT IMAGE
+#
+# This node does not have to run on the Pi, and on the Pi it is actively the wrong place
+# for it. Measured against the live aircraft:
+#
+#   raw H.264 on /dji/camera_h264 ........ 374 KB/s
+#   decoded JPEG at 1024px/15fps ......... 766 KB/s
+#
+# So forwarding the undecoded stream and decoding at the far end costs HALF the bandwidth,
+# because H.264 is inter-frame compressed and JPEG codes every frame from scratch. (An
+# earlier comment in this repo claimed the opposite. That was measured at 5 fps / 960 px,
+# where the JPEG side was genuinely smaller; it stops being true as soon as you ask for a
+# usable frame rate.)
+#
+# It is also the difference between a clean picture and a broken one. The Pi cannot decode
+# 1440x1080p30 and re-encode it while also running psdk_bridge: it was discarding ~1 MB/s
+# of input to hold latency down, and every discarded byte corrupts H.264 until the next
+# keyframe - which is what "weird jpeg artifacts" actually were. A laptop has the headroom
+# to decode every frame, so nothing is dropped and nothing tears.
+#
+# Deliberately NOT built on the VITRO images: the node imports only rclpy, sensor_msgs and
+# std_srvs, so a plain ros-base plus ffmpeg is enough, and that builds on any architecture
+# in about a minute. It is run as a plain script - no colcon, no package - which is why
+# only the single .py file is copied in.
+#
+# Build (on the machine that will run it, so the arch matches):
+#     docker build -f docker/Dockerfile.liveview-decoder -t liveview_decoder:latest .
+
+FROM ros:humble-ros-base
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# ffmpeg is the decoder itself. --no-install-recommends still pulls SDL2 and mesa because
+# Ubuntu ships no headless ffmpeg; that is ~400 MB and unavoidable short of a static build.
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY extracted_gnc/src/dji_psdk_bridge/dji_psdk_bridge/liveview_decoder_node.py /liveview_decoder_node.py
+
+RUN printf '%s\n' \
+        '#!/usr/bin/bash' \
+        'source /opt/ros/humble/setup.bash' \
+        'exec "$@"' \
+        > /entrypoint.sh \
+    && chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["python3", "/liveview_decoder_node.py"]

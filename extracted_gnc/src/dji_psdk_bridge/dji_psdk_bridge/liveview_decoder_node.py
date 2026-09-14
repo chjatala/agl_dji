@@ -17,14 +17,23 @@ Why a separate node rather than a few more lines in psdk_bridge:
 * psdk_bridge holds joystick control authority. A decoder that wedges, leaks or gets
   OOM-killed must not take the flight link with it.
 * Decoding is the expensive part and the aircraft link is not. Keeping them apart means
-  this can run on the laptop instead of the Pi later, with no code change.
+  this can run on the laptop instead of the Pi - which, on this rig, is where it should
+  run. See docker/Dockerfile.liveview-decoder.
 
-  That move is a CPU trade, not a bandwidth one - and not in the direction you would
-  guess. At the shipped settings the JPEG output is *smaller* than the H.264 it came
-  from: 5 fps at 960 px measures ~1.1 Mbps against the stream's ~4 Mbps, because the
-  frame rate is cut 6x. Decoding on the Pi therefore reduces what crosses the WiFi.
-  Push output_fps and output_width back up toward the source and that inverts, since
-  JPEG codes each frame on its own with no motion compensation.
+  Forwarding the undecoded stream is CHEAPER on the wire, not dearer. Measured against
+  the live aircraft: raw H.264 on /dji/camera_h264 is 374 KB/s, while the JPEG it decodes
+  to is 766 KB/s at only 1024px/15fps. H.264 is inter-frame compressed; JPEG codes every
+  frame from scratch. (This file twice claimed the reverse. The first claim was wrong
+  outright; the second was measured at 5 fps / 960 px, where the JPEG side really is
+  smaller - but that stops being true the moment you ask for a usable frame rate.)
+
+  It is also the difference between a clean picture and a broken one. The Pi cannot
+  decode 1440x1080p30 and re-encode it while running psdk_bridge: it discarded ~1 MB/s of
+  input to keep latency bounded, and every discarded byte corrupts H.264 until the next
+  keyframe. Decoding on the laptop drops nothing, and the JPEG never crosses the network
+  at all because drone_gui is on that same machine - so full 30 fps at native resolution
+  costs nothing extra.
+
 * It stays off unless you ask for it (the "liveview" compose profile).
 
 Decoding is done by an ``ffmpeg`` subprocess rather than PyAV or OpenCV: the runtime
