@@ -51,6 +51,7 @@ import time
 from collections import deque
 
 import rclpy
+from rcl_interfaces.msg import ParameterDescriptor
 from rclpy.node import Node
 from rclpy.qos import HistoryPolicy, QoSProfile, ReliabilityPolicy
 
@@ -79,12 +80,19 @@ class LiveviewDecoder(Node):
         self.declare_parameter('output_topic', 'camera/image/compressed')
         self.declare_parameter('frame_id', 'camera')
 
-        # Output shaping. 5 Hz at 960 px wide is a situational-awareness view, not a
-        # video feed, and that is the point: it shares WiFi with the control loop.
-        self.declare_parameter('output_fps', 5.0)
-        self.declare_parameter('output_width', 960)
+        # Output shaping - see cfg/liveview_decoder_params.yaml for measured cost/bandwidth.
+        #
+        # output_fps is declared with dynamic typing because it is a float that people
+        # naturally write as an integer. rclpy enforces the declared type strictly, so a
+        # hand-edited "output_fps: 15" in the YAML would otherwise raise
+        # InvalidParameterTypeException at startup and leave the node crash-looping -
+        # a puzzling failure for what looks like a perfectly reasonable edit.
+        self.declare_parameter(
+            'output_fps', 15.0,
+            ParameterDescriptor(dynamic_typing=True))
+        self.declare_parameter('output_width', 1280)
         # ffmpeg's mjpeg quality scale, 2 (best) to 31 (worst) - NOT 0-100.
-        self.declare_parameter('jpeg_quality', 6)
+        self.declare_parameter('jpeg_quality', 4)
 
         # CPU controls - see the module docstring.
         self.declare_parameter('decode_keyframes_only', False)

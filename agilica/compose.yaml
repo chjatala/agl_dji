@@ -273,6 +273,13 @@ services:
     volumes:
       - /dev/shm:/dev/shm
       - ./cfg/liveview_decoder_params.yaml:/liveview_decoder_params.yaml
+    # The Pi's VideoCore H.264 decoder. Harmless when hwaccel is empty (nothing opens it),
+    # so it is mounted unconditionally rather than left as a commented-out block someone
+    # has to remember. On a machine without /dev/video10 this service will not start -
+    # override LIVEVIEW_VIDEO_DEV to a path that exists, e.g. /dev/null, if you run the
+    # decoder on a laptop.
+    devices:
+      - "${LIVEVIEW_VIDEO_DEV:-/dev/video10}:/dev/video10"
     command: >-
       ros2 run dji_psdk_bridge liveview_decoder --ros-args -r __ns:=/dji
                                                 --params-file /liveview_decoder_params.yaml
