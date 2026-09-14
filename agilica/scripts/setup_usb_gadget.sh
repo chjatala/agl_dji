@@ -32,6 +32,27 @@
 #   BULK  -> 2CA3:F001      VCOM -> 2CA3:F002      RNDIS -> 2CA3:F003
 # We want RNDIS, hence F003.
 #
+# REQUIRED CABLING (DJI's own Raspberry Pi 4B + E-Port Developer Kit guide)
+#
+# DJI documents this exact hardware combination, and the steps that matter here are:
+#
+#   - "Set the USB host/device toggle switch (Marker 3) on the E-Port Developer Kit to
+#      the Host position."  <- the kit drives the bus; the Pi is the device.
+#   - "Using the USB-C OTG adapter and USB-C cable, connect the USB (Marker 6) on the
+#      E-Port Developer Kit to the USB-C on the developer board."  <- the Pi's USB-C
+#      port is the ONLY one that can act as a USB device. A USB-A port cannot: USB-A on
+#      the Pi is host-only, so a USB-A-to-C cable forces exactly the wrong roles.
+#   - The PSDK UART stays as it is: E-Port UART (Marker 5) -> USB-to-TTL module -> a Pi
+#     USB-A port. That is our FTDI TTL232R and it is already correct.
+#   - "turn on the power switch of the E-Port Developer Kit ... and check if the
+#      developer board is powered on."  <- in DJI's setup the kit powers the Pi, which
+#      is what frees the Pi's USB-C connector for data.
+#
+# Note DJI's guide is written for the M350, whose E-Port has a larger power budget than
+# the Mavic 3E's. Before relying on the kit to power this Pi, check it can actually
+# supply a Pi 4 plus its attached USB devices; otherwise feed 5V to the GPIO header
+# instead and leave USB-C for data only.
+#
 # WHAT THIS SCRIPT DOES NOT DO
 #
 # It does not reboot, and it does not edit boot configuration unless you pass --fix-boot.
@@ -101,8 +122,11 @@ check() {
     fi
 
     echo "== cabling =="
-    echo "  The aircraft must be connected to the Pi's USB-C port (the dwc2 bus), with"
-    echo "  the Pi as the USB device. Current USB topology:"
+    echo "  Required (per DJI's Pi 4B + E-Port Developer Kit guide):"
+    echo "    - dev kit host/device switch (Marker 3) -> HOST"
+    echo "    - dev kit USB (Marker 6) -> the Pi's USB-C port, NOT a USB-A port"
+    echo "    - PSDK UART via the USB-to-TTL module into a USB-A port (already correct)"
+    echo "  Current USB topology:"
     lsusb -t 2>/dev/null | sed 's/^/    /'
     if lsusb -t 2>/dev/null | grep -q 'dwc2'; then
         if lsusb -t 2>/dev/null | grep -A2 'dwc2' | grep -qE 'Dev [0-9]+, If'; then
