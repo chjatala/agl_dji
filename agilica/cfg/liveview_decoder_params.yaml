@@ -23,35 +23,34 @@
     frame_id: "camera"
 
     # ---- output shaping ---------------------------------------------------------------
-    # Measured on this Pi 4 against the live aircraft, 14 Sep 2026. "cpu" is one ffmpeg
-    # process; the Pi has four cores, so 100% of a core is 25% of the machine.
+    # Decode throughput measured on an OTHERWISE IDLE Pi 4, replaying a captured 1440x1080
+    # 30 fps stream. Anything above 1.0x can keep up in principle; the margin above it is
+    # what absorbs the rest of the stack (psdk_bridge alone runs ~60% of a core).
     #
-    #   fps  width  q | cpu  | achieved | on the wire | note
-    #   -----------------------------------------------------------------------------
-    #    5    960   6 |  54% |  4.9 fps |   100 KB/s  | the original conservative default
-    #   15    960   5 |  87% | 14.4 fps |   666 KB/s  | best value if bandwidth is tight
-    #   10   1280   5 |  89% |  9.8 fps |  1.03 MB/s  |
-    #   15   1280   4 | 111% | 15.0 fps |  1.35 MB/s  | <- current default, best picture
-    #   25   1440   3 | 137% | 12.3 fps |      -      | FAILS: cannot keep up, drops frames
+    #   decode only ............ 3.98x realtime   <- decoding is cheap
+    #   15 fps 1280px q4 ....... 1.70x
+    #   15 fps 1024px q4 ....... 2.05x   <- current default
+    #   15 fps  960px q4 ....... 2.16x
+    #   10 fps  960px q4 ....... 2.55x
     #
-    # ~15 fps is this Pi's ceiling, and it is CPU-bound rather than bandwidth-bound: the
-    # decoder must decode every frame the aircraft sends (~25-30 fps) before the fps
-    # filter throws any away, so raising output_fps costs only scaling and JPEG encoding,
-    # while lowering it saves less than you would expect. Asking for 25 gets you about 12
-    # and a steady stream of dropped bytes - worse than asking for 15.
+    # The expensive part is scaling and JPEG encoding, not decoding, so output_width is a
+    # much stronger lever than output_fps. Measure on an idle machine: benchmarking while
+    # the live decoder is running understates every figure by roughly half, which is how
+    # 1280px first looked impossible and then looked fine.
     #
-    # FLIGHT-TIME NOTE: 1.35 MB/s is ~11 Mbps, and on the DJI network that shares the link
-    # with the 40 Hz setpoint stream. The control traffic itself is tiny (~4 KB/s), so this
-    # is usually fine, but if the video is competing with control on a marginal link, drop
-    # to the "15 960 q5" row - it keeps the frame rate and costs half the bandwidth.
+    # FLIGHT-TIME NOTE: at 1024px/15fps this is ~0.9 MB/s. On the DJI network that shares
+    # the link with the 40 Hz setpoint stream (which is tiny, ~4 KB/s). If video ever
+    # competes with control, drop output_width to 960 and output_fps to 10.
     #
-    # Hardware decode (hwaccel: v4l2m2m) was tried and does NOT work on this stream: the
-    # VideoCore decoder bound and consumed input but produced 0.0 fps out. Left available
-    # in case a future kernel fixes it, but do not expect it to help today.
+    # Hardware decode (hwaccel: v4l2m2m) does NOT work on this stream - measured
+    # frame=0 out, twice. The aircraft sends H.264 High profile LEVEL 5.1 with B-frames,
+    # which is beyond what the Pi 4's VideoCore block accepts. Software decode is only
+    # 25% of the pipeline cost anyway, so there is little to win even if it were fixed.
     output_fps: 15.0
-    output_width: 1280     # 0 = keep the source width (1440 on the M3E, which is 4:3)
+    output_width: 1024     # 0 = keep the source width (1440 on the M3E, which is 4:3)
 
     # ffmpeg's mjpeg quality scale: 2 is best, 31 is worst. NOT a 0-100 percentage.
+    # Cheap to change: q4 vs q6 measured within noise of each other.
     jpeg_quality: 4
 
     # ---- CPU ---------------------------------------------------------------------------
@@ -78,11 +77,17 @@
     # a stream with missing bytes less gracefully than the software decoder.
     hwaccel: ""
 
-    # Ceiling on undecoded stream held in RAM. The aircraft keeps sending whether or not the
-    # decoder keeps up, and with no swap an unbounded buffer is an OOM kill rather than a
-    # slowdown. On overflow the OLDEST bytes are dropped - the newest are the ones worth
-    # keeping, and the tearing that causes is repaired at the next keyframe.
-    max_buffered_bytes: 4194304
+    # Ceiling on undecoded stream held in RAM. This bounds MEMORY, but what you actually
+    # notice is that it bounds LATENCY: every byte waiting here is delay between the world
+    # moving and the picture showing it. At ~400 KiB/s the previous 4 MiB ceiling allowed
+    # over ten seconds of lag, and it was invisible, because the buffer only logs when it
+    # OVERFLOWS - it can sit permanently near-full and report nothing. The stats line now
+    # prints queue depth in seconds for exactly this reason.
+    #
+    # For a live view, dropping beats buffering. On overflow the OLDEST bytes go and the
+    # aircraft is asked for a keyframe, so the tearing is repaired within a GOP rather
+    # than persisting. 256 KiB is comfortably under a second.
+    max_buffered_bytes: 262144
 
     ffmpeg_path: "ffmpeg"
 

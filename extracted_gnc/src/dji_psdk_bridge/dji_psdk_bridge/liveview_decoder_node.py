@@ -99,11 +99,18 @@ class LiveviewDecoder(Node):
         self.declare_parameter('hwaccel', '')  # '' or 'v4l2m2m'
 
         self.declare_parameter('ffmpeg_path', 'ffmpeg')
-        # Ceiling on undecoded input held in memory. The aircraft keeps sending whether
-        # or not ffmpeg keeps up; without a bound, a stalled decoder becomes an OOM on a
-        # machine with no swap. Overflow drops the OLDEST chunks: new bytes are the ones
-        # worth keeping, and the resulting corruption is repaired by the next keyframe.
-        self.declare_parameter('max_buffered_bytes', 4 * 1024 * 1024)
+        # Ceiling on undecoded input held in memory. This bounds MEMORY, but far more
+        # importantly it bounds LATENCY, which is what you actually notice: every byte
+        # sitting here is delay between the world moving and the picture showing it. At
+        # ~370 KiB/s the old 4 MiB ceiling permitted over ten seconds of lag, and it was
+        # invisible because the buffer only logs when it overflows - it can sit
+        # permanently near-full and say nothing. 256 KiB is well under a second.
+        #
+        # For a live view, dropping beats buffering: a stale picture is worse than a
+        # brief glitch. Overflow discards the OLDEST bytes and asks the aircraft for a
+        # keyframe, so the tearing that causes is repaired within a GOP instead of
+        # persisting.
+        self.declare_parameter('max_buffered_bytes', 256 * 1024)
 
         # A decoder that joins a stream mid-GOP has nothing to show until the next IDR.
         # psdk_bridge exposes a service that asks the aircraft for one; use it rather
@@ -191,11 +198,21 @@ class LiveviewDecoder(Node):
             argv += ['-skip_frame', 'nokey']
         if self.hwaccel:
             argv += ['-c:v', f'h264_{self.hwaccel}']
+        # Keep the probe TINY. These are ceilings on how much stream ffmpeg will buffer
+        # before it decides it knows the format, and they are paid as latency on every
+        # frame, not just the first. Measured on a real captured stream: raising them to
+        # 500 KB / 1 s (which an earlier version of this file did, speculatively, to guard
+        # against joining mid-GOP) added ~1.3 s to first frame AND ~1.9 s of steady-state
+        # lag, and produced fewer frames - 124 against 176 over the same input. The
+        # mid-GOP case is already handled properly by asking the aircraft for an IDR (see
+        # _request_keyframe), which is the right tool; buffering more input is not.
         argv += [
-            '-analyzeduration', '1000000',   # 1 s, vs the 5 s default
-            '-probesize', '500000',
+            '-analyzeduration', '0',
+            '-probesize', '32768',
             '-flags', 'low_delay',
             '-fflags', 'nobuffer',
+            '-max_delay', '0',
+            '-avioflags', 'direct',
             '-f', 'h264', '-i', 'pipe:0',
             '-an',
         ]
@@ -333,9 +350,18 @@ class LiveviewDecoder(Node):
 
         if self.stats_interval > 0 and now - self._last_stats >= self.stats_interval:
             elapsed = now - self._last_stats
+            rate = self._bytes_in / elapsed if elapsed > 0 else 0.0
+            # Queue depth is the latency that matters and was previously invisible: the
+            # buffer only reports drops when it OVERFLOWS, so it can sit permanently near
+            # full - seconds of delay - while logging nothing at all. Report it as time,
+            # since bytes mean nothing without the rate.
+            with self._queue_cv:
+                queued = self._queued_bytes
+            backlog = queued / rate if rate > 0 else 0.0
             self.get_logger().info(
-                f'liveview: {self._bytes_in / 1024.0 / elapsed:.0f} KiB/s in, '
-                f'{self._frames_out / elapsed:.1f} fps out'
+                f'liveview: {rate / 1024.0:.0f} KiB/s in, '
+                f'{self._frames_out / elapsed:.1f} fps out, '
+                f'queue {queued / 1024.0:.0f} KiB (~{backlog:.1f}s behind)'
                 + (f', {self._bytes_dropped / 1024.0:.0f} KiB dropped'
                    if self._bytes_dropped else ''))
             self._bytes_in = 0
@@ -370,11 +396,16 @@ class LiveviewDecoder(Node):
             self._queue_cv.notify()
         self._bytes_in += len(chunk)
         if dropped:
+            # Dropping mid-stream leaves the decoder mid-GOP, so the picture stays torn
+            # until the next IDR. Ask for one rather than waiting out the aircraft's own
+            # keyframe interval - that is the difference between a momentary glitch and
+            # seconds of garbage. Rate-limited inside _request_keyframe.
+            if time.monotonic() - self._last_keyframe_request > self.keyframe_interval:
+                self._request_keyframe('dropped input to bound latency')
             # Throttled: if we are overflowing, we are overflowing every message.
             self.get_logger().warning(
-                f'decoder behind: dropped {dropped} B of undecoded stream '
-                f'(buffer cap {self.max_buffered_bytes} B). Lower output_fps, set '
-                f'decode_keyframes_only, or enable hwaccel.',
+                f'decoder behind: dropped {dropped} B to keep latency bounded '
+                f'(cap {self.max_buffered_bytes} B). Lower output_fps or output_width.',
                 throttle_duration_sec=10.0)
 
     def _writer(self, proc):
