@@ -208,6 +208,13 @@ services:
       PSDK_BAUD_RATE: ${PSDK_BAUD_RATE:-460800}
       PSDK_UART_DEV1: /dev/ttyUSB0
       PSDK_LIB_PATH: /root/ros2_ws/install/psdk_wrapper/lib/libpsdk_wrapper.so
+      # Only read when the network handler is registered. PSDK passes these to the
+      # aircraft as the VID/PID of the USB network adapter it should bind for the
+      # high-speed (liveview) channel - see hal_network.h. Overridable so the value can
+      # be swept against a live aircraft without rebuilding the image.
+      PSDK_NET_VID: ${PSDK_NET_VID:-}
+      PSDK_NET_PID: ${PSDK_NET_PID:-}
+      PSDK_NET_DEV: ${PSDK_NET_DEV:-}
     devices:
       # UART link to the aircraft's payload port (E-Port/X-Port/SkyPort). Host side is
       # detected by USB product string (FTDI TTL232R-3V3) at launch; set PSDK_UART_DEV
@@ -245,12 +252,12 @@ services:
   # decoded from, so doing this on the Pi is currently the cheaper option on the wire too.
   #
   # Needs psdk_bridge's liveview_enabled to be true, otherwise nothing is published to
-  # decode and this just idles. Currently that is also not sufficient: tested against
-  # the live aircraft 14 Sep 2026, PSDK's own DjiLiveview_Init fails with 0xE0
-  # (NONSUPPORT) unless the network handler is registered, and registering it breaks
-  # the core flight link (0xE1) instead - see the comments in psdk_wrapper.c and
-  # cfg/psdk_bridge_params.yaml. So this service is currently correct but has nothing
-  # to decode on this aircraft; nothing further to fix here until that is resolved.
+  # decode and this just idles, which is the case today: liveview needs a high-speed USB
+  # channel that this rig is not cabled for (the Pi must be a USB *device* on the E-Port;
+  # it is currently a USB host). See cfg/psdk_bridge_params.yaml and
+  # scripts/setup_usb_gadget.sh. This service itself is verified working - it was tested
+  # end to end against a synthetic H.264 source, tools/fake_liveview.py - so nothing here
+  # needs changing when the wiring is fixed.
   #
   # To use the Pi's hardware H.264 decoder, add
   #     devices: ["/dev/video10:/dev/video10"]

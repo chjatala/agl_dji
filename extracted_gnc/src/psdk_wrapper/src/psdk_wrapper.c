@@ -248,51 +248,52 @@ static T_DjiReturnCode PsdkWrapper_RegisterPlatform(void)
         return rc;
     }
 
-    static T_DjiSocketHandler socketHandler = {
-        .Socket = Osal_Socket,
-        .Close = Osal_Close,
-        .Bind = Osal_Bind,
-        .UdpSendData = Osal_UdpSendData,
-        .UdpRecvData = Osal_UdpRecvData,
-        .TcpListen = Osal_TcpListen,
-        .TcpAccept = Osal_TcpAccept,
-        .TcpConnect = Osal_TcpConnect,
-        .TcpSendData = Osal_TcpSendData,
-        .TcpRecvData = Osal_TcpRecvData,
-    };
-    rc = DjiPlatform_RegSocketHandler(&socketHandler);
-    if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        return rc;
-    }
-
-    /* OFF by default: registering this breaks the core link on this aircraft, and
-     * leaving it off breaks liveview. Both halves are now measured, not inferred -
-     * there is currently no known configuration that gets both at once.
+    /* Registration order follows DJI's own Raspberry Pi sample
+     * (samples/sample_c/platform/linux/raspberry_pi/application/main.c), which under
+     * DJI_USE_UART_AND_NETWORK_DEVICE registers UART, then the network handler, then the
+     * socket handler. We previously registered the socket handler first. Swapped so this
+     * matches the reference exactly - one fewer difference to explain when the link
+     * misbehaves.
+     */
+    /* OFF by default: with this rig's current cabling, registering this costs the flight
+     * link and buys nothing. That is a wiring problem, not a PSDK one - see below.
      *
-     * With it OFF (default): DjiCore_Init succeeds - telemetry and control work - but
-     * DjiLiveview_Init fails with 0xE0 (NONSUPPORT). Root cause found 14 Sep 2026: the
-     * E-Port's RNDIS interface (rndis_host, USB 2ca3:001f) enumerates on the Pi but is
-     * never brought up, because nothing calls HalNetwork_Init to do it. Liveview's
-     * H.264 data rides that high-speed channel, not the UART, so with no interface up
-     * there is no path for it - hence NONSUPPORT, not a permissions or wiring issue.
+     * What liveview needs. Its H.264 does not travel over this UART; it rides a
+     * high-speed USB channel. DJI's PSDK HAL documentation, "USB Device" section, gives
+     * the M3E/M3T mapping as "RNDIS virtual network card/USB to Ethernet card -> Push
+     * Liveview, Subscribe FPV/main camera stream", and states the roles plainly:
+     * "M3E/M3T: SDK device side is USB Device, the drone side is USB Host". So the Pi
+     * must present itself to the aircraft as a USB *device* (an RNDIS gadget). DJI pins
+     * the identity for E-Port V2: RNDIS is 2CA3:F003 (BULK 2CA3:F001, VCOM 2CA3:F002).
      *
-     * With it ON: DjiCore_Init fails with 0xE1 (TIMEOUT) instead - no telemetry, no
-     * control, no link at all. First measured 24 Aug (two builds differing only in
-     * whether this block runs, cross-tested across the humble and jazzy containers -
-     * follows the library, not the ROS distro). Retested 14 Sep against the live
-     * aircraft with hal_network.c fully implemented (see its header comment) rather
-     * than the earlier stub, on the theory that the 24 Aug run might have failed for
-     * a reason this file has since fixed. It had not: identical 0xE1, and
-     * HalNetwork_Init is still never reached (none of its messages print, and the
-     * RNDIS interface stays down) - so the failure is in DjiCore_Init's own handshake,
-     * before our handler code runs at all, and is outside what this file controls.
+     * How this rig is actually wired (14 Sep 2026): every USB peripheral, including the
+     * aircraft's 2ca3:001f, sits on the Pi's USB-A ports with the Pi as HOST. The USB-C
+     * port - the only one with a device controller - is empty and pinned to
+     * dtoverlay=dwc2,dr_mode=host. So the channel PSDK wants has no physical path.
      *
-     * So: liveview is a real hardware/PSDK limitation on this aircraft as configured,
-     * not a bug in psdk_wrapper or hal_network.c. If DJI ever explains why registering
-     * a network handler blocks core init, or ships a build where it does not, revisit
-     * this. Until then, enable this only to work on outbound payload-camera video or
-     * high-speed bandwidth control, knowing the aircraft link is forfeit while it is
-     * on - and never for a flight. */
+     * That single fact explains both failures measured against the live aircraft:
+     *   - handler OFF: DjiCore_Init succeeds, but DjiLiveview_Init returns 0xE0
+     *     (NONSUPPORT) - there is no high-speed channel to carry video.
+     *   - handler ON:  DjiCore_Init returns 0xE1 (TIMEOUT). PSDK calls our
+     *     NetworkGetDeviceInfo (confirmed by its log line), tells the aircraft to bring
+     *     up the high-speed channel, and waits for a peer that cannot appear.
+     *     NetworkInit is never reached, which is why the interface stays down.
+     *
+     * Two plausible software causes were tested against the live aircraft and DISPROVED.
+     * Do not spend time on them again:
+     *   - the VID/PID from NetworkGetDeviceInfo. Swept 2CA3:F003, 0955:7020 (DJI's own
+     *     Pi sample), 0B95:1790 (their x86 sample, an AX88179) and 1D6B:0104. All four
+     *     produced an identical 0xE1.
+     *   - handler registration order. DJI's reference sample registers UART, then
+     *     network, then socket; this file had socket before network. Reordered to match
+     *     exactly (the order you see now) - no change.
+     *
+     * The remaining step is physical: put the Pi in peripheral mode and connect its
+     * USB-C to the aircraft's E-Port USB, then bring up an RNDIS gadget at 2CA3:F003.
+     * agilica/scripts/setup_usb_gadget.sh does the software half and --check reports
+     * what is still missing. Until that is done, leave this OFF: switching it on for a
+     * flight forfeits telemetry and control for no benefit.
+     */
     const char *regNetHandler = getenv("PSDK_REGISTER_NETWORK_HANDLER");
     if (regNetHandler && (regNetHandler[0] == '1' || regNetHandler[0] == 't' ||
                           regNetHandler[0] == 'T' || regNetHandler[0] == 'y' ||
@@ -313,6 +314,23 @@ static T_DjiReturnCode PsdkWrapper_RegisterPlatform(void)
                     (unsigned long long) rc);
             /* Not fatal: the UART path carries telemetry and control regardless. */
         }
+    }
+
+    static T_DjiSocketHandler socketHandler = {
+        .Socket = Osal_Socket,
+        .Close = Osal_Close,
+        .Bind = Osal_Bind,
+        .UdpSendData = Osal_UdpSendData,
+        .UdpRecvData = Osal_UdpRecvData,
+        .TcpListen = Osal_TcpListen,
+        .TcpAccept = Osal_TcpAccept,
+        .TcpConnect = Osal_TcpConnect,
+        .TcpSendData = Osal_TcpSendData,
+        .TcpRecvData = Osal_TcpRecvData,
+    };
+    rc = DjiPlatform_RegSocketHandler(&socketHandler);
+    if (rc != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        return rc;
     }
 
     return DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
