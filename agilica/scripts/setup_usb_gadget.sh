@@ -53,6 +53,19 @@
 # supply a Pi 4 plus its attached USB devices; otherwise feed 5V to the GPIO header
 # instead and leave USB-C for data only.
 #
+# RE-ENUMERATION IS REQUIRED PER PSDK SESSION
+#
+# Measured 14 Sep 2026: the aircraft binds the RNDIS gadget once per USB enumeration and
+# will not negotiate a second PSDK session over a link it has already bound. So a
+# psdk_bridge restart against a gadget that is merely still present fails in
+# DjiCore_Init with 0xE1, and HalNetwork_Init is never called - indistinguishable, from
+# the log alone, from the gadget being missing entirely.
+#
+# Tearing the gadget down and recreating it (--recycle) makes the aircraft enumerate
+# afresh, and the very next start connects. This is why start_demo.sh recycles before
+# bringing the stack up. If you restart psdk_bridge by hand with liveview enabled, run
+# `sudo setup_usb_gadget.sh --recycle` first or it will not connect.
+#
 # WHAT THIS SCRIPT DOES NOT DO
 #
 # It does not reboot, and it does not edit boot configuration unless you pass --fix-boot.
@@ -80,6 +93,8 @@ Usage: $0 [--check | --fix-boot | --up | --down]
               REQUIRES A REBOOT afterwards, which this script will not do for you.
   --up        Create and bind the RNDIS gadget (needs peripheral mode already active).
   --down      Tear the gadget down.
+  --recycle   Tear the gadget down and recreate it, forcing the aircraft to re-enumerate.
+              REQUIRED BEFORE EVERY psdk_bridge (RE)START - see the note below.
   --install-service
               Install a systemd unit so the gadget is created automatically at boot,
               plus a sysctl drop-in for the socket buffers PSDK asks for. Without this,
@@ -282,11 +297,19 @@ SYSCTL
     echo "The gadget will be recreated automatically on every boot."
 }
 
+recycle() {
+    [[ $EUID -eq 0 ]] || { echo "--recycle needs root." >&2; exit 1; }
+    down >/dev/null 2>&1
+    sleep 2          # let the host notice the disconnect before re-advertising
+    up
+}
+
 case "${1:---check}" in
     --check)    check ;;
     --fix-boot) fix_boot ;;
     --up)       up ;;
     --down)     down ;;
+    --recycle)  recycle ;;
     --install-service) install_service ;;
     *)          usage; exit 1 ;;
 esac

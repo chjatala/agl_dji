@@ -141,6 +141,25 @@ if [[ "$use_liveview" == "1" ]]; then
         echo "WARNING: liveview_enabled is false in cfg/psdk_bridge_params.yaml, so psdk_bridge"
         echo "         publishes no video and liveview_decode will have nothing to decode."
     fi
+    # The aircraft binds the RNDIS gadget once per USB enumeration and will not negotiate
+    # a second PSDK session over an already-bound link, so psdk_bridge must meet a freshly
+    # created gadget or DjiCore_Init fails with 0xE1. Recycling here costs two seconds and
+    # removes the single most confusing failure mode in this setup: telemetry dead, and a
+    # log that looks identical to a miswired cable.
+    _gadget_sh="${_this_dir}/setup_usb_gadget.sh"
+    if [[ -x "$_gadget_sh" ]]; then
+        if sudo -n true 2>/dev/null; then
+            echo "Recycling the USB gadget so the aircraft re-enumerates it..."
+            sudo -n "$_gadget_sh" --recycle || {
+                echo "ERROR: could not recycle the USB gadget - liveview will not connect." >&2
+                exit 1
+            }
+        else
+            echo "WARNING: no passwordless sudo, so the USB gadget was not recycled."
+            echo "         If psdk_bridge fails with 0xE1, run:"
+            echo "           sudo ${_gadget_sh} --recycle"
+        fi
+    fi
     echo "Liveview decoding enabled - /dji/camera/image/compressed will carry JPEG frames."
     profiles+=("liveview")
 else
