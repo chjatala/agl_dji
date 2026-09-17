@@ -107,13 +107,14 @@ services:
     command: ros2 run drone_gui dev_gui --ros-args -r __ns:=/dji -p cfg_file:=gui_cfg.yaml
 
   # VITRO's fusion + control + mission layer. Behind the "gnc" profile because it runs on a
-  # laptop for now (vitro_location=laptop): sensor_fusion and drone_control both import the
-  # `sundae` package, which is not in the extracted tree - Flanders Make will deliver it
-  # inside arm64 images (expected end of Aug 2026). Until those are baked into the image,
-  # starting this here fails on ModuleNotFoundError.
+  # Runs on the Pi by default (vitro_location=pi). sensor_fusion and drone_control both
+  # import the `sundae` package, which is absent from the extracted tree but IS present in
+  # Flanders Make's arm64 bundle, ghcr.io/flanders-make-vzw/vitro/drone_gnc_prod:5.0.0dev-jazzy,
+  # at /root/lib/SUNDAE - reachable only because that image's /entrypoint.sh puts it on
+  # PYTHONPATH. start_demo.sh defaults VITRO_GNC_IMAGE to that bundle.
   #
-  # Override VITRO_GNC_IMAGE to point at their bundle when it arrives, then switch
-  # vitro_location=pi.
+  # Do not override the entrypoint when debugging this service: bypassing it leaves
+  # PYTHONPATH unset and reproduces the original "No module named 'sundae'" failure.
   drone_gnc:
     container_name: drone_gnc
     profiles: ["gnc"]

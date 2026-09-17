@@ -1,0 +1,85 @@
+# DJI PSDK bridge layered ONTO Flanders Make's arm64 VITRO bundle - Raspberry Pi 4, ROS 2 Jazzy.
+#
+# Build context is the REPO ROOT, not this directory:
+#     docker build -f docker/Dockerfile.vitro-jazzy-overlay -t vitro_arm64:jazzy .
+#
+# Why this exists instead of Dockerfile.vitro-jazzy-arm64
+# -------------------------------------------------------
+# That file builds the whole world from `ros:jazzy-ros-base`: an apt layer (including ffmpeg,
+# +400 MB), a venv, and ~11 minutes of rosidl generation for the message packages. On a 28 GB
+# SD card already holding the 10 GB unpacked VITRO bundle, that no longer fits - the base pull
+# plus build needs 3-4 GB transient and there are only ~3 GB free.
+#
+# It is also redundant. Flanders Make's bundle (drone_gnc_prod:5.0.0dev-jazzy) already carries
+# everything that build produced, verified on this Pi on 15 Sep 2026:
+#   - every message dep dji_psdk_bridge declares: vitro_ros_definitions, geographic_msgs,
+#     mavros_msgs, geometry_msgs, sensor_msgs, std_srvs  -> no rosidl step needed
+#   - the build toolchain: cc, cmake, colcon
+#   - foxglove_bridge and rosbag2_storage_mcap, for the foxglove and recorder services
+#   - nmea_parser, so agilica_uwb needs nothing from us either
+#   - sundae + oase, the whole reason for the bundle
+#
+# The only things missing are ours: psdk_wrapper and dji_psdk_bridge. So we add exactly those
+# and inherit the rest, which also guarantees the bridge and the GNC stack are ABI- and
+# distro-identical - they are literally the same image.
+#
+# Deliberately NOT installed: ffmpeg. Only liveview_decode needs it and that service is off by
+# default (use_liveview=0); it costs 400 MB we do not have. Add it here if liveview moves on.
+FROM ghcr.io/flanders-make-vzw/vitro/drone_gnc_prod:5.0.0dev-jazzy
+
+# `source` is a bash builtin and the default Dockerfile shell is /bin/sh.
+SHELL ["/bin/bash", "-c"]
+
+# psdk_wrapper's CMakeLists selects third_party/psdk_lib/lib/aarch64-linux-gnu-gcc/
+# libpayloadsdk.a off `uname -m`, so building here on the Pi resolves it correctly.
+COPY extracted_gnc/src/psdk_wrapper/    /root/ros2_ws/src/psdk_wrapper/
+COPY extracted_gnc/src/dji_psdk_bridge/ /root/ros2_ws/src/dji_psdk_bridge/
+
+# The venv and ROS overlay are sourced in the same order as the bundle's own /entrypoint.sh,
+# so our packages compile against exactly the environment they will run in. install/setup.bash
+# is sourced so --packages-select can resolve vitro_ros_definitions and friends out of the
+# bundle's prebuilt overlay rather than trying to rebuild them.
+#
+# Plain (non-symlink) install: build/ is deleted right after, which would leave a
+# --symlink-install tree full of dangling links.
+RUN source /root/venv/bin/activate \
+    && source /opt/ros/jazzy/setup.bash \
+    && source /root/ros2_ws/install/setup.bash \
+    && cd /root/ros2_ws \
+    && colcon build --packages-select psdk_wrapper dji_psdk_bridge \
+    && rm -rf /root/ros2_ws/build /root/ros2_ws/log
+
+# pyserial, system-wide - NOT into /root/venv.
+#
+# The bundle ships the nmea_parser package but installs pyserial only inside /root/venv, and
+# the installed node executable's shebang is a hardcoded `#!/usr/bin/python3`. ros2 launch
+# spawns the node through that shebang, so it runs under the SYSTEM interpreter and never sees
+# the venv: agilica_uwb dies on `ModuleNotFoundError: No module named 'serial'` while a shell
+# in the same container imports serial happily. The venv is created --system-site-packages, so
+# venv -> system resolution works but system -> venv does not, which is why activating the
+# venv does not fix it.
+#
+# Our own Dockerfile.vitro-jazzy-arm64 installed python3-serial via apt and so never hit this.
+# Installing it system-wide restores that, and the venv still sees it via system-site-packages.
+# iproute2 provides `ip`, which PSDK shells out to from its own HAL. On DjiCore_Init the
+# aircraft is found (GetDeviceInfo -> vid=0x2CA3) and PSDK calls NetworkInit to put
+# 192.168.90.2/255.255.0.0 on usb0 for the liveview high-speed channel. Without `ip` that
+# shell-out prints "sh: 1: ip: not found" and init fails 0x000000EC - which reads like a
+# permissions problem ("missing NET_ADMIN?") but is not: compose already grants NET_ADMIN.
+#
+# ffmpeg is for liveview_decoder, which decodes the H.264 stream in an ffmpeg SUBPROCESS
+# (its ffmpeg_path parameter defaults to plain "ffmpeg") rather than via PyAV or OpenCV.
+# It is the expensive one: Ubuntu ships no headless build, so the package brings ffplay,
+# SDL2, mesa and libllvm - ~400 MB measured. It is only needed when use_liveview=1.
+#
+# Both were in Dockerfile.vitro-jazzy-arm64's apt layer; dropping that layer for this
+# overlay is what lost them.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ffmpeg \
+        iproute2 \
+        python3-serial \
+    && rm -rf /var/lib/apt/lists/*
+
+# ENTRYPOINT is inherited from the bundle: it activates the venv, puts SUNDAE/oase/UWB on
+# PYTHONPATH and sources both /opt/ros/jazzy and /root/ros2_ws/install - the last of which now
+# contains our two packages too. Do not override it (see the sundae note in compose.yaml).

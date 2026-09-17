@@ -41,9 +41,10 @@ export ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-0}"
 export ROS_AUTOMATIC_DISCOVERY_RANGE="${ROS_AUTOMATIC_DISCOVERY_RANGE:-SUBNET}"
 export ROS_STATIC_PEERS="${VITRO_HOST:-}"
 
-# ROS distro selection. Defaults to humble - today's known-good - so an unqualified run
-# behaves exactly as before. Set ros_distro=jazzy once Flanders Make's arm64 Jazzy image
-# (the one carrying `sundae`) is in place on both ends.
+# ROS distro selection. Defaults to jazzy: Flanders Make's arm64 image carrying `sundae`
+# (drone_gnc_prod:5.0.0dev-jazzy) is in place and verified on this Pi, so Jazzy is now the
+# normal path. Set ros_distro=humble for the rollback, which also forces vitro_location=laptop
+# because the Humble image has no `sundae`.
 #
 # This also closes a live footgun: neither this script nor compose exports VITRO_IMAGE, and
 # compose's own default is `vitro_arm64:jazzy`. So a bare ./scripts/start_demo.sh silently
@@ -52,7 +53,7 @@ export ROS_STATIC_PEERS="${VITRO_HOST:-}"
 # ROSBAG_EXCLUDE_FLAG exists because Humble spells the exclude flag -x while Jazzy spells it
 # --exclude-regex. Hardcoding either one silently breaks recording on the other distro, and
 # you would only find out when you went looking for a bag that was never written.
-ros_distro="${ros_distro:-humble}"
+ros_distro="${ros_distro:-jazzy}"
 case "$ros_distro" in
     humble)
         : "${VITRO_IMAGE:=vitro_arm64:humble}"
@@ -68,7 +69,7 @@ case "$ros_distro" in
         ;;
 esac
 export VITRO_IMAGE ROSBAG_EXCLUDE_FLAG
-export VITRO_GNC_IMAGE="${VITRO_GNC_IMAGE:-}"
+export VITRO_GNC_IMAGE="${VITRO_GNC_IMAGE:-ghcr.io/flanders-make-vzw/vitro/drone_gnc_prod:5.0.0dev-jazzy}"
 export VITRO_GUI_IMAGE="${VITRO_GUI_IMAGE:-}"
 echo "ROS distro: ${ros_distro} (VITRO_IMAGE=${VITRO_IMAGE})"
 
@@ -118,14 +119,14 @@ else
     echo "Skipping UWB (use_uwb=0) - agilica_uwb will not start."
 fi
 
-# use_liveview=0 (default) -> no camera decoding.
-# use_liveview=1           -> also start liveview_decode, which transcodes the aircraft's
-#                             H.264 stream into JPEG frames drone_gui and Foxglove can show.
+# use_liveview=0 (default) -> no camera stream at all.
+# use_liveview=1           -> enable the PSDK liveview channel: recycle the USB gadget and
+#                             let psdk_bridge publish /dji/camera_h264.
 #
-# Off by default for two reasons, neither of them cosmetic. It is the only CPU-hungry
-# service in the stack - software H.264 decode competes with the control loop on four cores
-# with no swap - and it needs psdk_bridge's liveview_enabled, which switches on a PSDK
-# subsystem still unverified against this aircraft. Start it once the flight itself is happy.
+# WHERE that stream is decoded is a separate decision - see liveview_decode_location below.
+# The two used to be one flag, which conflated them: the gadget recycle is required for the
+# aircraft's high-speed channel no matter who decodes, so turning the local decoder off must
+# not also turn the channel off.
 use_liveview="${use_liveview:-0}"
 if [[ "$use_liveview" == "1" ]]; then
     if [[ "$link_profile" != "psdk" ]]; then
@@ -160,22 +161,59 @@ if [[ "$use_liveview" == "1" ]]; then
             echo "           sudo ${_gadget_sh} --recycle"
         fi
     fi
-    echo "Liveview decoding enabled - /dji/camera/image/compressed will carry JPEG frames."
-    profiles+=("liveview")
+    # liveview_decode_location=laptop (default) -> decode off-board. The Pi publishes only
+    #                                              /dji/camera_h264; the laptop subscribes,
+    #                                              decodes and displays.
+    # liveview_decode_location=pi               -> run liveview_decode here as well.
+    #
+    # Defaults to laptop because the Pi 4 cannot keep up, measured 16 Sep 2026: the decoder
+    # pinned ~86% of a core at EVERY output width tried (1024/960/640) and still discarded
+    # 400-900 KiB per stats cycle. Flat CPU across widths is the tell - it is saturated by
+    # the input rate, not by scaling or JPEG encoding. The aircraft streams ~880 KiB/s
+    # (~7 Mbps), about double what this pipeline was tuned for, because psdk_bridge's
+    # SetEncodingStrategy(4000 kbps) is rejected with 0xE0 and it runs at its own default.
+    #
+    # It cannot be offloaded on the Pi either: hwaccel v4l2m2m yields frame=0 out, twice
+    # measured, because the M3E sends H.264 High profile Level 5.1 with B-frames, beyond
+    # what the VideoCore block accepts. So the only way to stop it competing with the
+    # 40 Hz EKF is to move it, which is why liveview_decode is its own service.
+    #
+    # Forwarding the undecoded stream is also CHEAPER on the wire, not merely neutral:
+    # measured 374 KB/s of raw H.264 against 766 KB/s of JPEG at 1024px/15fps, because
+    # H.264 is inter-frame compressed and JPEG codes every frame from scratch. The gap only
+    # widens at the full 1440px/30fps this now runs at. See the measurements and the
+    # correction of an earlier claim in docker/Dockerfile.liveview-decoder.
+    liveview_decode_location="${liveview_decode_location:-laptop}"
+    case "$liveview_decode_location" in
+        pi)
+            echo "Liveview decoding on the Pi - /dji/camera/image/compressed will carry JPEG frames."
+            echo "  NOTE: expect dropped frames; cfg/liveview_decoder_params.yaml is tuned for"
+            echo "        laptop-side decode. For Pi-side use output_width 640, output_fps 10."
+            profiles+=("liveview")
+            ;;
+        laptop)
+            echo "Liveview channel on, decoding on the laptop - this Pi publishes /dji/camera_h264 only."
+            echo "  Run liveview_decode there against the same ROS_DOMAIN_ID (${ROS_DOMAIN_ID})."
+            ;;
+        *)
+            echo "ERROR: liveview_decode_location must be 'pi' or 'laptop' (got '${liveview_decode_location}')" >&2
+            exit 1
+            ;;
+    esac
 else
-    echo "Skipping liveview decoding (use_liveview=0) - /dji/camera_h264 is not displayable."
+    echo "Skipping liveview entirely (use_liveview=0) - psdk_bridge publishes no video."
 fi
 
 # Where the VITRO framework (sensor_fusion + drone_control + mission) runs.
 #
-# vitro_location=laptop (default) -> VITRO runs on a laptop over the network; this Pi serves
-#                                   only the PSDK bridge and the UWB parser. This is the
-#                                   interim arrangement agreed with Flanders Make until the
-#                                   arm64 VITRO images (which include the `sundae` package)
-#                                   are delivered.
-# vitro_location=pi               -> also run drone_gnc here. Requires those arm64 images to
-#                                   be baked into the container image first.
-vitro_location="${vitro_location:-laptop}"
+# vitro_location=pi (default)  -> the whole stack runs here: drone_gnc (sensor_fusion +
+#                                 drone_control + mission) alongside the PSDK bridge and the
+#                                 UWB parser. Only drone_gui runs on the laptop, and it is
+#                                 never started from this script - it has no `gui` profile.
+# vitro_location=laptop        -> the old split: VITRO on a laptop over the network, this Pi
+#                                 serving only the PSDK bridge and UWB parser. Kept as the
+#                                 rollback path.
+vitro_location="${vitro_location:-pi}"
 case "$vitro_location" in
     laptop)
         echo "VITRO expected on the laptop (ROS_DOMAIN_ID=${ROS_DOMAIN_ID}) - drone_gnc stays down here."
@@ -184,11 +222,12 @@ case "$vitro_location" in
         fi
         ;;
     pi)
-        # Guard 1: drone_gnc falls back to ${VITRO_IMAGE} when VITRO_GNC_IMAGE is unset, and
-        # our image has no `sundae` - so it would start, fail on ModuleNotFoundError, and
-        # leave you debugging a container that looks like it launched fine. Compose cannot
-        # express this itself: a required-variable (:?) form is evaluated for every service
-        # regardless of the active profile, which would break the laptop path too.
+        # Guard 1: VITRO_GNC_IMAGE is defaulted above to Flanders Make's bundle, so this
+        # normally passes. It still fires if someone explicitly blanks it, because drone_gnc
+        # would then fall back to ${VITRO_IMAGE} - our own build, which has no `sundae` - and
+        # would start, die on ModuleNotFoundError, and look like it launched fine. Compose
+        # cannot express this itself: a required-variable (:?) form is evaluated for every
+        # service regardless of the active profile, which would break the laptop path too.
         if [[ -z "${VITRO_GNC_IMAGE}" ]]; then
             echo "ERROR: vitro_location=pi needs VITRO_GNC_IMAGE set to Flanders Make's" >&2
             echo "       arm64 image containing sundae. Without it drone_gnc starts and" >&2
