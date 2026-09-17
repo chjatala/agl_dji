@@ -43,6 +43,12 @@ SHELL ["/bin/bash", "-l", "-c"]
 # called vision_msgs (VisionResult/VisionResultArray), unrelated to the upstream perception
 # one. Installing both would shadow ours in the overlay.
 #
+# iproute2: hal_network.c shells out to `ip addr`/`ip link` to bring up the E-Port RNDIS
+# interface when the PSDK network handler is registered - which is now the normal case,
+# because liveview needs it. Without this the handler fails at NetworkInit and liveview
+# silently does not start. The Humble Dockerfile has had it since commit e5b4e03; this one
+# never did.
+#
 # ffmpeg: the H.264 decoder behind `ros2 run dji_psdk_bridge liveview_decoder`.
 # PSDK hands liveview over as an H.264 elementary stream, and nothing that can display an
 # image speaks that - drone_gui decodes through cv_bridge/cv2.imdecode (JPEG and PNG only)
@@ -62,6 +68,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         cmake \
         ffmpeg \
         git \
+        iproute2 \
         python3-colcon-common-extensions \
         python3-numpy \
         python3-pip \

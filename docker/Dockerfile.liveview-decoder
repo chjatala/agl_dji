@@ -25,10 +25,18 @@
 # in about a minute. It is run as a plain script - no colcon, no package - which is why
 # only the single .py file is copied in.
 #
+# ROS 2 has no cross-distro communication, so this MUST match the distro the rest of the
+# stack is running or it will not see the camera topic at all - it will simply sit there
+# with an empty subscription and no error. Pass --build-arg ROS_DIST=jazzy when the stack
+# is on Jazzy.
+#
 # Build (on the machine that will run it, so the arch matches):
-#     docker build -f docker/Dockerfile.liveview-decoder -t liveview_decoder:latest .
+#     docker build -f docker/Dockerfile.liveview-decoder \
+#         --build-arg ROS_DIST=jazzy -t liveview_decoder:jazzy .
 
-FROM ros:humble-ros-base
+ARG ROS_DIST=humble
+FROM ros:${ROS_DIST}-ros-base
+ARG ROS_DIST
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -41,7 +49,7 @@ COPY extracted_gnc/src/dji_psdk_bridge/dji_psdk_bridge/liveview_decoder_node.py 
 
 RUN printf '%s\n' \
         '#!/usr/bin/bash' \
-        'source /opt/ros/humble/setup.bash' \
+        "source /opt/ros/${ROS_DIST}/setup.bash" \
         'exec "$@"' \
         > /entrypoint.sh \
     && chmod +x /entrypoint.sh
