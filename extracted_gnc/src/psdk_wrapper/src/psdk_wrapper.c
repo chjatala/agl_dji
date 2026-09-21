@@ -368,7 +368,11 @@ static void PsdkWrapper_ConfigureJoystickMode(void)
         .horizontalControlMode = DJI_FLIGHT_CONTROLLER_HORIZONTAL_VELOCITY_CONTROL_MODE,
         .verticalControlMode = DJI_FLIGHT_CONTROLLER_VERTICAL_VELOCITY_CONTROL_MODE,
         .yawControlMode = DJI_FLIGHT_CONTROLLER_YAW_ANGLE_RATE_CONTROL_MODE,
-        .horizontalCoordinate = DJI_FLIGHT_CONTROLLER_HORIZONTAL_GROUND_COORDINATE,
+        /* VITRO sends the speed command in the body frame as of the 2026-09 control
+         * interface change, so the aircraft must interpret x/y in the body frame too.
+         * DJI's BODY_COORDINATE is FRU (Forward-Right-Up) per dji_flight_controller.h;
+         * VITRO's is FLU (Forward-Left-Up). The Y sign is reconciled in psdk_setpoint(). */
+        .horizontalCoordinate = DJI_FLIGHT_CONTROLLER_HORIZONTAL_BODY_COORDINATE,
         .stableControlMode = DJI_FLIGHT_CONTROLLER_STABLE_CONTROL_MODE_ENABLE,
     };
     DjiFlightController_SetJoystickMode(mode);
@@ -601,9 +605,15 @@ int psdk_setpoint(const char *setpointJson)
     JsonGetDouble(setpointJson, "vz", &vz);
     JsonGetDouble(setpointJson, "yaw", &yaw);
 
+    /* Incoming vx/vy/vz are VITRO's body frame: FLU (Forward-Left-Up).
+     * DJI's HORIZONTAL_BODY_COORDINATE is FRU (Forward-Right-Up), so only the Y axis
+     * disagrees and is negated here. X (forward) and Z (up) already match - note Z was
+     * up under the previous GROUND_COORDINATE (NEU) setting too, so its meaning is
+     * unchanged by this switch. Getting this sign wrong flies the aircraft sideways in
+     * the opposite direction, so it is done in one place rather than at the call sites. */
     T_DjiFlightControllerJoystickCommand cmd = {
         .x = (dji_f32_t) vx,
-        .y = (dji_f32_t) vy,
+        .y = (dji_f32_t) (-vy),
         .z = (dji_f32_t) vz,
         .yaw = (dji_f32_t) yaw,
     };

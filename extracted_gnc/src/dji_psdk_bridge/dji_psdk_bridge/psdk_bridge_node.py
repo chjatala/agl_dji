@@ -235,8 +235,13 @@ class PSDKBridgeNode(Node):
         # rather than a JSON string so it plots natively in Foxglove.
         #
         # Field meanings follow the configured joystick mode (see
-        # PsdkWrapper_ConfigureJoystickMode): linear x/y are GROUND-frame velocity,
-        # linear z is vertical velocity, and angular z is a yaw RATE, not a yaw angle.
+        # PsdkWrapper_ConfigureJoystickMode): linear x/y are BODY-frame velocity as sent
+        # by VITRO, i.e. FLU (Forward-Left-Up) - x forward, y LEFT. The wrapper negates y
+        # on the way to DJI, whose body frame is FRU. linear z is vertical velocity (up
+        # positive), and angular z is a yaw RATE, not a yaw angle.
+        #
+        # This topic shows what ARRIVED on cmd/drone/setpoint, so it is in VITRO's FLU
+        # convention, not the FRU the aircraft finally receives.
         self.joystick_pub = self.create_publisher(
             TwistStamped, topic('joystick_command'), 10)
 
