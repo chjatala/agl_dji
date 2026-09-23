@@ -256,4 +256,20 @@ echo "COMPOSE_PROFILES=${COMPOSE_PROFILES}"
 
 docker compose down --remove-orphans
 
-docker compose up
+# detach=1 starts the stack in the background and returns. Foreground stays the default
+# for anyone running this on the Pi's own console, but over ssh it is expensive: measured
+# 2026-09-23 on a Pi already at 100% CPU, `docker compose up` multiplexing every
+# container's output took ~20% of a core and sshd another ~11% encrypting it to the
+# laptop. Read logs on demand instead:  docker logs -f --tail 50 <container>
+detach="${detach:-0}"
+if [[ "$detach" == "1" ]]; then
+    if docker compose up -d; then
+        echo "Stack started detached. Logs: docker logs -f --tail 50 <container>   Stop: ./scripts/stop_demo.sh"
+    else
+        echo "ERROR: docker compose up -d failed (see above) - the stack may be only partly up." >&2
+        echo "       Check: docker ps -a   A name conflict usually means another compose is running." >&2
+        exit 1
+    fi
+else
+    docker compose up
+fi

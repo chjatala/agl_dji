@@ -151,6 +151,13 @@ services:
       - ${UWB_UART_DEV:-/dev/uwb-not-detected}:/dev/ttyAgilica
       - ./log/sundae:/root/log
       - ./cfg/parser_params.yaml:/parser_params.yaml
+      # Deploys src/nmea_parser without rebuilding the image. The image's installed copy
+      # was verified byte-identical to this file on 2026-09-23 apart from the throttled
+      # warnings, so the mount carries only that fix. Rebuilding vitro_arm64:jazzy instead
+      # would also activate the pending body-frame setpoint change in psdk_bridge; this
+      # keeps the two independent. The target is the Jazzy image's python3.12 path, so
+      # under ros_distro=humble it is simply ignored.
+      - ../src/nmea_parser/nmea_parser/nmea_parser.py:/root/ros2_ws/install/nmea_parser/lib/python3.12/site-packages/nmea_parser/nmea_parser.py:ro
     privileged: true
     network_mode: "host"
     command: ros2 launch nmea_parser parser.launch.py params_file:=/parser_params.yaml

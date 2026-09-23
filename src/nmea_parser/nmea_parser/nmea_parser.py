@@ -343,16 +343,28 @@ class NMEAParser(Node):
 
             # Check if required fields are present and not empty
             if len(fields) <= 6:
-                self.get_logger().warning("AGLLP sentence has insufficient fields")
+                # Throttled for the same reason as the empty-coordinate warning below.
+                self.get_logger().warning(
+                    "AGLLP sentence has insufficient fields - logged at most every 5 s",
+                    throttle_duration_sec=5.0,
+                )
                 return {"error": "Insufficient fields in AGLLP sentence"}
 
             # Check if x, y, z fields are not empty
             if not fields[2] or not fields[4] or not fields[6]:
+                # Throttled: the tag emits one of these per sentence (~40 Hz) for as long
+                # as it has no fix - beacons off, out of range, or dropping out mid-flight.
+                # Unthrottled, this one line cost more than half a core on the Pi 4
+                # (measured 2026-09-23: ~42 lines/s relayed by this node, the ros2 launch
+                # wrapper, docker compose and sshd). A lost fix still shows immediately:
+                # rclpy prints the first occurrence at once, then at most every 5 s.
                 self.get_logger().warning(
-                    "AGLLP sentence has empty coordinate fields: x='"
+                    "AGLLP sentence has empty coordinate fields (no UWB fix): x='"
                     + f"{fields[2] if len(fields) > 2 else ''}', "
                     + f"y='{fields[4] if len(fields) > 4 else ''}', "
-                    + f"z='{fields[6] if len(fields) > 6 else ''}'"
+                    + f"z='{fields[6] if len(fields) > 6 else ''}' "
+                    + "- logged at most every 5 s",
+                    throttle_duration_sec=5.0,
                 )
                 return {
                     "error": "Empty coordinate fields in AGLLP sentence",

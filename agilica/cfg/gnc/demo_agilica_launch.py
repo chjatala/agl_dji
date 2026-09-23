@@ -62,6 +62,10 @@ def generate_launch_description():
                 ),
                 launch_arguments={
                     "run_gui": "false",
+                    # No DS4 pad is ever attached to the Pi (no /dev/input/js*), but
+                    # drone_pilot_launch.py defaults run_ds4 to true, so ds4_to_setpoint
+                    # ran anyway and cost ~7% of a core waiting for one (2026-09-23).
+                    "run_ds4": "false",
                 }.items(),
             )
         ]
