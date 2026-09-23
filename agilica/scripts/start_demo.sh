@@ -201,8 +201,22 @@ if [[ "$use_liveview" == "1" ]]; then
             ;;
     esac
 else
+    # This used to only print the message below: psdk_bridge reads liveview_enabled from
+    # cfg/psdk_bridge_params.yaml, which says true, so the aircraft video kept streaming
+    # and use_liveview=0 saved nothing on the Pi. The -p override is what makes it true.
+    # Passed only when disabling, so the params file stays authoritative otherwise.
+    #
+    # network_handler_enabled goes off with it, and this is not optional. The handler only
+    # serves liveview's E-Port high-speed channel, and it needs the USB gadget recycle that
+    # this script performs in the use_liveview=1 branch only. Leaving it on here made
+    # DjiCore_Init fail with 0xE1 and took the WHOLE flight link down - no telemetry, no
+    # control, linker_task spinning at 97% of a core (measured 2026-09-23). With it off,
+    # psdk_bridge falls back to the UART-only core link, the configuration that flew
+    # before liveview existed.
+    PSDK_BRIDGE_EXTRA_ARGS="-p liveview_enabled:=false -p network_handler_enabled:=false"
     echo "Skipping liveview entirely (use_liveview=0) - psdk_bridge publishes no video."
 fi
+export PSDK_BRIDGE_EXTRA_ARGS="${PSDK_BRIDGE_EXTRA_ARGS:-}"
 
 # Where the VITRO framework (sensor_fusion + drone_control + mission) runs.
 #

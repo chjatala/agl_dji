@@ -187,13 +187,18 @@ services:
     # and `h264` catches the raw liveview stream feeding them. h264 does not contain the
     # word "image", so without it a liveview run writes ~4 Mbps straight into the bag.
     #
+    # /dji/sm is excluded too: it is mission_ctrl's state-machine diagram, re-rendered by
+    # graphviz and published as a JPEG 2-3 times a second - a picture, not flight data.
+    # Its name contains neither "image" nor "h264", so it slipped past the video filter
+    # and was being written to the card continuously (measured 2026-09-23).
+    #
     # --max-bag-size caps a single bag at 512 MB. Once drone_gnc runs on the Pi the recorder
     # also captures the 40 Hz /dji/gnc/... fusion topics and growth roughly triples; this
     # card has already been filled to 100% once.
     command: >-
       ros2 bag record -s mcap
       --regex '^/(agilica_pose|dji/.*)$'
-      ${ROSBAG_EXCLUDE_FLAG:--x} '(.*)(image|h264)(.*)'
+      ${ROSBAG_EXCLUDE_FLAG:--x} '(.*)(image|h264)(.*)|^/dji/sm$'
       --max-bag-size ${ROSBAG_MAX_BAG_SIZE:-536870912}
 
   psdk_bridge:
@@ -244,6 +249,7 @@ services:
     command: >-
       ros2 run dji_psdk_bridge psdk_bridge --ros-args -r __ns:=/dji
                                            --params-file /psdk_bridge_params.yaml
+                                           ${PSDK_BRIDGE_EXTRA_ARGS:-}
 
   # Decodes liveview into pictures. psdk_bridge republishes the aircraft's H.264
   # elementary stream verbatim on /dji/camera_h264, and nothing that draws an image can
