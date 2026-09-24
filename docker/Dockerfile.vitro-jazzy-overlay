@@ -16,11 +16,16 @@
 #     mavros_msgs, geometry_msgs, sensor_msgs, std_srvs  -> no rosidl step needed
 #   - the build toolchain: cc, cmake, colcon
 #   - foxglove_bridge and rosbag2_storage_mcap, for the foxglove and recorder services
-#   - nmea_parser, so agilica_uwb needs nothing from us either
+#   - an nmea_parser - but an OLD one, see below
 #   - sundae + oase, the whole reason for the bundle
 #
-# The only things missing are ours: psdk_wrapper and dji_psdk_bridge. So we add exactly those
-# and inherit the rest, which also guarantees the bridge and the GNC stack are ABI- and
+# The things missing are ours: psdk_wrapper and dji_psdk_bridge. We also rebuild nmea_parser,
+# because the bundle's copy predates commit 68c5f18 (2026-08-26) and has no publish_rate
+# rate limiter: it never declares the parameter, so the `publish_rate: 10.0` in
+# cfg/parser_params.yaml is silently ignored and agilica_pose goes out once per AGLLP
+# sentence (~40 Hz) instead of 10 Hz. Ours is a strict superset of theirs - the only line
+# unique to theirs is the direct publish() our limiter replaced - so overwriting is safe.
+# We inherit the rest, which also guarantees the bridge and the GNC stack are ABI- and
 # distro-identical - they are literally the same image.
 #
 # Deliberately NOT installed: ffmpeg. Only liveview_decode needs it and that service is off by
@@ -34,6 +39,7 @@ SHELL ["/bin/bash", "-c"]
 # libpayloadsdk.a off `uname -m`, so building here on the Pi resolves it correctly.
 COPY extracted_gnc/src/psdk_wrapper/    /root/ros2_ws/src/psdk_wrapper/
 COPY extracted_gnc/src/dji_psdk_bridge/ /root/ros2_ws/src/dji_psdk_bridge/
+COPY src/nmea_parser/                   /root/ros2_ws/src/nmea_parser/
 
 # The venv and ROS overlay are sourced in the same order as the bundle's own /entrypoint.sh,
 # so our packages compile against exactly the environment they will run in. install/setup.bash
@@ -46,7 +52,7 @@ RUN source /root/venv/bin/activate \
     && source /opt/ros/jazzy/setup.bash \
     && source /root/ros2_ws/install/setup.bash \
     && cd /root/ros2_ws \
-    && colcon build --packages-select psdk_wrapper dji_psdk_bridge \
+    && colcon build --packages-select psdk_wrapper dji_psdk_bridge nmea_parser \
     && rm -rf /root/ros2_ws/build /root/ros2_ws/log
 
 # pyserial, system-wide - NOT into /root/venv.

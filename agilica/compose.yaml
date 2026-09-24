@@ -239,6 +239,11 @@ services:
       - /dev/shm:/dev/shm
       - ./log/sundae:/root/log
       - ./cfg/psdk_bridge_params.yaml:/psdk_bridge_params.yaml
+      # Deploys psdk_bridge_node.py without an image rebuild, same pattern as nmea_parser in
+      # agilica_uwb. The image's installed copy was verified identical to this file on
+      # 2026-09-23 apart from the setpoint_yaw_rate_invert parameter, so the mount carries
+      # only that. The C layer (psdk_wrapper) is untouched and still comes from the image.
+      - ../extracted_gnc/src/dji_psdk_bridge/dji_psdk_bridge/psdk_bridge_node.py:/root/ros2_ws/install/dji_psdk_bridge/lib/python3.12/site-packages/dji_psdk_bridge/psdk_bridge_node.py:ro
     # psdk_wrapper and dji_psdk_bridge are compiled into vitro_arm64:jazzy at
     # image-build time, so there is no colcon build here - the static whole-archive
     # link against libpayloadsdk.a is slow on a Pi 4 and pointless to repeat on

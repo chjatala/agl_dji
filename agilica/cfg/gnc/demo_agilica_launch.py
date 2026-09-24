@@ -41,6 +41,9 @@ def generate_launch_description():
                     # mission_ctrl keeps the previously loaded mission on a failed load.
                     #
                     "waypoint_file": "demo_agilica/waypoint_cage.csv",
+                    # Tunable copy of the controller gains - see the header of that file for what
+                    # does and does not take effect (WpCtrl.KpYaw does; ace_pilot's PIDs do not).
+                    "ctrl_param": "demo_agilica/ctrl_param.yaml",
                 }.items(),
             )
         ]

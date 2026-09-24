@@ -171,6 +171,7 @@ class PSDKBridgeNode(Node):
         # So the rate is converted on the way out. Set true if a sender is already using
         # deg/s - verify by commanding a known rate and timing a 90 degree turn.
         self.declare_parameter('setpoint_yaw_rate_is_degrees', False)
+        self.declare_parameter('setpoint_yaw_rate_invert', False)
 
         # Setpoint watchdog. Matters most in the split deployment, where VITRO runs on a
         # laptop and the 40 Hz control loop crosses WiFi: a dropout must not leave the last
@@ -207,6 +208,8 @@ class PSDKBridgeNode(Node):
             self.get_parameter('authority_retry_interval').value)
         self.yaw_rate_is_degrees = bool(
             self.get_parameter('setpoint_yaw_rate_is_degrees').value)
+        self.yaw_rate_invert = bool(
+            self.get_parameter('setpoint_yaw_rate_invert').value)
         self._yaw_mask_warned = False
         self._last_authority_attempt = None
         self._authority_warned = False
@@ -308,7 +311,8 @@ class PSDKBridgeNode(Node):
             f"watchdog {'on' if self.watchdog_enabled else 'off'} "
             f"@ {self.setpoint_timeout}s; "
             f"liveview {'on' if self.liveview_enabled else 'off'}; "
-            f"network handler {'on' if self.network_handler_enabled else 'off'}"
+            f"network handler {'on' if self.network_handler_enabled else 'off'}; "
+            f"yaw rate {'INVERTED' if self.yaw_rate_invert else 'as sent'}"
         )
 
     # -- helpers ----------------------------------------------------------------
@@ -437,6 +441,16 @@ class PSDKBridgeNode(Node):
                     level='warning')
         elif not self.yaw_rate_is_degrees:
             yaw_rate = math.degrees(yaw_rate)
+
+        # Yaw-rate sign flip for a convention mismatch between VITRO and DJI. The
+        # body-frame switch (VITRO's FLU -> DJI's FRU) negates Y in psdk_wrapper.c but
+        # deliberately leaves yaw alone, because the interface change only covered the
+        # speed command. If VITRO has also moved yaw to ENU (counter-clockwise positive)
+        # the aircraft turns the wrong way: set setpoint_yaw_rate_invert: true in
+        # cfg/psdk_bridge_params.yaml rather than editing code. Applied here, not in the
+        # C layer, so the joystick_command debug topic shows the value actually sent.
+        if self.yaw_rate_invert:
+            yaw_rate = -yaw_rate
 
         sp = {
             'frame_id': msg.header.frame_id,

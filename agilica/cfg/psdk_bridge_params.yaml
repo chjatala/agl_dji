@@ -142,3 +142,10 @@
     # true: the sender already uses deg/s. Confirm empirically before setting this -
     # command a known rate and time a 90 degree turn.
     setpoint_yaw_rate_is_degrees: false
+
+    # Negate the yaw-rate command on its way to DJI. Leave false unless the aircraft
+    # turns the wrong way under the body-frame interface: that change made x/y FLU but
+    # did not touch yaw, and DJI's own convention is clockwise-positive seen from above.
+    # Judge it from the joystick_command debug topic against d(Psi)/dt, not by eye.
+    # Read once at startup - after changing it:  docker restart psdk_bridge
+    setpoint_yaw_rate_invert: true

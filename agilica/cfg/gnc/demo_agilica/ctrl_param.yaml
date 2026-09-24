@@ -1,0 +1,120 @@
+# Controller parameters for the demo_agilica mission - a full copy of the
+# ctrl_param_default.yaml baked into Flanders Make's drone_gnc_prod:5.0.0dev-jazzy
+# image (copied 2026-09-23, values unchanged), so they can be tuned without a rebuild.
+#
+# Read via the ctrl_param launch argument set in ../demo_agilica_launch.py, by
+# wp_to_vel_ctrl and mission_ctrl ONLY. It must stay a complete file: the loader reads
+# this one file, not the default plus overrides, so a file holding just KpYaw would drop
+# every other section.
+#
+# WHAT TAKES EFFECT HERE: WpCtrl (KpPos, KpYaw, CtrlRate) - the waypoint controller.
+#
+# WHAT DOES NOT: the Yaw / YawRate / Zvel ... PID sections belong to ace_pilot, and
+# drone_pilot_launch.py hardcodes ace_pilot to the image's ctrl_param_default.yaml.
+# Editing those sections here changes nothing.
+#
+# Yaw proportional band = maxYawRate (per waypoint, in the waypoint csv) / KpYaw.
+# Outside that band the yaw-rate command is saturated at maxYawRate.
+#
+# After editing:  docker restart drone_gnc   (values are read once, at startup)
+
+# The controller gain 
+
+JoystickCtrl:
+  CtrlRate: 25.0
+  Pitch:
+    Sign: 1.0
+    P: 0.0
+    I: 0.0
+    D: 0.0
+    FF: 0.7
+    CtrlLimit:
+      max_cmd_out: 3.0
+      max_i_err: 0.0
+      max_i: 0.0
+      max_integrator: 0.0
+      max_rate: 3.0
+    Trim: 0.0
+  Roll:
+    Sign: -1.0
+    P: 0.0
+    I: 0.0
+    D: 0.0
+    FF: 0.8
+    CtrlLimit:
+      max_cmd_out: 3.0
+      max_i_err: 0.0
+      max_i: 0.0
+      max_integrator: 0.0
+      max_rate: 3.0
+    Trim: 0.0
+  Yaw:
+    Sign: -1.0
+    P: 3.5
+    I: 0.0
+    D: 0.0
+    FF: 0.0
+    CtrlLimit:
+      max_cmd_out: 1.5
+      max_i_err: 0.0
+      max_i: 0.0
+      max_integrator: 0.0
+      max_rate: 3.0
+    Trim: 0.0
+  YawRate:
+    Sign: -1.0
+    P: 0.0
+    I: 0.0
+    D: 0.0
+    FF: 0.9
+    CtrlLimit:
+      max_cmd_out: 1.5
+      max_i_err: 0.0
+      max_i: 0.0
+      max_integrator: 0.0
+      max_rate: 3.0
+    Trim: 0.0
+  Zvel:
+    Sign: 1.0
+    P: 0.0
+    I: 0.0
+    D: 0.0
+    FF: 0.5
+    CtrlLimit:
+      max_cmd_out: 3.0
+      max_i_err: 0.0
+      max_i: 0.0
+      max_integrator: 0.0
+      max_rate: 3.0
+    Trim: 0.0
+
+WpCtrl:
+  CtrlRate: 25.0
+  KpPos: 0.5
+  KpYaw: 1.5
+
+LineFollowCtrl:
+  CtrlRate: 20.0
+
+GenLineFollowCtrl:
+  CtrlRate: 20.0
+  CtrlX:
+    p_gain: 0.5
+    max_cmd: 0.5
+    max_rate: 1.0
+    sign: 1.0
+  CtrlY:
+    p_gain: 0.5
+    max_cmd: 0.5
+    max_rate: 1.0
+    sign: 1.0
+  CtrlZ:
+    p_gain: 0.5
+    max_cmd: 0.5
+    max_rate: 1.0
+    sign: 1.0
+  CtrlYaw:
+    p_gain: 1.5
+    max_cmd: 0.5
+    max_rate: 1.0
+    sign: 1.0
