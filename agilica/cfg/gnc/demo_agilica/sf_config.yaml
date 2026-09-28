@@ -164,7 +164,7 @@ SensorSetting:
     # to convert the AP yaw data to local frame
     ApYawShift: 0.0
     # Add autopilot yaw angle bias state
-    AddApYawBias: False
+    AddApYawBias: True
     Sigma: 0.05
 
   ApAlt:
